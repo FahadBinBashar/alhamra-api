@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -19,12 +20,14 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', 'string', Rule::in(User::ROLES)],
         ]);
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => $data['role'],
         ]);
 
         $token = $user->createToken('api_token')->plainTextToken;
@@ -43,6 +46,7 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'role' => ['sometimes', 'string', Rule::in(User::ROLES)],
         ]);
 
         $user = User::where('email', $credentials['email'])->first();
@@ -50,6 +54,12 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => [Lang::get('auth.failed')],
+            ]);
+        }
+
+        if (isset($credentials['role']) && $user->role !== $credentials['role']) {
+            throw ValidationException::withMessages([
+                'role' => [Lang::get('auth.failed')],
             ]);
         }
 
