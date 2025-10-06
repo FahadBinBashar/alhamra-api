@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $t) {
-        $t->id();
-        $t->foreignId('category_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
-        $t->string('name');
-        $t->decimal('price',14,2)->default(0);
-        $t->json('attributes')->nullable();
-        $t->timestamps();
+        Schema::create('services', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('category_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->string('name');
+            $table->decimal('price', 14, 2)->default(0);
+            $table->json('attributes')->nullable();
+            $table->timestamps();
         });
     }
 

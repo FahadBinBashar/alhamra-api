@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ResolvesIncludes;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
@@ -12,12 +13,20 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoryController extends Controller
 {
+    use ResolvesIncludes;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
+        $includes = $this->resolveIncludes($request, ['products', 'services']);
+
         $query = Category::query()->withCount(['products', 'services']);
+
+        if (!empty($includes)) {
+            $query->with($includes);
+        }
 
         if ($request->filled('type')) {
             $query->where('type', $request->string('type'));
@@ -35,15 +44,29 @@ class CategoryController extends Controller
     {
         $category = Category::create($request->validated());
 
+        $category->loadCount(['products', 'services']);
+
+        $includes = $this->resolveIncludes($request, ['products', 'services']);
+
+        if (!empty($includes)) {
+            $category->load($includes);
+        }
+
         return new CategoryResource($category);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category): CategoryResource
+    public function show(Request $request, Category $category): CategoryResource
     {
         $category->loadCount(['products', 'services']);
+
+        $includes = $this->resolveIncludes($request, ['products', 'services']);
+
+        if (!empty($includes)) {
+            $category->load($includes);
+        }
 
         return new CategoryResource($category);
     }
@@ -55,6 +78,12 @@ class CategoryController extends Controller
     {
         $category->update($request->validated());
         $category->loadCount(['products', 'services']);
+
+        $includes = $this->resolveIncludes($request, ['products', 'services']);
+
+        if (!empty($includes)) {
+            $category->load($includes);
+        }
 
         return new CategoryResource($category);
     }
