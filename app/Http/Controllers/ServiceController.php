@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ResolvesIncludes;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Http\Resources\ServiceResource;
@@ -12,12 +13,20 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ServiceController extends Controller
 {
+    use ResolvesIncludes;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Service::query()->with('category');
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $query = Service::query()->with($includes);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->integer('category_id'));
@@ -34,7 +43,14 @@ class ServiceController extends Controller
     public function store(StoreServiceRequest $request): ServiceResource
     {
         $service = Service::create($request->validated());
-        $service->load('category');
+
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $service->load($includes);
 
         return new ServiceResource($service);
     }
@@ -42,9 +58,15 @@ class ServiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Service $service): ServiceResource
+    public function show(Request $request, Service $service): ServiceResource
     {
-        $service->load('category');
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $service->load($includes);
 
         return new ServiceResource($service);
     }
@@ -55,7 +77,14 @@ class ServiceController extends Controller
     public function update(UpdateServiceRequest $request, Service $service): ServiceResource
     {
         $service->update($request->validated());
-        $service->load('category');
+
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $service->load($includes);
 
         return new ServiceResource($service);
     }

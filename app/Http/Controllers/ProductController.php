@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ResolvesIncludes;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -12,12 +13,20 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
 {
+    use ResolvesIncludes;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Product::query()->with('category');
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $query = Product::query()->with($includes);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->integer('category_id'));
@@ -39,7 +48,13 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        $product->load('category');
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $product->load($includes);
 
         return new ProductResource($product);
     }
@@ -47,9 +62,15 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product): ProductResource
+    public function show(Request $request, Product $product): ProductResource
     {
-        $product->load('category');
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $product->load($includes);
 
         return new ProductResource($product);
     }
@@ -60,7 +81,14 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
         $product->update($request->validated());
-        $product->load('category');
+
+        $includes = $this->resolveIncludes($request, ['category']);
+
+        if (empty($includes)) {
+            $includes = ['category'];
+        }
+
+        $product->load($includes);
 
         return new ProductResource($product);
     }
