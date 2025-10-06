@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $t) {
         $t->id();
-        $t->foreignId('category_id')->constrained();
+        $t->foreignId('category_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
         $t->string('name');
         $t->enum('product_type', ['small','big','land','share','other']);
         $t->decimal('price',14,2)->default(0);
