@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $t) {
-        $t->id();
-        $t->foreignId('category_id')->constrained();
-        $t->string('name');
-        $t->enum('product_type', ['small','big','land','share','other']);
-        $t->decimal('price',14,2)->default(0);
-        $t->json('attributes')->nullable(); // কাস্টম অ্যাট্রিবিউট
-        $t->timestamps();
+        Schema::create('products', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('category_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->string('name');
+            $table->enum('product_type', ['small', 'big', 'land', 'share', 'other']);
+            $table->decimal('price', 14, 2)->default(0);
+            $table->json('attributes')->nullable();
+            $table->timestamps();
         });
     }
 

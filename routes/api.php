@@ -1,6 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InstallmentController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SalesOrderController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
