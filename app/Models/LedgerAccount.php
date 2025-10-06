@@ -7,24 +7,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Branch extends Model
+class LedgerAccount extends Model
 {
     use HasFactory;
     use LogsActivityChanges;
 
     protected $fillable = [
-        'name',
         'code',
-        'address',
+        'name',
+        'type',
+        'meta',
     ];
 
-    public function agents(): HasMany
-    {
-        return $this->hasMany(Agent::class);
-    }
+    protected $casts = [
+        'meta' => 'array',
+    ];
 
-    public function salesOrders(): HasMany
+    public function entries(): HasMany
     {
-        return $this->hasMany(SalesOrder::class);
+        return $this->hasMany(LedgerEntry::class, 'account_id');
     }
 }

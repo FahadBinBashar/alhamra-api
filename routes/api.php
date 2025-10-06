@@ -4,6 +4,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -36,7 +37,13 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('sales-orders', SalesOrderController::class);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
+    Route::post('documents', [DocumentController::class,'store']);
     Route::get('reports/receivables', [ReportController::class,'receivables']);
+    Route::get('reports/payables', [ReportController::class,'payables']);
+    Route::get('reports/commissions', [ReportController::class,'commissions']);
+    Route::get('reports/rank-funds', [ReportController::class,'rankFunds']);
+    Route::get('reports/agent-performance', [ReportController::class,'agentPerformance']);
+    Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });
 
