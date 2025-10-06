@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $t) {
-        $t->id();
-        $t->foreignId('sales_order_id')->constrained()->cascadeOnDelete();
-        $t->date('paid_at');
-        $t->decimal('amount',14,2);
-        $t->enum('type',['down_payment','installment'])->default('installment');
-        $t->string('method')->nullable(); // cash/bkash/nagad/bank
-        $t->timestamps();
+            $t->id();
+            $t->foreignId('sales_order_id')->constrained()->cascadeOnDelete();
+            $t->date('paid_at');
+            $t->decimal('amount', 14, 2);
+            $t->enum('type', ['down_payment', 'installment', 'full_payment'])->default('installment');
+            $t->string('method')->nullable(); // cash/bkash/nagad/bank
+            $t->json('meta')->nullable();
+            $t->timestamps();
         });
     }
 
