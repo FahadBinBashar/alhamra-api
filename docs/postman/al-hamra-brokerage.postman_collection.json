@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Al-Hamra Brokerage API v1",
-    "description": "Postman collection for the catalog endpoints of the Al-Hamra Brokerage Management System.",
+    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v1 REST interface.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -20,7 +20,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret\"\n}",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"secret\",\n  \"role\": \"admin\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -40,7 +40,31 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.response) { return; }",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) {",
+                  "      pm.collectionVariables.set(\"access_token\", json.token);",
+                  "    }",
+                  "    if (json.user && json.user.role) {",
+                  "      pm.collectionVariables.set(\"user_role\", json.user.role);",
+                  "    }",
+                  "  } catch (e) {",
+                  "    console.warn(\"Unable to parse login response\", e);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Register",
@@ -66,7 +90,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"secret\",\n  \"password_confirmation\": \"secret\"\n}",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\",\n  \"role\": \"agent\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -144,6 +168,12 @@
                   "key": "per_page",
                   "value": "15",
                   "disabled": true
+                },
+                {
+                  "key": "include",
+                  "value": "products,services",
+                  "description": "Comma separated relations (products, services)",
+                  "disabled": true
                 }
               ]
             }
@@ -211,6 +241,13 @@
                 "v1",
                 "categories",
                 "{{category_id}}"
+              ],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "products,services",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -232,7 +269,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Hospital Services\"\n}",
+              "raw": "{\n  \"name\": \"Hospital Services\",\n  \"type\": \"service\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -320,7 +357,17 @@
                 },
                 {
                   "key": "product_type",
-                  "value": "land",
+                  "value": "order",
+                  "disabled": true
+                },
+                {
+                  "key": "include",
+                  "value": "category",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
                   "disabled": true
                 }
               ]
@@ -344,7 +391,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  }\n}",
+              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  },\n  \"stock_qty\": 2,\n  \"min_stock_alert\": 1,\n  \"is_stock_managed\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -389,6 +436,13 @@
                 "v1",
                 "products",
                 "{{product_id}}"
+              ],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "category",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -410,7 +464,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"price\": 5200000\n}",
+              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"price\": 5200000,\n  \"attributes\": {\n    \"plot_size\": \"5.5 katha\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -495,6 +549,16 @@
                   "key": "category_id",
                   "value": "1",
                   "disabled": true
+                },
+                {
+                  "key": "include",
+                  "value": "category",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
                 }
               ]
             }
@@ -517,7 +581,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Hajj Package\",\n  \"price\": 350000,\n  \"attributes\": {\n    \"duration\": \"15 days\"\n  }\n}",
+              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Concierge\",\n  \"price\": 15000,\n  \"attributes\": {\n    \"duration\": \"3 nights\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -562,6 +626,13 @@
                 "v1",
                 "services",
                 "{{service_id}}"
+              ],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "category",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -583,7 +654,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"price\": 360000\n}",
+              "raw": "{\n  \"price\": 17500,\n  \"attributes\": {\n    \"duration\": \"4 nights\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -662,6 +733,13 @@
                 "api",
                 "v1",
                 "branches"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -828,6 +906,13 @@
                 "api",
                 "v1",
                 "agents"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -994,6 +1079,18 @@
                 "api",
                 "v1",
                 "sales-orders"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "sales_type",
+                  "value": "order",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -1026,7 +1123,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customer_id\": 3,\n  \"agent_id\": 1,\n  \"branch_id\": 1,\n  \"down_payment\": 5000,\n  \"status\": \"draft\",\n  \"items\": [\n    {\n      \"itemable_type\": \"product\",\n      \"itemable_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 25000,\n      \"line_total\": 25000\n    }\n  ]\n}",
+              "raw": "{\n  \"customer_id\": {{customer_id}},\n  \"sales_type\": \"order\",\n  \"branch_id\": {{branch_id}},\n  \"agent_id\": {{agent_id}},\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 1,\n      \"unit_price\": 250000\n    },\n    {\n      \"item_type\": \"service\",\n      \"item_id\": {{service_id}},\n      \"qty\": 1,\n      \"unit_price\": 5000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1093,7 +1190,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"active\"\n}",
+              "raw": "{\n  \"status\": \"active\",\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1162,7 +1259,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"frequency\": \"monthly\",\n  \"count\": 12,\n  \"start_date\": \"2025-01-01\"\n}",
+              "raw": "{\n  \"frequency\": \"monthly\",\n  \"count\": 12,\n  \"start_date\": \"2025-01-01\",\n  \"grace_days\": 5\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1201,7 +1298,109 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 1500,\n  \"type\": \"down_payment\",\n  \"method\": \"bank_transfer\",\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 1500\n    }\n  ]\n}",
+              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 1500,\n  \"type\": \"down_payment\",\n  \"method\": \"bank_transfer\",\n  \"meta\": {\n    \"reference\": \"BANK-REF-20250115\"\n  },\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 1500\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stock Movements",
+      "item": [
+        {
+          "name": "List Stock Movements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-movements"
+              ],
+              "query": [
+                {
+                  "key": "product_id",
+                  "value": "{{product_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "in",
+                  "disabled": true
+                },
+                {
+                  "key": "ref_type",
+                  "value": "sales_order",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Stock Movement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stock-movements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": {{product_id}},\n  \"type\": \"in\",\n  \"qty\": 10,\n  \"ref_type\": \"manual_adjustment\",\n  \"note\": \"Initial stock load\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1360,6 +1559,137 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Current Stock Snapshot",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/stock/current",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "stock",
+                "current"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "{{category_id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Low Stock Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/stock/low",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "stock",
+                "low"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "{{category_id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Stock Movement Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/stock/movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "stock",
+                "movements"
+              ],
+              "query": [
+                {
+                  "key": "product_id",
+                  "value": "{{product_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "out",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "25",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1464,7 +1794,8 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost"
+      "value": "http://localhost",
+      "type": "string"
     },
     {
       "key": "access_token",
@@ -1504,6 +1835,16 @@
     {
       "key": "installment_id",
       "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "user_role",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customer_id",
+      "value": "3",
       "type": "string"
     }
   ]
