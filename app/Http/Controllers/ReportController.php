@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\StockMovementResource;
 use App\Models\Agent;
 use App\Models\Commission;
 use App\Models\CustomerInstallment;
 use App\Models\LedgerEntry;
+use App\Models\Product;
 use App\Models\SalesOrder;
+use App\Models\StockMovement;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -103,12 +108,99 @@ class ReportController extends Controller
             ->get()
             ->sum(fn ($entry) => $entry->credit - $entry->debit);
 
+        $stockQuery = Product::query()
+            ->where('is_stock_managed', true)
+            ->where('product_type', '!=', 'land');
+
+        $stockSummary = [
+            'total_items' => (clone $stockQuery)->count(),
+            'total_qty' => (clone $stockQuery)->sum('stock_qty'),
+            'low_stock_items' => (clone $stockQuery)
+                ->whereColumn('stock_qty', '<', 'min_stock_alert')
+                ->count(),
+            'total_value' => (clone $stockQuery)
+                ->selectRaw('SUM(stock_qty * price) as total_value')
+                ->value('total_value') ?? 0,
+        ];
+
         return response()->json([
             'sales_total' => $salesTotal,
             'collection_total' => $collectionTotal,
             'receivables' => $receivables,
             'commissions' => $commissionSummary,
             'rank_fund_balance' => $rankFund,
+            'stock_summary' => $stockSummary,
         ]);
+    }
+
+    public function currentStock(Request $request)
+    {
+        $products = Product::query()
+            ->with('category')
+            ->where('is_stock_managed', true)
+            ->where('product_type', '!=', 'land')
+            ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->integer('category_id')))
+            ->orderBy('name')
+            ->get();
+
+        $summary = [
+            'total_products' => $products->count(),
+            'total_qty' => $products->sum(fn (Product $product) => (float) $product->stock_qty),
+            'total_value' => $products->sum(fn (Product $product) => (float) $product->stock_qty * (float) $product->price),
+        ];
+
+        return response()->json([
+            'summary' => $summary,
+            'data' => ProductResource::collection($products)->resolve(),
+        ]);
+    }
+
+    public function lowStock(Request $request)
+    {
+        $products = Product::query()
+            ->with('category')
+            ->where('is_stock_managed', true)
+            ->where('product_type', '!=', 'land')
+            ->whereColumn('stock_qty', '<', 'min_stock_alert')
+            ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->integer('category_id')))
+            ->orderBy('name')
+            ->get();
+
+        $summary = [
+            'total_products' => $products->count(),
+            'total_qty' => $products->sum(fn (Product $product) => (float) $product->stock_qty),
+        ];
+
+        return response()->json([
+            'summary' => $summary,
+            'data' => ProductResource::collection($products)->resolve(),
+        ]);
+    }
+
+    public function stockMovements(Request $request)
+    {
+        $query = StockMovement::query()->with('product.category');
+
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->integer('product_id'));
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->string('type'));
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->date('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->date('to'));
+        }
+
+        $movements = $query->orderByDesc('id')
+            ->paginate($request->integer('per_page', 15))
+            ->appends($request->query());
+
+        return StockMovementResource::collection($movements);
     }
 }

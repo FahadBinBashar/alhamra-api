@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Employee;
 use App\Models\Product;
 use App\Models\SalesOrder;
+use App\Models\StockMovement;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -108,6 +109,9 @@ class SalesOrderController extends Controller
                 $order->items()->createMany($preparedItems['items']);
             }
 
+            $order->load('items.itemable');
+            $this->syncStockForSalesOrder($order);
+
             return $order;
         });
 
@@ -183,6 +187,10 @@ class SalesOrderController extends Controller
         }
 
         DB::transaction(function () use ($salesOrder, $data, $itemsProvided, $preparedItems) {
+            if ($itemsProvided) {
+                $this->revertStockMovementsForOrder($salesOrder);
+            }
+
             $salesOrder->fill($data);
             $salesOrder->save();
 
@@ -192,6 +200,9 @@ class SalesOrderController extends Controller
                 if (! empty($preparedItems['items'])) {
                     $salesOrder->items()->createMany($preparedItems['items']);
                 }
+
+                $salesOrder->load('items.itemable');
+                $this->syncStockForSalesOrder($salesOrder);
             }
         });
 
@@ -211,7 +222,10 @@ class SalesOrderController extends Controller
     {
         $this->ensureSalesEntryPermission($request->user());
 
-        $salesOrder->delete();
+        DB::transaction(function () use ($salesOrder) {
+            $this->revertStockMovementsForOrder($salesOrder);
+            $salesOrder->delete();
+        });
 
         return response()->noContent();
     }
@@ -274,6 +288,66 @@ class SalesOrderController extends Controller
                 'agent_id' => 'The selected agent does not belong to the specified branch.',
             ]);
         }
+    }
+
+    private function syncStockForSalesOrder(SalesOrder $order): void
+    {
+        $order->loadMissing('items.itemable');
+
+        foreach ($order->items as $item) {
+            $product = $item->itemable;
+
+            if (! $product instanceof Product) {
+                continue;
+            }
+
+            if (! $product->is_stock_managed || $product->product_type === 'land') {
+                continue;
+            }
+
+            $qty = (float) $item->qty;
+
+            if ($qty <= 0) {
+                continue;
+            }
+
+            StockMovement::create([
+                'product_id' => $product->id,
+                'type' => StockMovement::TYPE_OUT,
+                'qty' => $qty,
+                'ref_type' => 'sales_order',
+                'ref_id' => $order->id,
+            ]);
+
+            Product::query()->whereKey($product->id)->decrement('stock_qty', $qty);
+        }
+    }
+
+    private function revertStockMovementsForOrder(SalesOrder $order): void
+    {
+        $movements = StockMovement::query()
+            ->where('ref_type', 'sales_order')
+            ->where('ref_id', $order->id)
+            ->get();
+
+        if ($movements->isEmpty()) {
+            return;
+        }
+
+        foreach ($movements as $movement) {
+            $qty = (float) $movement->qty;
+
+            if ($movement->type === StockMovement::TYPE_OUT) {
+                Product::query()->whereKey($movement->product_id)->increment('stock_qty', $qty);
+            } elseif ($movement->type === StockMovement::TYPE_IN) {
+                Product::query()->whereKey($movement->product_id)->decrement('stock_qty', $qty);
+            }
+        }
+
+        StockMovement::query()
+            ->where('ref_type', 'sales_order')
+            ->where('ref_id', $order->id)
+            ->delete();
     }
 
     private function prepareOrderItems(array $items): array

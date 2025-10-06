@@ -22,6 +22,9 @@ class StoreProductRequest extends FormRequest
             'product_type' => ['required', 'in:small,big,land,share,other'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'attributes' => ['nullable', 'array'],
+            'stock_qty' => ['sometimes', 'numeric', 'min:0'],
+            'min_stock_alert' => ['sometimes', 'numeric', 'min:0'],
+            'is_stock_managed' => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesOrderController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('sales-orders', SalesOrderController::class);
+    Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
     Route::post('documents', [DocumentController::class,'store']);
@@ -43,6 +45,9 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/commissions', [ReportController::class,'commissions']);
     Route::get('reports/rank-funds', [ReportController::class,'rankFunds']);
     Route::get('reports/agent-performance', [ReportController::class,'agentPerformance']);
+    Route::get('reports/stock/current', [ReportController::class,'currentStock']);
+    Route::get('reports/stock/low', [ReportController::class,'lowStock']);
+    Route::get('reports/stock/movements', [ReportController::class,'stockMovements']);
     Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });
