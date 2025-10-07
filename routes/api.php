@@ -5,9 +5,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RankRequirementController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\StockMovementController;
@@ -32,6 +34,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
     Route::apiResource('branches', BranchController::class);
     Route::apiResource('agents', AgentController::class);
+    Route::apiResource('employees', EmployeeController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('services', ServiceController::class);
@@ -40,6 +43,7 @@ Route::prefix('v1')->group(function () {
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
     Route::post('documents', [DocumentController::class,'store']);
+    Route::apiResource('rank-requirements', RankRequirementController::class);
     Route::get('reports/receivables', [ReportController::class,'receivables']);
     Route::get('reports/payables', [ReportController::class,'payables']);
     Route::get('reports/commissions', [ReportController::class,'commissions']);

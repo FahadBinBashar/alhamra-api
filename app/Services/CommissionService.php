@@ -22,9 +22,17 @@ class CommissionService
     {
         $payment->loadMissing('salesOrder.agent', 'salesOrder.branch');
 
+        $scopes = [$payment->type, CommissionRule::SCOPE_GLOBAL];
+
+        $rank = $payment->salesOrder?->rank;
+
+        if ($rank) {
+            $scopes[] = 'rank:' . $rank;
+        }
+
         $rules = CommissionRule::active()
             ->where('trigger', CommissionRule::TRIGGER_ON_PAYMENT)
-            ->whereIn('scope', [$payment->type, CommissionRule::SCOPE_GLOBAL])
+            ->whereIn('scope', $scopes)
             ->get();
 
         return DB::transaction(function () use ($payment, $rules) {
