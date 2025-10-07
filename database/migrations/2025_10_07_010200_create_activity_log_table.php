@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('activity_log', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('log_name')->nullable();
+            $table->string('event')->nullable();
             $table->text('description');
             $table->nullableMorphs('subject', 'subject');
             $table->nullableMorphs('causer', 'causer');
             $table->json('properties')->nullable();
-            $table->timestamp('created_at')->nullable();
             $table->uuid('batch_uuid')->nullable();
+            $table->timestamps();
         });
     }
 
