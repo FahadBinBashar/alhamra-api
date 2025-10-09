@@ -7,9 +7,16 @@ use App\Http\Requests\StoreAgentRequest;
 use App\Http\Requests\UpdateAgentRequest;
 use App\Http\Resources\AgentResource;
 use App\Models\Agent;
+use App\Models\User;
+use App\Notifications\AgentCredentialNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class AgentController extends Controller
 {
@@ -46,6 +53,7 @@ class AgentController extends Controller
 
             $query->where(function ($query) use ($search) {
                 $query->where('agent_code', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($userQuery) use ($search) {
                         $userQuery->where('name', 'like', "%{$search}%")
                             ->orWhere('email', 'like', "%{$search}%");
@@ -66,7 +74,32 @@ class AgentController extends Controller
      */
     public function store(StoreAgentRequest $request): AgentResource
     {
-        $agent = Agent::create($request->validated());
+        $data = $request->validated();
+
+        [$agent, $user, $password] = DB::transaction(function () use ($data) {
+            $password = Str::random(12);
+
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($password),
+                'role' => User::ROLE_AGENT_ADMIN,
+            ]);
+
+            if (method_exists($user, 'assignRole')) {
+                $role = Role::findOrCreate(User::ROLE_AGENT_ADMIN, 'web');
+                $user->assignRole($role);
+            }
+
+            $agentData = Arr::only($data, ['branch_id', 'agent_code', 'mobile', 'address']);
+            $agentData['user_id'] = $user->id;
+
+            $agent = Agent::create($agentData);
+
+            return [$agent, $user, $password];
+        });
+
+        $user->notify(new AgentCredentialNotification($user->email, $password));
 
         $agent->loadCount(['salesOrders']);
 
@@ -80,7 +113,9 @@ class AgentController extends Controller
             $agent->load($includes);
         }
 
-        return new AgentResource($agent);
+        return (new AgentResource($agent))->additional([
+            'password' => $password,
+        ]);
     }
 
     /**
@@ -108,7 +143,21 @@ class AgentController extends Controller
      */
     public function update(UpdateAgentRequest $request, Agent $agent): AgentResource
     {
-        $agent->update($request->validated());
+        $data = $request->validated();
+
+        $userData = Arr::only($data, ['name', 'email']);
+        $agentData = Arr::only($data, ['branch_id', 'agent_code', 'mobile', 'address']);
+
+        DB::transaction(function () use ($agent, $userData, $agentData) {
+            if (! empty($userData) && $agent->user) {
+                $agent->user->update($userData);
+            }
+
+            if (! empty($agentData)) {
+                $agent->update($agentData);
+            }
+        });
+
         $agent->loadCount(['salesOrders']);
 
         $includes = $this->resolveIncludes($request, ['user', 'branch', 'rankMemberships', 'activeRank']);
