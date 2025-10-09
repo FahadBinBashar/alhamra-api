@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
@@ -77,17 +76,17 @@ class AgentController extends Controller
         $data = $request->validated();
 
         [$agent, $user, $password] = DB::transaction(function () use ($data) {
-            $password = Str::random(12);
+            $password = Str::password(12);
 
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make($password),
-                'role' => User::ROLE_AGENT_ADMIN,
+                'password' => $password,
+                'role' => User::ROLE_AGENT,
             ]);
 
             if (method_exists($user, 'assignRole')) {
-                $role = Role::findOrCreate(User::ROLE_AGENT_ADMIN, 'web');
+                $role = Role::findOrCreate(User::ROLE_AGENT, 'web');
                 $user->assignRole($role);
             }
 
@@ -184,7 +183,15 @@ class AgentController extends Controller
             ], 422);
         }
 
-        $agent->delete();
+        $user = $agent->user;
+
+        DB::transaction(function () use ($agent, $user) {
+            $agent->delete();
+
+            if ($user) {
+                $user->delete();
+            }
+        });
 
         return response()->json(null, 204);
     }

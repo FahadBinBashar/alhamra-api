@@ -19,6 +19,7 @@ class User extends Authenticatable
 
     public const ROLE_ADMIN = 'admin';
     public const ROLE_BRANCH_ADMIN = 'branch_admin';
+    public const ROLE_AGENT = 'agent';
     public const ROLE_AGENT_ADMIN = 'agent_admin';
     public const ROLE_EMPLOYEE = 'employee';
     public const ROLE_OWNER = 'owner';
@@ -27,6 +28,7 @@ class User extends Authenticatable
     public const ROLES = [
         self::ROLE_ADMIN,
         self::ROLE_BRANCH_ADMIN,
+        self::ROLE_AGENT,
         self::ROLE_AGENT_ADMIN,
         self::ROLE_EMPLOYEE,
         self::ROLE_OWNER,
