@@ -22,6 +22,8 @@ class AgentResource extends JsonResource
             'user_id' => $this->user_id,
             'branch_id' => $this->branch_id,
             'agent_code' => $this->agent_code,
+            'mobile' => $this->mobile,
+            'address' => $this->address,
             'sales_orders_count' => $this->whenCounted('salesOrders'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

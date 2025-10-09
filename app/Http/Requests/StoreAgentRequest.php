@@ -17,9 +17,12 @@ class StoreAgentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id', 'unique:agents,user_id'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
             'agent_code' => ['required', 'string', 'max:255', 'unique:agents,agent_code'],
+            'mobile' => ['nullable', 'string', 'max:50'],
+            'address' => ['nullable', 'string'],
         ];
     }
 }
