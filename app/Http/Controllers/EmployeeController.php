@@ -44,127 +44,250 @@ class EmployeeController extends Controller
         return response()->json($employees);
     }
 
+    // public function store(Request $request)
+    // {
+    //     $data = $request->validate([
+    //         'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code'],
+    //         'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
+    //         'agent_id' => ['nullable', 'integer', 'exists:agents,id'],
+    //         'superior_id' => ['nullable', 'integer', 'exists:employees,id'],
+    //         'rank' => ['nullable', 'string', Rule::in(Employee::RANKS)],
+    //         'full_name_en' => ['required', 'string', 'max:255'],
+    //         'full_name_bn' => ['nullable', 'string', 'max:255'],
+    //         'father_name' => ['nullable', 'string', 'max:255'],
+    //         'mother_name' => ['nullable', 'string', 'max:255'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+    //         'mobile' => ['required', 'string', 'max:50'],
+    //         'national_id' => ['nullable', 'string', 'max:100', 'unique:employees,national_id'],
+    //         'date_of_birth' => ['nullable', 'date'],
+    //         'marital_status' => ['nullable', 'string', 'max:100'],
+    //         'religion' => ['nullable', 'string', 'max:100'],
+    //         'gender' => ['nullable', 'string', 'max:50'],
+    //         'nationality' => ['nullable', 'string', 'max:100'],
+    //         'district' => ['nullable', 'string', 'max:100'],
+    //         'upazila' => ['nullable', 'string', 'max:100'],
+    //         'present_address' => ['nullable', 'string'],
+    //         'permanent_address' => ['nullable', 'string'],
+    //         'post_code' => ['nullable', 'string', 'max:20'],
+    //         'educations' => ['nullable', 'array'],
+    //         'educations.*.level' => ['required_with:educations', 'string', 'max:255'],
+    //         'educations.*.institution' => ['nullable', 'string', 'max:255'],
+    //         'educations.*.subject' => ['nullable', 'string', 'max:255'],
+    //         'educations.*.result' => ['nullable', 'string', 'max:255'],
+    //         'educations.*.passing_year' => ['nullable', 'string', 'max:10'],
+    //         'nominees' => ['nullable', 'array'],
+    //         'nominees.*.name' => ['required_with:nominees', 'string', 'max:255'],
+    //         'nominees.*.relation' => ['nullable', 'string', 'max:255'],
+    //         'nominees.*.phone' => ['nullable', 'string', 'max:50'],
+    //         'nominees.*.email' => ['nullable', 'email', 'max:255'],
+    //         'nominees.*.address' => ['nullable', 'string'],
+    //         'photo' => ['nullable', 'image', 'max:10240'],
+    //         'signature' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
+    //     ]);
+
+    //     $educations = Arr::pull($data, 'educations', []);
+    //     $nominees = Arr::pull($data, 'nominees', []);
+    //     $email = Arr::pull($data, 'email');
+
+    //     $password = Str::random(12);
+
+    //     $user = User::create([
+    //         'name' => $data['full_name_en'],
+    //         'email' => $email,
+    //         'password' => $password,
+    //         'role' => User::ROLE_EMPLOYEE,
+    //     ]);
+
+    //     if (method_exists($user, 'assignRole')) {
+    //         Role::findOrCreate(User::ROLE_EMPLOYEE, 'web');
+
+    //         $user->assignRole(User::ROLE_EMPLOYEE);
+    //     }
+
+    //     $employeeData = Arr::only($data, [
+    //         'employee_code',
+    //         'branch_id',
+    //         'agent_id',
+    //         'superior_id',
+    //         'rank',
+    //         'full_name_en',
+    //         'full_name_bn',
+    //         'father_name',
+    //         'mother_name',
+    //         'mobile',
+    //         'national_id',
+    //         'date_of_birth',
+    //         'marital_status',
+    //         'religion',
+    //         'gender',
+    //         'nationality',
+    //         'district',
+    //         'upazila',
+    //         'present_address',
+    //         'permanent_address',
+    //         'post_code',
+    //     ]);
+
+    //     $employeeData['user_id'] = $user->id;
+
+    //     $employeeData = $this->resolveAgentContext($employeeData);
+
+    //     $employee = Employee::create($employeeData);
+
+    //     if (! empty($educations)) {
+    //         $this->syncEducations($employee, $educations);
+    //     }
+
+    //     if (! empty($nominees)) {
+    //         $this->syncNominees($employee, $nominees);
+    //     }
+
+    //     if ($request->file('photo')) {
+    //         $this->storeEmployeeDocument($employee, $request->file('photo'), 'photo');
+    //     }
+
+    //     if ($request->file('signature')) {
+    //         $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
+    //     }
+
+    //     $user->notify(new EmployeeCredentialNotification($user->email, $password));
+
+    //     return response()->json([
+    //         'data' => $employee->load([
+    //             'user',
+    //             'branch',
+    //             'agent.user',
+    //             'superior.user',
+    //             'educations',
+    //             'nominees',
+    //             'photo',
+    //             'signature',
+    //         ]),
+    //     ], 201);
+    // }
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code'],
-            'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'agent_id' => ['nullable', 'integer', 'exists:agents,id'],
-            'superior_id' => ['nullable', 'integer', 'exists:employees,id'],
-            'rank' => ['nullable', 'string', Rule::in(Employee::RANKS)],
-            'full_name_en' => ['required', 'string', 'max:255'],
-            'full_name_bn' => ['nullable', 'string', 'max:255'],
-            'father_name' => ['nullable', 'string', 'max:255'],
-            'mother_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'mobile' => ['required', 'string', 'max:50'],
-            'national_id' => ['nullable', 'string', 'max:100', 'unique:employees,national_id'],
-            'date_of_birth' => ['nullable', 'date'],
-            'marital_status' => ['nullable', 'string', 'max:100'],
-            'religion' => ['nullable', 'string', 'max:100'],
-            'gender' => ['nullable', 'string', 'max:50'],
-            'nationality' => ['nullable', 'string', 'max:100'],
-            'district' => ['nullable', 'string', 'max:100'],
-            'upazila' => ['nullable', 'string', 'max:100'],
-            'present_address' => ['nullable', 'string'],
-            'permanent_address' => ['nullable', 'string'],
-            'post_code' => ['nullable', 'string', 'max:20'],
-            'educations' => ['nullable', 'array'],
-            'educations.*.level' => ['required_with:educations', 'string', 'max:255'],
-            'educations.*.institution' => ['nullable', 'string', 'max:255'],
-            'educations.*.subject' => ['nullable', 'string', 'max:255'],
-            'educations.*.result' => ['nullable', 'string', 'max:255'],
-            'educations.*.passing_year' => ['nullable', 'string', 'max:10'],
-            'nominees' => ['nullable', 'array'],
-            'nominees.*.name' => ['required_with:nominees', 'string', 'max:255'],
-            'nominees.*.relation' => ['nullable', 'string', 'max:255'],
-            'nominees.*.phone' => ['nullable', 'string', 'max:50'],
-            'nominees.*.email' => ['nullable', 'email', 'max:255'],
-            'nominees.*.address' => ['nullable', 'string'],
-            'photo' => ['nullable', 'image', 'max:10240'],
-            'signature' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
-        ]);
+{
+    $data = $request->validate([
+        'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code'],
+        'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
+        'agent_id' => ['nullable', 'integer', 'exists:agents,id'],
+        'superior_id' => ['nullable', 'integer', 'exists:employees,id'],
+        'rank' => ['nullable', 'string', Rule::in(Employee::RANKS)],
+        'full_name_en' => ['required', 'string', 'max:255'],
+        'full_name_bn' => ['nullable', 'string', 'max:255'],
+        'father_name' => ['nullable', 'string', 'max:255'],
+        'mother_name' => ['nullable', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+        'mobile' => ['required', 'string', 'max:50'],
+        'national_id' => ['nullable', 'string', 'max:100', 'unique:employees,national_id'],
+        'date_of_birth' => ['nullable', 'date'],
+        'marital_status' => ['nullable', 'string', 'max:100'],
+        'religion' => ['nullable', 'string', 'max:100'],
+        'gender' => ['nullable', 'string', 'max:50'],
+        'nationality' => ['nullable', 'string', 'max:100'],
+        'district' => ['nullable', 'string', 'max:100'],
+        'upazila' => ['nullable', 'string', 'max:100'],
+        'present_address' => ['nullable', 'string'],
+        'permanent_address' => ['nullable', 'string'],
+        'post_code' => ['nullable', 'string', 'max:20'],
+        'educations' => ['nullable', 'array'],
+        'educations.*.level' => ['required_with:educations', 'string', 'max:255'],
+        'educations.*.institution' => ['nullable', 'string', 'max:255'],
+        'educations.*.subject' => ['nullable', 'string', 'max:255'],
+        'educations.*.result' => ['nullable', 'string', 'max:255'],
+        'educations.*.passing_year' => ['nullable', 'string', 'max:10'],
+        'nominees' => ['nullable', 'array'],
+        'nominees.*.name' => ['required_with:nominees', 'string', 'max:255'],
+        'nominees.*.relation' => ['nullable', 'string', 'max:255'],
+        'nominees.*.phone' => ['nullable', 'string', 'max:50'],
+        'nominees.*.email' => ['nullable', 'email', 'max:255'],
+        'nominees.*.address' => ['nullable', 'string'],
+        'photo' => ['nullable', 'image', 'max:10240'],
+        'signature' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
+    ]);
 
-        $educations = Arr::pull($data, 'educations', []);
-        $nominees = Arr::pull($data, 'nominees', []);
-        $email = Arr::pull($data, 'email');
+    $educations = Arr::pull($data, 'educations', []);
+    $nominees = Arr::pull($data, 'nominees', []);
+    $email = Arr::pull($data, 'email');
 
-        $password = Str::random(12);
+    $password = Str::random(12);
 
-        $user = User::create([
-            'name' => $data['full_name_en'],
-            'email' => $email,
-            'password' => $password,
-            'role' => User::ROLE_EMPLOYEE,
-        ]);
+    $user = User::create([
+        'name' => $data['full_name_en'],
+        'email' => $email,
+        'password' => bcrypt($password), // It's better to bcrypt the password
+        'role' => User::ROLE_EMPLOYEE,
+    ]);
 
-        if (method_exists($user, 'assignRole')) {
-            Role::findOrCreate(User::ROLE_EMPLOYEE, 'web');
-
-            $user->assignRole(User::ROLE_EMPLOYEE);
-        }
-
-        $employeeData = Arr::only($data, [
-            'employee_code',
-            'branch_id',
-            'agent_id',
-            'superior_id',
-            'rank',
-            'full_name_en',
-            'full_name_bn',
-            'father_name',
-            'mother_name',
-            'mobile',
-            'national_id',
-            'date_of_birth',
-            'marital_status',
-            'religion',
-            'gender',
-            'nationality',
-            'district',
-            'upazila',
-            'present_address',
-            'permanent_address',
-            'post_code',
-        ]);
-
-        $employeeData['user_id'] = $user->id;
-
-        $employeeData = $this->resolveAgentContext($employeeData);
-
-        $employee = Employee::create($employeeData);
-
-        if (! empty($educations)) {
-            $this->syncEducations($employee, $educations);
-        }
-
-        if (! empty($nominees)) {
-            $this->syncNominees($employee, $nominees);
-        }
-
-        if ($request->file('photo')) {
-            $this->storeEmployeeDocument($employee, $request->file('photo'), 'photo');
-        }
-
-        if ($request->file('signature')) {
-            $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
-        }
-
-        $user->notify(new EmployeeCredentialNotification($user->email, $password));
-
-        return response()->json([
-            'data' => $employee->load([
-                'user',
-                'branch',
-                'agent.user',
-                'superior.user',
-                'educations',
-                'nominees',
-                'photo',
-                'signature',
-            ]),
-        ], 201);
+    if (method_exists($user, 'assignRole')) {
+        Role::findOrCreate(User::ROLE_EMPLOYEE, 'web');
+        $user->assignRole(User::ROLE_EMPLOYEE);
     }
+
+    $employeeData = Arr::only($data, [
+        'employee_code',
+        'branch_id',
+        'agent_id',
+        'superior_id',
+        'rank',
+        'full_name_en',
+        'full_name_bn',
+        'father_name',
+        'mother_name',
+        'mobile',
+        'national_id',
+        'date_of_birth',
+        'marital_status',
+        'religion',
+        'gender',
+        'nationality',
+        'district',
+        'upazila',
+        'present_address',
+        'permanent_address',
+        'post_code',
+    ]);
+
+    $employeeData['user_id'] = $user->id;
+
+    $employeeData = $this->resolveAgentContext($employeeData);
+
+    $employee = Employee::create($employeeData);
+
+    if (!empty($educations)) {
+        $this->syncEducations($employee, $educations);
+    }
+
+    if (!empty($nominees)) {
+        $this->syncNominees($employee, $nominees);
+    }
+
+    if ($request->file('photo')) {
+        $this->storeEmployeeDocument($employee, $request->file('photo'), 'photo');
+    }
+
+    if ($request->file('signature')) {
+        $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
+    }
+
+    // Skipping notification for now
+    // $user->notify(new EmployeeCredentialNotification($user->email, $password));
+
+    return response()->json([
+        'data' => $employee->load([
+            'user',
+            'branch',
+            'agent.user',
+            'superior.user',
+            'educations',
+            'nominees',
+            'photo',
+            'signature',
+        ]),
+        'password' => $password, // Include the password in the response
+    ], 201);
+}
+
 
     public function show(Employee $employee)
     {
