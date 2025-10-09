@@ -12,6 +12,8 @@ class EmployeeNominee extends Model
     use HasFactory;
     use LogsActivityChanges;
 
+    protected $table = 'employee_nominees';
+
     protected $fillable = [
         'employee_id',
         'name',

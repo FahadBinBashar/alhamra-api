@@ -18,6 +18,8 @@ class Agent extends Model
         'user_id',
         'branch_id',
         'agent_code',
+        'mobile',
+        'address',
     ];
 
     public function user(): BelongsTo
