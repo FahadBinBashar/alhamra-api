@@ -12,6 +12,8 @@ class EmployeeEducation extends Model
     use HasFactory;
     use LogsActivityChanges;
 
+    protected $table = 'employee_educations';
+
     protected $fillable = [
         'employee_id',
         'level',
