@@ -138,6 +138,8 @@ class DemoDataSeeder extends Seeder
             [
                 'branch_id' => $branch->id,
                 'rank' => Employee::RANK_MM,
+                'employee_code' => sprintf('EMP-%04d', $branchManager->id),
+                'full_name_en' => $branchManager->name,
             ]
         );
 
@@ -147,6 +149,8 @@ class DemoDataSeeder extends Seeder
                 'branch_id' => $branch->id,
                 'agent_id' => $agent->id,
                 'rank' => Employee::RANK_ME,
+                'employee_code' => sprintf('EMP-%04d', $agentUser->id),
+                'full_name_en' => $agentUser->name,
             ]
         );
 
@@ -154,6 +158,8 @@ class DemoDataSeeder extends Seeder
             ['user_id' => $director->id],
             [
                 'rank' => Employee::RANK_PD,
+                'employee_code' => sprintf('EMP-%04d', $director->id),
+                'full_name_en' => $director->name,
             ]
         );
 

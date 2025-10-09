@@ -6,6 +6,9 @@ use App\Traits\LogsActivityChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Employee extends Model
 {
@@ -39,7 +42,29 @@ class Employee extends Model
         'user_id',
         'branch_id',
         'agent_id',
+        'superior_id',
+        'employee_code',
         'rank',
+        'full_name_en',
+        'full_name_bn',
+        'father_name',
+        'mother_name',
+        'mobile',
+        'national_id',
+        'date_of_birth',
+        'marital_status',
+        'religion',
+        'gender',
+        'nationality',
+        'district',
+        'upazila',
+        'present_address',
+        'permanent_address',
+        'post_code',
+    ];
+
+    protected $casts = [
+        'date_of_birth' => 'date',
     ];
 
     public function user(): BelongsTo
@@ -55,5 +80,40 @@ class Employee extends Model
     public function agent(): BelongsTo
     {
         return $this->belongsTo(Agent::class);
+    }
+
+    public function superior(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'superior_id');
+    }
+
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(self::class, 'superior_id');
+    }
+
+    public function educations(): HasMany
+    {
+        return $this->hasMany(EmployeeEducation::class);
+    }
+
+    public function nominees(): HasMany
+    {
+        return $this->hasMany(EmployeeNominee::class);
+    }
+
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    public function photo(): MorphOne
+    {
+        return $this->morphOne(Document::class, 'documentable')->where('category', 'photo');
+    }
+
+    public function signature(): MorphOne
+    {
+        return $this->morphOne(Document::class, 'documentable')->where('category', 'signature');
     }
 }
