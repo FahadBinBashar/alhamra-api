@@ -989,7 +989,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user_id\": 2,\n  \"branch_id\": 1,\n  \"agent_code\": \"AG-1001\"\n}",
+              "raw": "{\n  \"name\": \"Create Agent\",\n  \"email\": \"agent@example.com\",\n  \"branch_id\": 1,\n  \"agent_code\": \"AG-1001\",\n  \"mobile\": \"+880123456789\",\n  \"address\": \"House 10, Road 12, Dhaka\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1060,7 +1060,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"branch_id\": 2\n}",
+              "raw": "{\n  \"name\": \"Updated Agent Name\",\n  \"email\": \"updated-agent@example.com\",\n  \"mobile\": \"+8801987654321\",\n  \"address\": \"New Address, Dhaka\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
