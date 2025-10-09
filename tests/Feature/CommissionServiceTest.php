@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\CommissionRule;
 use App\Models\Employee;
+use App\Models\Rank;
 use App\Models\Payment;
 use App\Models\SalesOrder;
 use App\Models\User;
@@ -17,6 +18,13 @@ use Tests\TestCase;
 class CommissionServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->ensureRanks(Employee::RANKS);
+    }
 
     public function test_rank_scoped_commission_rules_are_applied(): void
     {
@@ -88,5 +96,15 @@ class CommissionServiceTest extends TestCase
             'recipient_id' => $owner->id,
             'amount' => 2500.0,
         ]);
+    }
+
+    protected function ensureRanks(array $codes): void
+    {
+        foreach ($codes as $index => $code) {
+            Rank::firstOrCreate(
+                ['code' => $code],
+                ['name' => $code, 'sort_order' => $index + 1]
+            );
+        }
     }
 }

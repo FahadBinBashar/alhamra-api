@@ -29,11 +29,10 @@ class EmployeeController extends Controller
             'nominees',
             'photo',
             'signature',
+            'rankDefinition',
         ])
             ->when($request->query('rank'), function ($query, $rank) {
-                if (in_array($rank, Employee::RANKS, true)) {
-                    $query->where('rank', $rank);
-                }
+                $query->where('rank', $rank);
             })
             ->when($request->query('branch_id'), function ($query, $branchId) {
                 $query->where('branch_id', $branchId);
@@ -51,7 +50,7 @@ class EmployeeController extends Controller
             'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
             'agent_id' => ['nullable', 'integer', 'exists:agents,id'],
             'superior_id' => ['nullable', 'integer', 'exists:employees,id'],
-            'rank' => ['nullable', 'string', Rule::in(Employee::RANKS)],
+            'rank' => ['nullable', 'string', Rule::exists('ranks', 'code')],
             'full_name_en' => ['required', 'string', 'max:255'],
             'full_name_bn' => ['nullable', 'string', 'max:255'],
             'father_name' => ['nullable', 'string', 'max:255'],
@@ -162,6 +161,7 @@ class EmployeeController extends Controller
                 'nominees',
                 'photo',
                 'signature',
+                'rankDefinition',
             ]),
         ], 201);
     }
@@ -189,7 +189,7 @@ class EmployeeController extends Controller
             'branch_id' => ['sometimes', 'nullable', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'nullable', 'integer', 'exists:agents,id'],
             'superior_id' => ['sometimes', 'nullable', 'integer', 'exists:employees,id'],
-            'rank' => ['sometimes', 'nullable', 'string', Rule::in(Employee::RANKS)],
+            'rank' => ['sometimes', 'nullable', 'string', Rule::exists('ranks', 'code')],
             'full_name_en' => ['sometimes', 'string', 'max:255'],
             'full_name_bn' => ['sometimes', 'nullable', 'string', 'max:255'],
             'father_name' => ['sometimes', 'nullable', 'string', 'max:255'],
@@ -305,6 +305,7 @@ class EmployeeController extends Controller
                 'nominees',
                 'photo',
                 'signature',
+                'rankDefinition',
             ]),
         ]);
     }

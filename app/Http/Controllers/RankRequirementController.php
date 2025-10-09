@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
 use App\Models\RankRequirement;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -58,7 +57,7 @@ class RankRequirementController extends Controller
     protected function validateData(Request $request, ?int $ignoreId = null): array
     {
         return $request->validate([
-            'rank' => ['required', 'string', Rule::in(Employee::RANKS), Rule::unique('rank_requirements', 'rank')->ignore($ignoreId)],
+            'rank' => ['required', 'string', Rule::exists('ranks', 'code'), Rule::unique('rank_requirements', 'rank')->ignore($ignoreId)],
             'sequence' => ['required', 'integer', 'min:0'],
             'personal_sales_target' => ['required', 'numeric', 'min:0'],
             'bonus_down_payment' => ['required', 'numeric', 'min:0'],

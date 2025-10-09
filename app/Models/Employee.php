@@ -82,6 +82,11 @@ class Employee extends Model
         return $this->belongsTo(Agent::class);
     }
 
+    public function rankDefinition(): BelongsTo
+    {
+        return $this->belongsTo(Rank::class, 'rank', 'code');
+    }
+
     public function superior(): BelongsTo
     {
         return $this->belongsTo(self::class, 'superior_id');
