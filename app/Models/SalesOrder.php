@@ -99,4 +99,9 @@ class SalesOrder extends Model
     {
         return $this->hasMany(Commission::class);
     }
+
+    public function rankDefinition(): BelongsTo
+    {
+        return $this->belongsTo(Rank::class, 'rank', 'code');
+    }
 }

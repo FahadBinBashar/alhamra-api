@@ -1859,6 +1859,188 @@
       ]
     },
     {
+      "name": "Ranks",
+      "item": [
+        {
+          "name": "List Ranks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ranks"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "director",
+                  "disabled": true
+                },
+                {
+                  "key": "code",
+                  "value": "ND",
+                  "description": "Filter by rank code",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Rank",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"National Director\",\n  \"code\": \"ND\",\n  \"description\": \"Top leadership rank overseeing nationwide operations\",\n  \"sort_order\": 9\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ranks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Rank",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranks/{{rank_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ranks",
+                "{{rank_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Rank",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Deputy National Director\",\n  \"description\": \"Supports the national director in strategic initiatives\",\n  \"sort_order\": 8\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranks/{{rank_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ranks",
+                "{{rank_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Rank",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranks/{{rank_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ranks",
+                "{{rank_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Employees",
       "item": [
         {

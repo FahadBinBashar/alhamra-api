@@ -28,6 +28,7 @@ class SalesOrderController extends Controller
             'customer',
             'employee.user',
             'introducer',
+            'rankDefinition',
         ])
             ->when($request->query('sales_type'), function ($query, $salesType) {
                 if (in_array($salesType, SalesOrder::SALES_TYPES, true)) {
@@ -58,7 +59,7 @@ class SalesOrderController extends Controller
             'sales_type' => ['required', 'string', Rule::in(SalesOrder::SALES_TYPES)],
             'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
-            'rank' => ['sometimes', 'string', Rule::in(Employee::RANKS)],
+            'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['required', 'numeric', 'min:0'],
             'total' => ['required', 'numeric', 'min:0'],
@@ -123,6 +124,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ], 201);
     }
@@ -139,6 +141,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ]);
     }
@@ -152,7 +155,7 @@ class SalesOrderController extends Controller
             'sales_type' => ['sometimes', 'string', Rule::in(SalesOrder::SALES_TYPES)],
             'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
-            'rank' => ['sometimes', 'string', Rule::in(Employee::RANKS)],
+            'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['sometimes', 'nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['sometimes', 'numeric', 'min:0'],
             'total' => ['sometimes', 'numeric', 'min:0'],
@@ -214,6 +217,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ]);
     }

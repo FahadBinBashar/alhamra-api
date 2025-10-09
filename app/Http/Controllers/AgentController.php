@@ -112,7 +112,9 @@ class AgentController extends Controller
             $agent->load($includes);
         }
 
-        return new AgentResource($agent);
+        return (new AgentResource($agent))->additional([
+            'password' => $password,
+        ]);
     }
 
     /**

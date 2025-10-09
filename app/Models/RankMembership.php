@@ -30,4 +30,9 @@ class RankMembership extends Model
     {
         return $this->belongsTo(Agent::class);
     }
+
+    public function rankDefinition(): BelongsTo
+    {
+        return $this->belongsTo(Rank::class, 'rank', 'code');
+    }
 }

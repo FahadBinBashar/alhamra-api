@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\Rank;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -15,6 +16,13 @@ class EmployeeManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->ensureRanks(Employee::RANKS);
+    }
+
     protected function actingAsAdmin(): User
     {
         $admin = User::factory()->create([
@@ -24,6 +32,16 @@ class EmployeeManagementTest extends TestCase
         Sanctum::actingAs($admin);
 
         return $admin;
+    }
+
+    protected function ensureRanks(array $codes): void
+    {
+        foreach ($codes as $index => $code) {
+            Rank::firstOrCreate(
+                ['code' => $code],
+                ['name' => $code, 'sort_order' => $index + 1]
+            );
+        }
     }
 
     public function test_admin_can_create_employee_with_rank(): void

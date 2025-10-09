@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Employee;
+use App\Models\Rank;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
@@ -18,6 +19,13 @@ use Tests\TestCase;
 class SalesOrderTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->ensureRanks(Employee::RANKS);
+    }
 
     public function test_admin_can_create_sales_order_with_implicit_context(): void
     {
@@ -131,6 +139,16 @@ class SalesOrderTest extends TestCase
 
         $response->assertForbidden();
         $this->assertDatabaseCount('sales_orders', 0);
+    }
+
+    protected function ensureRanks(array $codes): void
+    {
+        foreach ($codes as $index => $code) {
+            Rank::firstOrCreate(
+                ['code' => $code],
+                ['name' => $code, 'sort_order' => $index + 1]
+            );
+        }
     }
 
     public function test_product_sales_adjust_stock_levels(): void

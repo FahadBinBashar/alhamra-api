@@ -39,6 +39,7 @@ class RolesSeeder extends Seeder
             'admin' => $permissions,
             'finance' => ['manage payments', 'manage commissions', 'manage accounting', 'view reports'],
             'branch-manager' => ['manage agents', 'manage sales orders', 'manage payments', 'view reports'],
+            'agent_admin' => ['manage sales orders', 'view reports'],
             'agent' => ['manage sales orders', 'view reports'],
             'director' => ['manage ranks', 'manage commissions', 'view reports'],
             'owner' => ['view reports'],
