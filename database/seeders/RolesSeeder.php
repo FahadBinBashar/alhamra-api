@@ -43,6 +43,7 @@ class RolesSeeder extends Seeder
             'director' => ['manage ranks', 'manage commissions', 'view reports'],
             'owner' => ['view reports'],
             'customer' => [],
+            'employee' => [],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {

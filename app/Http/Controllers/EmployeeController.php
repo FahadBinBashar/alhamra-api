@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class EmployeeController extends Controller
 {
@@ -98,6 +99,8 @@ class EmployeeController extends Controller
         ]);
 
         if (method_exists($user, 'assignRole')) {
+            Role::findOrCreate(User::ROLE_EMPLOYEE, 'web');
+
             $user->assignRole(User::ROLE_EMPLOYEE);
         }
 
