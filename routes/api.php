@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RankController;
 use App\Http\Controllers\RankRequirementController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesOrderController;
@@ -40,6 +41,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('sales-orders', SalesOrderController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
+    Route::apiResource('ranks', RankController::class);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
     Route::post('documents', [DocumentController::class,'store']);

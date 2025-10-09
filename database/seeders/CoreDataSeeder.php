@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Category;
 use App\Models\CommissionRule;
 use App\Models\LedgerAccount;
+use App\Models\Rank;
 use App\Models\RankRequirement;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -17,6 +18,7 @@ class CoreDataSeeder extends Seeder
     {
         $this->seedBranches();
         $this->seedCategories();
+        $this->seedRanks();
         $this->seedRankRequirements();
         $this->seedLedgerAccounts();
         $this->seedCommissionRules();
@@ -68,6 +70,27 @@ class CoreDataSeeder extends Seeder
             Category::updateOrCreate(
                 ['name' => $category['name'], 'type' => $category['type']],
                 []
+            );
+        }
+    }
+
+    private function seedRanks(): void
+    {
+        $ranks = [
+            ['code' => 'ME', 'name' => 'ME', 'sort_order' => 1],
+            ['code' => 'MM', 'name' => 'MM', 'sort_order' => 2],
+            ['code' => 'DGM', 'name' => 'DGM', 'sort_order' => 3],
+            ['code' => 'GM', 'name' => 'GM', 'sort_order' => 4],
+            ['code' => 'PD', 'name' => 'PD', 'sort_order' => 5],
+            ['code' => 'ED', 'name' => 'ED', 'sort_order' => 6],
+            ['code' => 'DMD', 'name' => 'DMD', 'sort_order' => 7],
+            ['code' => 'HD', 'name' => 'HD', 'sort_order' => 8],
+        ];
+
+        foreach ($ranks as $rank) {
+            Rank::updateOrCreate(
+                ['code' => $rank['code']],
+                Arr::except($rank, ['code'])
             );
         }
     }
