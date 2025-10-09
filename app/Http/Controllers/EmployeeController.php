@@ -178,6 +178,7 @@ class EmployeeController extends Controller
                 'nominees',
                 'photo',
                 'signature',
+                'rankDefinition',
             ]),
         ]);
     }

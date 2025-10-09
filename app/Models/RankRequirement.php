@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\LogsActivityChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RankRequirement extends Model
 {
@@ -27,4 +28,9 @@ class RankRequirement extends Model
         'bonus_installment' => 'decimal:2',
         'meta' => 'array',
     ];
+
+    public function rankDefinition(): BelongsTo
+    {
+        return $this->belongsTo(Rank::class, 'rank', 'code');
+    }
 }

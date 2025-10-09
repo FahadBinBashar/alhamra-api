@@ -28,6 +28,7 @@ class SalesOrderController extends Controller
             'customer',
             'employee.user',
             'introducer',
+            'rankDefinition',
         ])
             ->when($request->query('sales_type'), function ($query, $salesType) {
                 if (in_array($salesType, SalesOrder::SALES_TYPES, true)) {
@@ -123,6 +124,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ], 201);
     }
@@ -139,6 +141,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ]);
     }
@@ -214,6 +217,7 @@ class SalesOrderController extends Controller
                 'customer',
                 'employee.user',
                 'introducer',
+                'rankDefinition',
             ]),
         ]);
     }

@@ -6,9 +6,9 @@ use App\Http\Requests\StoreRankRequest;
 use App\Http\Requests\UpdateRankRequest;
 use App\Http\Resources\RankResource;
 use App\Models\Rank;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class RankController extends Controller
 {
@@ -25,6 +25,10 @@ class RankController extends Controller
             });
         }
 
+        if ($request->filled('code')) {
+            $query->where('code', $request->string('code')->upper()->toString());
+        }
+
         $ranks = $query
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -36,9 +40,16 @@ class RankController extends Controller
 
     public function store(StoreRankRequest $request): RankResource
     {
-        $rank = Rank::create($request->validated());
+        $data = $request->validated();
+        $data['code'] = strtoupper($data['code']);
 
-        return new RankResource($rank);
+        if (! array_key_exists('sort_order', $data) || $data['sort_order'] === null) {
+            $data['sort_order'] = (int) Rank::max('sort_order') + 1;
+        }
+
+        $rank = Rank::create($data);
+
+        return new RankResource($rank->fresh());
     }
 
     public function show(Rank $rank): RankResource
@@ -48,14 +59,22 @@ class RankController extends Controller
 
     public function update(UpdateRankRequest $request, Rank $rank): RankResource
     {
-        $rank->update($request->validated());
+        $data = $request->validated();
 
-        return new RankResource($rank);
+        if (array_key_exists('code', $data)) {
+            $data['code'] = strtoupper($data['code']);
+        }
+
+        $rank->update($data);
+
+        return new RankResource($rank->fresh());
     }
 
-    public function destroy(Rank $rank): JsonResponse
+    public function destroy(Rank $rank): Response
     {
-        if ($rank->employees()->exists() || $rank->requirements()->exists() || $rank->memberships()->exists()) {
+        $rank->loadCount(['employees', 'requirements', 'memberships']);
+
+        if ($rank->employees_count > 0 || $rank->requirements_count > 0 || $rank->memberships_count > 0) {
             return response()->json([
                 'message' => 'Rank cannot be deleted while it is in use.',
             ], 422);
@@ -63,6 +82,6 @@ class RankController extends Controller
 
         $rank->delete();
 
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

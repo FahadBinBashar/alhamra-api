@@ -10,7 +10,7 @@ class RankRequirementController extends Controller
 {
     public function index()
     {
-        $requirements = RankRequirement::orderBy('sequence')->get();
+        $requirements = RankRequirement::with('rankDefinition')->orderBy('sequence')->get();
 
         return response()->json([
             'data' => $requirements,
@@ -22,6 +22,7 @@ class RankRequirementController extends Controller
         $data = $this->validateData($request);
 
         $requirement = RankRequirement::create($data);
+        $requirement->load('rankDefinition');
 
         return response()->json([
             'data' => $requirement,
@@ -31,7 +32,7 @@ class RankRequirementController extends Controller
     public function show(RankRequirement $rankRequirement)
     {
         return response()->json([
-            'data' => $rankRequirement,
+            'data' => $rankRequirement->load('rankDefinition'),
         ]);
     }
 
@@ -43,7 +44,7 @@ class RankRequirementController extends Controller
         $rankRequirement->save();
 
         return response()->json([
-            'data' => $rankRequirement,
+            'data' => $rankRequirement->load('rankDefinition'),
         ]);
     }
 
