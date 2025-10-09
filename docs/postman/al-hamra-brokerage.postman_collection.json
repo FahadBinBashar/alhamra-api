@@ -1927,7 +1927,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user_id\": 7,\n  \"branch_id\": 2,\n  \"agent_id\": 4,\n  \"rank\": \"MM\"\n}",
+              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1997,7 +1997,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"branch_id\": 3,\n  \"agent_id\": 5,\n  \"rank\": \"GM\"\n}",
+              "raw": "{\n  \"branch_id\": 3,\n  \"superior_id\": 2,\n  \"rank\": \"GM\",\n  \"mobile\": \"01700000002\",\n  \"educations\": [\n    {\n      \"level\": \"MBA\",\n      \"institution\": \"North South University\",\n      \"passing_year\": \"2018\"\n    }\n  ],\n  \"nominees\": []\n}",
               "options": {
                 "raw": {
                   "language": "json"
