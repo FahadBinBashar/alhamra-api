@@ -164,7 +164,7 @@ class EmployeeController extends Controller
     //         ]),
     //     ], 201);
     // }
-    public function store(Request $request)
+   public function store(Request $request)
     {
         $data = $request->validate([
             'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code'],
@@ -220,7 +220,6 @@ class EmployeeController extends Controller
 
         if (method_exists($user, 'assignRole')) {
             Role::findOrCreate(User::ROLE_EMPLOYEE, 'web');
-
             $user->assignRole(User::ROLE_EMPLOYEE);
         }
 
@@ -249,72 +248,25 @@ class EmployeeController extends Controller
         ]);
 
         $employeeData['user_id'] = $user->id;
-
         $employeeData = $this->resolveAgentContext($employeeData);
 
-    $employeeData = Arr::only($data, [
-        'employee_code',
-        'branch_id',
-        'agent_id',
-        'superior_id',
-        'rank',
-        'full_name_en',
-        'full_name_bn',
-        'father_name',
-        'mother_name',
-        'mobile',
-        'national_id',
-        'date_of_birth',
-        'marital_status',
-        'religion',
-        'gender',
-        'nationality',
-        'district',
-        'upazila',
-        'present_address',
-        'permanent_address',
-        'post_code',
-    ]);
+        $employee = Employee::create($employeeData);
 
-    $employeeData['user_id'] = $user->id;
+        if (!empty($educations)) {
+            $this->syncEducations($employee, $educations);
+        }
 
-    $employeeData = $this->resolveAgentContext($employeeData);
+        if (!empty($nominees)) {
+            $this->syncNominees($employee, $nominees);
+        }
 
-    $employee = Employee::create($employeeData);
+        if ($request->file('photo')) {
+            $this->storeEmployeeDocument($employee, $request->file('photo'), 'photo');
+        }
 
-    if (!empty($educations)) {
-        $this->syncEducations($employee, $educations);
-    }
-
-    if (!empty($nominees)) {
-        $this->syncNominees($employee, $nominees);
-    }
-
-    if ($request->file('photo')) {
-        $this->storeEmployeeDocument($employee, $request->file('photo'), 'photo');
-    }
-
-    if ($request->file('signature')) {
-        $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
-    }
-
-    // Skipping notification for now
-    // $user->notify(new EmployeeCredentialNotification($user->email, $password));
-
-    return response()->json([
-        'data' => $employee->load([
-            'user',
-            'branch',
-            'agent.user',
-            'superior.user',
-            'educations',
-            'nominees',
-            'photo',
-            'signature',
-        ]),
-        'password' => $password, // Include the password in the response
-    ], 201);
-}
+        if ($request->file('signature')) {
+            $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
+        }
 
         return response()->json([
             'data' => $employee->load([
@@ -326,8 +278,8 @@ class EmployeeController extends Controller
                 'nominees',
                 'photo',
                 'signature',
-                'rankDefinition',
             ]),
+            'password' => $password, // Optional
         ], 201);
     }
 
