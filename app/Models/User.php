@@ -24,6 +24,7 @@ class User extends Authenticatable
     public const ROLE_EMPLOYEE = 'employee';
     public const ROLE_OWNER = 'owner';
     public const ROLE_DIRECTOR = 'director';
+    public const ROLE_CUSTOMER = 'customer';
 
     public const ROLES = [
         self::ROLE_ADMIN,
@@ -33,6 +34,7 @@ class User extends Authenticatable
         self::ROLE_EMPLOYEE,
         self::ROLE_OWNER,
         self::ROLE_DIRECTOR,
+        self::ROLE_CUSTOMER,
     ];
 
     /**

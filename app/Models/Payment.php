@@ -15,11 +15,34 @@ class Payment extends Model
     use HasFactory;
     use LogsActivityChanges;
 
+    public const TYPE_DOWN_PAYMENT = 'down_payment';
+    public const TYPE_INSTALLMENT = 'installment';
+    public const TYPE_FULL_PAYMENT = 'full_payment';
+
+    public const BASE_TYPES = [
+        self::TYPE_DOWN_PAYMENT,
+        self::TYPE_INSTALLMENT,
+        self::TYPE_FULL_PAYMENT,
+    ];
+
+    public const INTENT_DOWN_PAYMENT = 'down_payment';
+    public const INTENT_INSTALLMENT = 'installment_payment';
+    public const INTENT_DUE = 'due_payment';
+    public const INTENT_BOOKING = 'booking_payment';
+
+    public const INTENT_TYPES = [
+        self::INTENT_DOWN_PAYMENT,
+        self::INTENT_INSTALLMENT,
+        self::INTENT_DUE,
+        self::INTENT_BOOKING,
+    ];
+
     protected $fillable = [
         'sales_order_id',
         'paid_at',
         'amount',
         'type',
+        'intent_type',
         'method',
         'meta',
     ];
@@ -33,6 +56,15 @@ class Payment extends Model
     protected $dispatchesEvents = [
         'created' => PaymentRecorded::class,
     ];
+
+    public static function resolveTypeFromIntent(string $intent): string
+    {
+        return match ($intent) {
+            self::INTENT_DOWN_PAYMENT => self::TYPE_DOWN_PAYMENT,
+            self::INTENT_INSTALLMENT => self::TYPE_INSTALLMENT,
+            default => self::TYPE_FULL_PAYMENT,
+        };
+    }
 
     public function salesOrder(): BelongsTo
     {
