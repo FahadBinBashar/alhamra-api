@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Agent;
 use App\Models\SalesOrder;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -37,6 +39,25 @@ class CustomerController extends Controller
             ->appends($request->query());
 
         return UserResource::collection($customers);
+    }
+
+    public function store(StoreCustomerRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $this->ensureCustomerAccess($user);
+
+        $data = $request->validated();
+
+        $customer = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'role' => User::ROLE_CUSTOMER,
+        ]);
+
+        return (new UserResource($customer))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show(Request $request, User $customer): UserResource

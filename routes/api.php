@@ -62,7 +62,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('services', ServiceController::class);
-    Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
+    Route::apiResource('customers', CustomerController::class)->only(['index', 'store', 'show']);
     Route::apiResource('sales-orders', SalesOrderController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);

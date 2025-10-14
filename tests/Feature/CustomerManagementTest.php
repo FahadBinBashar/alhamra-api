@@ -41,6 +41,28 @@ class CustomerManagementTest extends TestCase
         }
     }
 
+    public function test_admin_can_create_customer(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->postJson('/api/v1/customers', [
+            'name' => 'New Customer',
+            'email' => 'new-customer@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'new-customer@example.com',
+            'role' => User::ROLE_CUSTOMER,
+        ]);
+    }
+
     public function test_agent_only_sees_assigned_customers(): void
     {
         $agentUser = User::factory()->create([
@@ -106,6 +128,28 @@ class CustomerManagementTest extends TestCase
         $response->assertJsonMissing(['id' => $otherCustomer->id]);
     }
 
+    public function test_agent_admin_can_create_customer(): void
+    {
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT_ADMIN,
+        ]);
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/customers', [
+            'name' => 'Agent Customer',
+            'email' => 'agent-customer@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'agent-customer@example.com',
+            'role' => User::ROLE_CUSTOMER,
+        ]);
+    }
+
     public function test_agent_cannot_view_unassigned_customer(): void
     {
         $agentUser = User::factory()->create([
@@ -149,6 +193,25 @@ class CustomerManagementTest extends TestCase
         Sanctum::actingAs($customer);
 
         $this->getJson('/api/v1/customers')->assertForbidden();
+    }
+
+    public function test_non_privileged_user_cannot_create_customer(): void
+    {
+        $customer = User::factory()->create([
+            'role' => User::ROLE_CUSTOMER,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/customers', [
+            'name' => 'Unauthorized Customer',
+            'email' => 'unauthorized@example.com',
+            'password' => 'password123',
+        ])->assertForbidden();
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'unauthorized@example.com',
+        ]);
     }
 
     public function test_dashboard_includes_customer_summary_for_admin(): void
