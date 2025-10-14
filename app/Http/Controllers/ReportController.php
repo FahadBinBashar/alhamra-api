@@ -130,15 +130,15 @@ class ReportController extends Controller
         $customerQuery = User::query()->where('role', User::ROLE_CUSTOMER);
 
         if ($authUser && in_array($authUser->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
-            $agentId = Agent::where('user_id', $authUser->id)->value('id');
+            $agent = $authUser->agent;
 
-            if (! $agentId) {
+            if (! $agent) {
                 $customerQuery->whereRaw('0 = 1');
             } else {
-                $customerQuery->whereIn('id', function ($subQuery) use ($agentId) {
+                $customerQuery->whereIn('id', function ($subQuery) use ($agent) {
                     $subQuery->select('customer_id')
                         ->from('sales_orders')
-                        ->where('agent_id', $agentId);
+                        ->where('agent_id', $agent->id);
                 });
             }
         }

@@ -48,21 +48,19 @@ class CustomerController extends Controller
             abort(404);
         }
 
-        if (in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
-            $agentId = Agent::where('user_id', $user->id)->value('id');
+        $agent = $this->resolveAgent($user);
 
-            if (! $agentId) {
-                abort(404);
-            }
-
+        if ($agent) {
             $assigned = SalesOrder::query()
-                ->where('agent_id', $agentId)
+                ->where('agent_id', $agent->id)
                 ->where('customer_id', $customer->id)
                 ->exists();
 
             if (! $assigned) {
                 abort(403, 'You are not authorised to view this customer.');
             }
+        } elseif ($this->requiresAgentScope($user)) {
+            abort(404);
         }
 
         return new UserResource($customer);
@@ -82,22 +80,34 @@ class CustomerController extends Controller
 
     private function applyAgentScope(Builder $query, ?User $user): void
     {
-        if (! $user || ! in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+        $agent = $this->resolveAgent($user);
+
+        if ($agent) {
+            $query->whereIn('id', function ($subQuery) use ($agent) {
+                $subQuery->select('customer_id')
+                    ->from('sales_orders')
+                    ->where('agent_id', $agent->id);
+            });
+
             return;
         }
 
-        $agentId = Agent::where('user_id', $user->id)->value('id');
-
-        if (! $agentId) {
+        if ($this->requiresAgentScope($user)) {
             $query->whereRaw('0 = 1');
+        }
+    }
 
-            return;
+    private function resolveAgent(?User $user): ?Agent
+    {
+        if (! $user || ! in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+            return null;
         }
 
-        $query->whereIn('id', function ($subQuery) use ($agentId) {
-            $subQuery->select('customer_id')
-                ->from('sales_orders')
-                ->where('agent_id', $agentId);
-        });
+        return $user->agent;
+    }
+
+    private function requiresAgentScope(?User $user): bool
+    {
+        return $user !== null && in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true);
     }
 }
