@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\Employee;
+use App\Models\Rank;
 use App\Models\User;
 use App\Notifications\EmployeeCredentialNotification;
 use Illuminate\Http\Request;
@@ -41,6 +42,45 @@ class EmployeeController extends Controller
             ->paginate((int) $request->query('per_page', 15));
 
         return response()->json($employees);
+    }
+
+    public function superiors(Request $request)
+    {
+        $data = $request->validate([
+            'rank' => ['nullable', 'string', Rule::exists('ranks', 'code')],
+            'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
+        ]);
+
+        $query = Employee::query()->with(['user', 'branch', 'rankDefinition']);
+
+        if (isset($data['rank'])) {
+            /** @var Rank|null $rank */
+            $rank = Rank::query()->where('code', $data['rank'])->first();
+
+            if ($rank) {
+                $superiorRank = Rank::query()
+                    ->where('sort_order', '>', $rank->sort_order)
+                    ->orderBy('sort_order')
+                    ->first();
+
+                if (! $superiorRank) {
+                    return response()->json(['data' => []]);
+                }
+
+                $query->where('rank', $superiorRank->code);
+            }
+        }
+
+        if (isset($data['branch_id'])) {
+            $query->where('branch_id', $data['branch_id']);
+        }
+
+        $employees = $query
+            ->orderBy('full_name_en')
+            ->orderBy('id')
+            ->get();
+
+        return response()->json(['data' => $employees]);
     }
 
     // public function store(Request $request)

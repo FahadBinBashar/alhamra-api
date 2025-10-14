@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
     Route::apiResource('branches', BranchController::class);
     Route::apiResource('agents', AgentController::class);
+    Route::get('employees/superiors', [EmployeeController::class,'superiors']);
     Route::apiResource('employees', EmployeeController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
