@@ -73,4 +73,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+
+    public function agent(): HasOne
+    {
+        return $this->hasOne(Agent::class);
+    }
 }
