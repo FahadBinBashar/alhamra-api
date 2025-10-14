@@ -162,4 +162,82 @@ class EmployeeManagementTest extends TestCase
         $this->assertSame(1, $response->json('total'));
         $this->assertSame(Employee::RANK_MM, $response->json('data.0.rank'));
     }
+
+    public function test_superior_listing_returns_next_rank_employees(): void
+    {
+        $this->actingAsAdmin();
+
+        $branch = Branch::create([
+            'name' => 'Khulna',
+            'code' => 'KHL',
+            'address' => 'Khulna',
+        ]);
+
+        $mmUser = User::factory()->create();
+        $mmAgent = Agent::create([
+            'user_id' => $mmUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+        $mmEmployee = Employee::create([
+            'user_id' => $mmUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $mmAgent->id,
+            'rank' => Employee::RANK_MM,
+            'employee_code' => Str::uuid()->toString(),
+            'full_name_en' => 'MM Employee',
+        ]);
+
+        $meUser = User::factory()->create();
+        $meAgent = Agent::create([
+            'user_id' => $meUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+        Employee::create([
+            'user_id' => $meUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $meAgent->id,
+            'rank' => Employee::RANK_ME,
+            'employee_code' => Str::uuid()->toString(),
+            'full_name_en' => 'ME Employee',
+        ]);
+
+        $response = $this->getJson('/api/v1/employees/superiors?rank=' . Employee::RANK_ME);
+
+        $response->assertOk();
+        $this->assertSame($mmEmployee->id, $response->json('data.0.id'));
+        $this->assertSame(Employee::RANK_MM, $response->json('data.0.rank'));
+    }
+
+    public function test_superior_listing_returns_empty_for_highest_rank(): void
+    {
+        $this->actingAsAdmin();
+
+        $branch = Branch::create([
+            'name' => 'Barishal',
+            'code' => 'BAR',
+            'address' => 'Barishal',
+        ]);
+
+        $hdUser = User::factory()->create();
+        $hdAgent = Agent::create([
+            'user_id' => $hdUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+        Employee::create([
+            'user_id' => $hdUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $hdAgent->id,
+            'rank' => Employee::RANK_HD,
+            'employee_code' => Str::uuid()->toString(),
+            'full_name_en' => 'HD Employee',
+        ]);
+
+        $response = $this->getJson('/api/v1/employees/superiors?rank=' . Employee::RANK_HD);
+
+        $response->assertOk();
+        $this->assertSame([], $response->json('data'));
+    }
 }
