@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'sslcommerz' => [
+        'store_id' => env('SSLCOMMERZ_STORE_ID'),
+        'store_password' => env('SSLCOMMERZ_STORE_PASSWORD'),
+        'payment_url' => env('SSLCOMMERZ_PAYMENT_URL', 'https://sandbox.sslcommerz.com/EasyCheckOut'),
+        'currency' => env('SSLCOMMERZ_CURRENCY', 'BDT'),
+    ],
+
 ];

@@ -8,6 +8,7 @@ use App\Models\PaymentAllocation;
 use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
@@ -16,7 +17,8 @@ class PaymentController extends Controller
         $data = $request->validate([
             'paid_at' => ['required', 'date'],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            'type' => ['required', 'in:down_payment,installment,full_payment'],
+            'type' => ['required', Rule::in(Payment::BASE_TYPES)],
+            'intent_type' => ['sometimes', 'string', Rule::in(Payment::INTENT_TYPES)],
             'method' => ['nullable', 'string'],
             'meta' => ['nullable', 'array'],
             'allocations' => ['sometimes', 'array'],
@@ -30,6 +32,7 @@ class PaymentController extends Controller
                 'paid_at' => $data['paid_at'],
                 'amount' => $data['amount'],
                 'type' => $data['type'],
+                'intent_type' => $data['intent_type'] ?? $data['type'],
                 'method' => $data['method'] ?? null,
                 'meta' => $data['meta'] ?? null,
             ]);

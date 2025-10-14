@@ -15,6 +15,11 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Customer\CustomerAuthController;
+use App\Http\Controllers\Customer\CustomerInstallmentController;
+use App\Http\Controllers\Customer\CustomerPaymentController;
+use App\Http\Controllers\Customer\CustomerProfileController;
+use App\Http\Controllers\Customer\CustomerSalesOrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +36,22 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
   Route::post('/auth/login', [AuthController::class,'login']);
   Route::post('/auth/register', [AuthController::class,'register']);
+  Route::prefix('customer')->group(function () {
+    Route::post('auth/register', [CustomerAuthController::class,'register']);
+    Route::post('auth/login', [CustomerAuthController::class,'login']);
+    Route::post('payments/callback', [CustomerPaymentController::class,'callback'])->name('customer.payments.callback');
+
+    Route::middleware(['auth:sanctum', 'role.customer'])->group(function () {
+      Route::post('auth/logout', [CustomerAuthController::class,'logout']);
+      Route::get('profile', [CustomerProfileController::class,'show']);
+      Route::match(['put', 'patch'], 'profile', [CustomerProfileController::class,'update']);
+      Route::get('sales-orders', [CustomerSalesOrderController::class,'index']);
+      Route::get('sales-orders/{order}', [CustomerSalesOrderController::class,'show']);
+      Route::get('payments', [CustomerPaymentController::class,'history']);
+      Route::get('installments', [CustomerInstallmentController::class,'index']);
+      Route::post('sales-orders/{order}/payments/initiate', [CustomerPaymentController::class,'initiate']);
+    });
+  });
   Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
     Route::apiResource('branches', BranchController::class);
