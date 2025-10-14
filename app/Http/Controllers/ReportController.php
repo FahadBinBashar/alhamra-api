@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StockMovementResource;
+use App\Http\Resources\UserResource;
 use App\Models\Agent;
 use App\Models\Commission;
 use App\Models\CustomerInstallment;
@@ -11,6 +12,7 @@ use App\Models\LedgerEntry;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -90,8 +92,10 @@ class ReportController extends Controller
         ]);
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $authUser = $request->user();
+
         $salesTotal = SalesOrder::sum('total');
         $collectionTotal = LedgerEntry::whereHas('account', fn ($q) => $q->whereIn('code', [
             config('accounting.accounts.cash.code'),
@@ -123,6 +127,32 @@ class ReportController extends Controller
                 ->value('total_value') ?? 0,
         ];
 
+        $customerQuery = User::query()->where('role', User::ROLE_CUSTOMER);
+
+        if ($authUser && in_array($authUser->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+            $agentId = Agent::where('user_id', $authUser->id)->value('id');
+
+            if (! $agentId) {
+                $customerQuery->whereRaw('0 = 1');
+            } else {
+                $customerQuery->whereIn('id', function ($subQuery) use ($agentId) {
+                    $subQuery->select('customer_id')
+                        ->from('sales_orders')
+                        ->where('agent_id', $agentId);
+                });
+            }
+        }
+
+        $customerSummary = [
+            'total' => (clone $customerQuery)->distinct()->count('users.id'),
+            'recent' => UserResource::collection(
+                (clone $customerQuery)
+                    ->orderByDesc('created_at')
+                    ->take(5)
+                    ->get()
+            )->resolve(),
+        ];
+
         return response()->json([
             'sales_total' => $salesTotal,
             'collection_total' => $collectionTotal,
@@ -130,6 +160,7 @@ class ReportController extends Controller
             'commissions' => $commissionSummary,
             'rank_fund_balance' => $rankFund,
             'stock_summary' => $stockSummary,
+            'customers' => $customerSummary,
         ]);
     }
 
