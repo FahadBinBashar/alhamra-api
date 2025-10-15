@@ -155,6 +155,129 @@ class SalesOrderTest extends TestCase
         $this->assertDatabaseCount('sales_orders', 0);
     }
 
+    public function test_agent_sales_order_does_not_require_marketing_executive(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Sylhet Branch',
+            'code' => 'SYL',
+            'address' => 'Sylhet',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $customer = User::factory()->create();
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_SERVICE,
+            'down_payment' => 1000,
+            'total' => 5000,
+        ]);
+
+        $response->assertCreated();
+
+        $response->assertJsonPath('data.agent_id', $agent->id);
+        $response->assertJsonPath('data.branch_id', $branch->id);
+        $response->assertJsonPath('data.source_me_id', null);
+        $response->assertJsonPath('data.employee_id', null);
+        $response->assertJsonPath('data.created_by', SalesOrder::CREATED_BY_AGENT);
+
+        $this->assertDatabaseHas('sales_orders', [
+            'customer_id' => $customer->id,
+            'agent_id' => $agent->id,
+            'branch_id' => $branch->id,
+            'source_me_id' => null,
+            'employee_id' => null,
+            'created_by' => SalesOrder::CREATED_BY_AGENT,
+        ]);
+    }
+
+    public function test_agent_cannot_assign_marketing_executive_to_sales_order(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Barishal Branch',
+            'code' => 'BAR',
+            'address' => 'Barishal',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $agent->id,
+            'rank' => Employee::RANK_ME,
+        ]);
+
+        $customer = User::factory()->create();
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_ORDER,
+            'source_me_id' => $marketingExecutive->id,
+            'down_payment' => 2000,
+            'total' => 10000,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['source_me_id']);
+
+        $this->assertDatabaseCount('sales_orders', 0);
+    }
+
+    public function test_admin_sales_order_requires_marketing_executive(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Rangpur Branch',
+            'code' => 'RNG',
+            'address' => 'Rangpur',
+        ]);
+
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $customer = User::factory()->create();
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_SHARE,
+            'down_payment' => 1500,
+            'total' => 3000,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['source_me_id']);
+
+        $this->assertDatabaseCount('sales_orders', 0);
+    }
+
     protected function ensureRanks(array $codes): void
     {
         foreach ($codes as $index => $code) {

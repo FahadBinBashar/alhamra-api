@@ -52,7 +52,7 @@ class SalesOrderController extends Controller
             'sales_type' => ['required', 'string', Rule::in(SalesOrder::SALES_TYPES)],
             'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
-            'source_me_id' => ['required', 'integer', 'exists:employees,id'],
+            'source_me_id' => ['nullable', 'integer', 'exists:employees,id'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['required', 'numeric', 'min:0'],
@@ -64,16 +64,8 @@ class SalesOrderController extends Controller
             'items.*.unit_price' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $sourceEmployee = Employee::find($data['source_me_id']);
-
-        if (! $sourceEmployee) {
-            throw ValidationException::withMessages([
-                'source_me_id' => 'The selected marketing executive could not be found.',
-            ]);
-        }
-
         $data = $this->applyEntryRoleConstraints($user, $data);
-        $data = $this->resolveSourceContext($data, $sourceEmployee);
+        $data = $this->applySourceContextForStore($user, $data);
         $data['created_by'] = $this->resolveCreatedByFlag($user);
 
         $preparedItems = null;
@@ -91,7 +83,7 @@ class SalesOrderController extends Controller
             ]);
         }
 
-        $this->ensureAgentBelongsToBranch($data['agent_id'], $data['branch_id']);
+        $this->ensureAgentBelongsToBranch($data['agent_id'] ?? null, $data['branch_id'] ?? null);
 
         $order = DB::transaction(function () use ($data, $preparedItems) {
             $payload = Arr::only($data, [
@@ -178,17 +170,9 @@ class SalesOrderController extends Controller
 
         $data = $this->applyEntryRoleConstraints($request->user(), $data);
 
-        if (array_key_exists('source_me_id', $data)) {
-            $sourceEmployee = Employee::find($data['source_me_id']);
+        [$data, $sourceProvided] = $this->applySourceContextForUpdate($request->user(), $salesOrder, $data);
 
-            if (! $sourceEmployee) {
-                throw ValidationException::withMessages([
-                    'source_me_id' => 'The selected marketing executive could not be found.',
-                ]);
-            }
-
-            $data = $this->resolveSourceContext($data, $sourceEmployee);
-        } else {
+        if (! $sourceProvided) {
             $this->assertExistingSourceAlignment($salesOrder, $data);
         }
 
@@ -285,6 +269,94 @@ class SalesOrderController extends Controller
             User::ROLE_CUSTOMER => SalesOrder::CREATED_BY_CUSTOMER,
             default => SalesOrder::CREATED_BY_SYSTEM,
         };
+    }
+
+    private function applySourceContextForStore(?User $user, array $data): array
+    {
+        $sourceId = $data['source_me_id'] ?? null;
+        $role = $user?->role;
+
+        if ($user && in_array($role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+            if ($sourceId) {
+                throw ValidationException::withMessages([
+                    'source_me_id' => 'Agents may not assign a marketing executive to their own sales orders.',
+                ]);
+            }
+
+            $data['source_me_id'] = null;
+            $data['employee_id'] = null;
+
+            return $data;
+        }
+
+        if ($user && in_array($role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true) && ! $sourceId) {
+            throw ValidationException::withMessages([
+                'source_me_id' => 'A marketing executive is required for admin-entered sales orders.',
+            ]);
+        }
+
+        if ($sourceId) {
+            $sourceEmployee = Employee::find($sourceId);
+
+            if (! $sourceEmployee) {
+                throw ValidationException::withMessages([
+                    'source_me_id' => 'The selected marketing executive could not be found.',
+                ]);
+            }
+
+            return $this->resolveSourceContext($data, $sourceEmployee);
+        }
+
+        $data['source_me_id'] = null;
+        $data['employee_id'] = null;
+
+        return $data;
+    }
+
+    private function applySourceContextForUpdate(?User $user, SalesOrder $salesOrder, array $data): array
+    {
+        $sourceProvided = array_key_exists('source_me_id', $data);
+        $sourceId = $data['source_me_id'] ?? null;
+        $role = $user?->role;
+
+        if ($user && in_array($role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+            if ($sourceProvided && ! is_null($sourceId)) {
+                throw ValidationException::withMessages([
+                    'source_me_id' => 'Agents may not assign a marketing executive to their own sales orders.',
+                ]);
+            }
+
+            if ($sourceProvided) {
+                $data['source_me_id'] = null;
+                $data['employee_id'] = null;
+            }
+
+            return [$data, $sourceProvided];
+        }
+
+        if ($sourceProvided) {
+            if ($user && in_array($role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true) && ! $sourceId) {
+                throw ValidationException::withMessages([
+                    'source_me_id' => 'A marketing executive is required for admin-entered sales orders.',
+                ]);
+            }
+
+            if ($sourceId) {
+                $sourceEmployee = Employee::find($sourceId);
+
+                if (! $sourceEmployee) {
+                    throw ValidationException::withMessages([
+                        'source_me_id' => 'The selected marketing executive could not be found.',
+                    ]);
+                }
+
+                $data = $this->resolveSourceContext($data, $sourceEmployee);
+            } else {
+                $data['employee_id'] = null;
+            }
+        }
+
+        return [$data, $sourceProvided];
     }
 
     private function applyEntryRoleConstraints(?User $user, array $data): array
