@@ -41,6 +41,7 @@ class Payment extends Model
         'sales_order_id',
         'paid_at',
         'amount',
+        'commission_base_amount',
         'type',
         'intent_type',
         'method',
@@ -50,6 +51,7 @@ class Payment extends Model
     protected $casts = [
         'paid_at' => 'date',
         'amount' => 'decimal:2',
+        'commission_base_amount' => 'decimal:2',
         'meta' => 'array',
     ];
 
@@ -79,5 +81,24 @@ class Payment extends Model
     public function commissions(): HasMany
     {
         return $this->hasMany(Commission::class);
+    }
+
+    public function getCommissionableAmountAttribute(): float
+    {
+        $meta = $this->meta ?? [];
+
+        $baseFromMeta = null;
+
+        if (is_array($meta)) {
+            if (array_key_exists('ccv', $meta)) {
+                $baseFromMeta = (float) $meta['ccv'];
+            } elseif (array_key_exists('commission_base', $meta)) {
+                $baseFromMeta = (float) $meta['commission_base'];
+            }
+        }
+
+        $base = $this->commission_base_amount ?? $baseFromMeta ?? $this->amount;
+
+        return (float) $base;
     }
 }
