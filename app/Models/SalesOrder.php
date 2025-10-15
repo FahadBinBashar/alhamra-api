@@ -37,9 +37,24 @@ class SalesOrder extends Model
         self::STATUS_CANCELLED,
     ];
 
+    public const CREATED_BY_ADMIN = 'admin';
+    public const CREATED_BY_BRANCH_ADMIN = 'branch_admin';
+    public const CREATED_BY_AGENT = 'agent';
+    public const CREATED_BY_CUSTOMER = 'customer';
+    public const CREATED_BY_SYSTEM = 'system';
+
+    public const CREATED_BY_OPTIONS = [
+        self::CREATED_BY_ADMIN,
+        self::CREATED_BY_BRANCH_ADMIN,
+        self::CREATED_BY_AGENT,
+        self::CREATED_BY_CUSTOMER,
+        self::CREATED_BY_SYSTEM,
+    ];
+
     protected $fillable = [
         'customer_id',
         'employee_id',
+        'source_me_id',
         'agent_id',
         'branch_id',
         'sales_type',
@@ -48,6 +63,7 @@ class SalesOrder extends Model
         'down_payment',
         'total',
         'status',
+        'created_by',
     ];
 
     protected $casts = [
@@ -68,6 +84,11 @@ class SalesOrder extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function sourceMe(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'source_me_id');
     }
 
     public function branch(): BelongsTo

@@ -39,17 +39,25 @@ class SalesOrderTest extends TestCase
             'role' => User::ROLE_ADMIN,
         ]);
 
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
         $agent = Agent::create([
-            'user_id' => $admin->id,
+            'user_id' => $agentUser->id,
             'branch_id' => $branch->id,
             'agent_code' => Str::uuid()->toString(),
         ]);
 
-        Employee::create([
-            'user_id' => $admin->id,
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
             'branch_id' => $branch->id,
             'agent_id' => $agent->id,
-            'rank' => Employee::RANK_MM,
+            'rank' => Employee::RANK_ME,
         ]);
 
         $customer = User::factory()->create();
@@ -72,6 +80,7 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_LAND,
+            'source_me_id' => $marketingExecutive->id,
             'down_payment' => 50000,
             'total' => 500000,
             'items' => [
@@ -87,8 +96,10 @@ class SalesOrderTest extends TestCase
 
         $response->assertJsonPath('data.branch_id', $branch->id);
         $response->assertJsonPath('data.agent_id', $agent->id);
-        $response->assertJsonPath('data.rank', Employee::RANK_MM);
-        $response->assertJsonPath('data.employee_id', $admin->employee->id);
+        $response->assertJsonPath('data.rank', Employee::RANK_ME);
+        $response->assertJsonPath('data.source_me_id', $marketingExecutive->id);
+        $response->assertJsonPath('data.employee_id', $marketingExecutive->id);
+        $response->assertJsonPath('data.created_by', SalesOrder::CREATED_BY_ADMIN);
         $response->assertJsonPath('data.sales_type', SalesOrder::TYPE_LAND);
         $response->assertJsonPath('data.items.0.itemable_id', $product->id);
 
@@ -96,8 +107,10 @@ class SalesOrderTest extends TestCase
             'customer_id' => $customer->id,
             'branch_id' => $branch->id,
             'agent_id' => $agent->id,
-            'rank' => Employee::RANK_MM,
+            'rank' => Employee::RANK_ME,
             'sales_type' => SalesOrder::TYPE_LAND,
+            'source_me_id' => $marketingExecutive->id,
+            'created_by' => SalesOrder::CREATED_BY_ADMIN,
         ]);
     }
 
@@ -119,7 +132,7 @@ class SalesOrderTest extends TestCase
             'agent_code' => Str::uuid()->toString(),
         ]);
 
-        Employee::create([
+        $marketingExecutive = Employee::create([
             'user_id' => $rankUser->id,
             'branch_id' => $branch->id,
             'agent_id' => $agent->id,
@@ -133,6 +146,7 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_SERVICE,
+            'source_me_id' => $marketingExecutive->id,
             'down_payment' => 1000,
             'total' => 2000,
         ]);
@@ -163,17 +177,25 @@ class SalesOrderTest extends TestCase
             'role' => User::ROLE_ADMIN,
         ]);
 
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
         $agent = Agent::create([
-            'user_id' => $admin->id,
+            'user_id' => $agentUser->id,
             'branch_id' => $branch->id,
             'agent_code' => Str::uuid()->toString(),
         ]);
 
-        Employee::create([
-            'user_id' => $admin->id,
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
             'branch_id' => $branch->id,
             'agent_id' => $agent->id,
-            'rank' => Employee::RANK_MM,
+            'rank' => Employee::RANK_ME,
         ]);
 
         $customer = User::factory()->create();
@@ -199,6 +221,7 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_ORDER,
+            'source_me_id' => $marketingExecutive->id,
             'down_payment' => 0,
             'total' => 1000,
             'items' => [

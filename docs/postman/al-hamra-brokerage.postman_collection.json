@@ -1286,7 +1286,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customer_id\": {{customer_id}},\n  \"sales_type\": \"order\",\n  \"branch_id\": {{branch_id}},\n  \"agent_id\": {{agent_id}},\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 1,\n      \"unit_price\": 250000\n    },\n    {\n      \"item_type\": \"service\",\n      \"item_id\": {{service_id}},\n      \"qty\": 1,\n      \"unit_price\": 5000\n    }\n  ]\n}",
+              "raw": "{\n  \"customer_id\": {{customer_id}},\n  \"sales_type\": \"order\",\n  \"branch_id\": {{branch_id}},\n  \"agent_id\": {{agent_id}},\n  \"source_me_id\": {{source_me_id}},\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 1,\n      \"unit_price\": 250000\n    },\n    {\n      \"item_type\": \"service\",\n      \"item_id\": {{service_id}},\n      \"qty\": 1,\n      \"unit_price\": 5000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1357,7 +1357,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"active\",\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
+              "raw": "{\n  \"status\": \"active\",\n  \"source_me_id\": {{source_me_id}},\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
