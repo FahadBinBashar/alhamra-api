@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\CommissionRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateCommissionRuleRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => ['sometimes', 'string', 'max:255'],
+            'scope' => ['sometimes', 'string', 'max:255'],
+            'trigger' => ['sometimes', 'string', Rule::in([CommissionRule::TRIGGER_ON_PAYMENT])],
+            'recipient_type' => ['sometimes', 'string', 'max:255'],
+            'recipient_id' => ['sometimes', 'nullable', 'integer'],
+            'percentage' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
+            'flat_amount' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'active' => ['sometimes', 'boolean'],
+            'meta' => ['sometimes', 'nullable', 'array'],
+        ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('active')) {
+            $active = filter_var($this->input('active'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($active !== null) {
+                $this->merge(['active' => $active]);
+            }
+        }
+
+        foreach (['recipient_id', 'percentage', 'flat_amount'] as $field) {
+            if ($this->exists($field) && $this->input($field) === '') {
+                $this->merge([$field => null]);
+            }
+        }
+
+        if ($this->exists('meta') && is_string($this->input('meta'))) {
+            $decoded = json_decode($this->input('meta'), true);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $this->merge(['meta' => $decoded]);
+            }
+        }
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $rule = $this->route('commission_rule');
+
+            $input = $this->all();
+
+            $percentage = array_key_exists('percentage', $input)
+                ? $input['percentage']
+                : ($rule?->percentage ?? null);
+
+            $flat = array_key_exists('flat_amount', $input)
+                ? $input['flat_amount']
+                : ($rule?->flat_amount ?? null);
+
+            $defined = array_filter([$percentage, $flat], static fn ($value) => $value !== null);
+
+            if (count($defined) === 0) {
+                $validator->errors()->add('percentage', 'Either percentage or flat amount must be provided.');
+            }
+
+            $provided = array_filter([
+                $input['percentage'] ?? null,
+                $input['flat_amount'] ?? null,
+            ], static fn ($value) => $value !== null);
+
+            if (count($provided) > 1) {
+                $validator->errors()->add('percentage', 'Only one of percentage or flat amount may be provided in a single update.');
+            }
+        });
+    }
+}
