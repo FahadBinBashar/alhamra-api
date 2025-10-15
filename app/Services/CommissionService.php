@@ -33,7 +33,8 @@ class CommissionService
         $rules = CommissionRule::active()
             ->where('trigger', CommissionRule::TRIGGER_ON_PAYMENT)
             ->whereIn('scope', $scopes)
-            ->get();
+            ->get()
+            ->filter(fn (CommissionRule $rule) => $this->shouldApplyRuleToPayment($rule, $payment));
 
         return DB::transaction(function () use ($payment, $rules) {
             return $rules->map(function (CommissionRule $rule, int $index) use ($payment) {
@@ -43,7 +44,9 @@ class CommissionService
                     return null;
                 }
 
-                $amount = $this->calculateAmount($rule, $payment->amount);
+                $commissionableAmount = $this->resolveCommissionableAmount($rule, $payment);
+
+                $amount = $this->calculateAmount($rule, $commissionableAmount);
 
                 if ($amount <= 0) {
                     return null;
@@ -102,6 +105,43 @@ class CommissionService
         }
 
         return round($flat, 2);
+    }
+
+    protected function resolveCommissionableAmount(CommissionRule $rule, Payment $payment): float
+    {
+        $meta = $rule->meta ?? [];
+
+        $base = null;
+
+        if (is_array($meta) && array_key_exists('commission_base', $meta)) {
+            $base = $meta['commission_base'];
+        }
+
+        return match ($base) {
+            'amount' => (float) $payment->amount,
+            default => $payment->commissionable_amount,
+        };
+    }
+
+    protected function shouldApplyRuleToPayment(CommissionRule $rule, Payment $payment): bool
+    {
+        $meta = $rule->meta ?? [];
+
+        if (! is_array($meta) || ! array_key_exists('applies_to', $meta)) {
+            return true;
+        }
+
+        $targets = $meta['applies_to'];
+
+        if (is_string($targets)) {
+            $targets = [$targets];
+        }
+
+        if (! is_array($targets)) {
+            return true;
+        }
+
+        return in_array($payment->type, $targets, true);
     }
 
     protected function recordCommissionLiability(Commission $commission): void
