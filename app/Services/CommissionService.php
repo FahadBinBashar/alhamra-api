@@ -6,6 +6,7 @@ use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\CommissionRule;
+use App\Models\Employee;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\Accounting\LedgerService;
@@ -20,7 +21,7 @@ class CommissionService
 
     public function handlePayment(Payment $payment): Collection
     {
-        $payment->loadMissing('salesOrder.agent', 'salesOrder.branch');
+        $payment->loadMissing('salesOrder.agent', 'salesOrder.branch', 'salesOrder.sourceMe');
 
         $scopes = [$payment->type, CommissionRule::SCOPE_GLOBAL];
 
@@ -60,10 +61,12 @@ class CommissionService
                     'recipient_id' => $recipient['id'],
                     'amount' => $amount,
                     'status' => 'unpaid',
-                    'meta' => [
+                    'meta' => array_filter([
                         'payment_type' => $payment->type,
                         'rule_scope' => $rule->scope,
-                    ],
+                        'order_created_by' => $payment->salesOrder?->created_by,
+                        'source_me_id' => $payment->salesOrder?->source_me_id,
+                    ]),
                 ]);
 
                 $this->recordCommissionLiability($commission);
@@ -81,6 +84,18 @@ class CommissionService
                 'id' => $payment->salesOrder->agent->getKey(),
             ] : null,
             'branch' => $payment->salesOrder?->branch ? [
+                'type' => Branch::class,
+                'id' => $payment->salesOrder->branch->getKey(),
+            ] : null,
+            'source_me' => $payment->salesOrder?->sourceMe ? [
+                'type' => Employee::class,
+                'id' => $payment->salesOrder->sourceMe->getKey(),
+            ] : null,
+            'order_agent' => $payment->salesOrder?->agent ? [
+                'type' => Agent::class,
+                'id' => $payment->salesOrder->agent->getKey(),
+            ] : null,
+            'order_branch' => $payment->salesOrder?->branch ? [
                 'type' => Branch::class,
                 'id' => $payment->salesOrder->branch->getKey(),
             ] : null,

@@ -27,6 +27,7 @@ class SalesOrderController extends Controller
             'branch',
             'customer',
             'employee.user',
+            'sourceMe.user',
             'introducer',
             'rankDefinition',
         ])
@@ -46,19 +47,12 @@ class SalesOrderController extends Controller
         $user = $request->user();
         $this->ensureSalesEntryPermission($user);
 
-        $employee = $user?->employee;
-
-        if (! $employee) {
-            throw ValidationException::withMessages([
-                'employee_id' => 'The authenticated user is not linked to an employee profile.',
-            ]);
-        }
-
         $data = $request->validate([
             'customer_id' => ['required', 'integer', 'exists:users,id'],
             'sales_type' => ['required', 'string', Rule::in(SalesOrder::SALES_TYPES)],
             'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
+            'source_me_id' => ['required', 'integer', 'exists:employees,id'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['required', 'numeric', 'min:0'],
@@ -70,7 +64,17 @@ class SalesOrderController extends Controller
             'items.*.unit_price' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $data = $this->resolveEmployeeContext($data, $employee);
+        $sourceEmployee = Employee::find($data['source_me_id']);
+
+        if (! $sourceEmployee) {
+            throw ValidationException::withMessages([
+                'source_me_id' => 'The selected marketing executive could not be found.',
+            ]);
+        }
+
+        $data = $this->applyEntryRoleConstraints($user, $data);
+        $data = $this->resolveSourceContext($data, $sourceEmployee);
+        $data['created_by'] = $this->resolveCreatedByFlag($user);
 
         $preparedItems = null;
         if (! empty($data['items'])) {
@@ -93,6 +97,7 @@ class SalesOrderController extends Controller
             $payload = Arr::only($data, [
                 'customer_id',
                 'employee_id',
+                'source_me_id',
                 'agent_id',
                 'branch_id',
                 'sales_type',
@@ -100,6 +105,7 @@ class SalesOrderController extends Controller
                 'introducer_id',
                 'down_payment',
                 'total',
+                'created_by',
             ]);
             $payload['status'] = SalesOrder::STATUS_ACTIVE;
 
@@ -123,6 +129,7 @@ class SalesOrderController extends Controller
                 'branch',
                 'customer',
                 'employee.user',
+                'sourceMe.user',
                 'introducer',
                 'rankDefinition',
             ]),
@@ -140,6 +147,7 @@ class SalesOrderController extends Controller
                 'branch',
                 'customer',
                 'employee.user',
+                'sourceMe.user',
                 'introducer',
                 'rankDefinition',
             ]),
@@ -155,6 +163,7 @@ class SalesOrderController extends Controller
             'sales_type' => ['sometimes', 'string', Rule::in(SalesOrder::SALES_TYPES)],
             'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
             'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
+            'source_me_id' => ['sometimes', 'integer', 'exists:employees,id'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['sometimes', 'nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['sometimes', 'numeric', 'min:0'],
@@ -166,6 +175,22 @@ class SalesOrderController extends Controller
             'items.*.qty' => ['required_with:items', 'integer', 'min:1'],
             'items.*.unit_price' => ['nullable', 'numeric', 'min:0'],
         ]);
+
+        $data = $this->applyEntryRoleConstraints($request->user(), $data);
+
+        if (array_key_exists('source_me_id', $data)) {
+            $sourceEmployee = Employee::find($data['source_me_id']);
+
+            if (! $sourceEmployee) {
+                throw ValidationException::withMessages([
+                    'source_me_id' => 'The selected marketing executive could not be found.',
+                ]);
+            }
+
+            $data = $this->resolveSourceContext($data, $sourceEmployee);
+        } else {
+            $this->assertExistingSourceAlignment($salesOrder, $data);
+        }
 
         $itemsProvided = array_key_exists('items', $data);
         $preparedItems = ['items' => []];
@@ -216,6 +241,7 @@ class SalesOrderController extends Controller
                 'branch',
                 'customer',
                 'employee.user',
+                'sourceMe.user',
                 'introducer',
                 'rankDefinition',
             ]),
@@ -240,13 +266,69 @@ class SalesOrderController extends Controller
             User::ROLE_ADMIN,
             User::ROLE_BRANCH_ADMIN,
             User::ROLE_AGENT_ADMIN,
+            User::ROLE_AGENT,
         ], true)) {
             abort(403, 'You are not authorised to manage sales entries.');
         }
     }
 
-    private function resolveEmployeeContext(array $data, Employee $employee): array
+    private function resolveCreatedByFlag(?User $user): string
     {
+        if (! $user) {
+            return SalesOrder::CREATED_BY_SYSTEM;
+        }
+
+        return match ($user->role) {
+            User::ROLE_ADMIN => SalesOrder::CREATED_BY_ADMIN,
+            User::ROLE_BRANCH_ADMIN => SalesOrder::CREATED_BY_BRANCH_ADMIN,
+            User::ROLE_AGENT, User::ROLE_AGENT_ADMIN => SalesOrder::CREATED_BY_AGENT,
+            User::ROLE_CUSTOMER => SalesOrder::CREATED_BY_CUSTOMER,
+            default => SalesOrder::CREATED_BY_SYSTEM,
+        };
+    }
+
+    private function applyEntryRoleConstraints(?User $user, array $data): array
+    {
+        if (! $user) {
+            return $data;
+        }
+
+        if (in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
+            $agentProfile = $user->agent;
+
+            if (! $agentProfile) {
+                throw ValidationException::withMessages([
+                    'agent_id' => 'The authenticated agent profile is missing.',
+                ]);
+            }
+
+            if (isset($data['agent_id']) && (int) $data['agent_id'] !== (int) $agentProfile->id) {
+                throw ValidationException::withMessages([
+                    'agent_id' => 'Agents may only manage orders for their own profile.',
+                ]);
+            }
+
+            $data['agent_id'] = $agentProfile->id;
+
+            if (! array_key_exists('branch_id', $data) || is_null($data['branch_id'])) {
+                $data['branch_id'] = $agentProfile->branch_id;
+            }
+        }
+
+        if (array_key_exists('agent_id', $data) && ! is_null($data['agent_id'])) {
+            $data['agent_id'] = (int) $data['agent_id'];
+        }
+
+        if (array_key_exists('branch_id', $data) && ! is_null($data['branch_id'])) {
+            $data['branch_id'] = (int) $data['branch_id'];
+        }
+
+        return $data;
+    }
+
+    private function resolveSourceContext(array $data, Employee $employee): array
+    {
+        $data['source_me_id'] = $employee->id;
         $data['employee_id'] = $employee->id;
 
         if (! array_key_exists('branch_id', $data) || is_null($data['branch_id'])) {
@@ -263,20 +345,58 @@ class SalesOrderController extends Controller
 
         $messages = [];
 
-        foreach (['branch_id', 'agent_id', 'rank'] as $field) {
-            if (! isset($data[$field])) {
-                $messages[$field] = 'The '.$field.' could not be determined from the employee profile.';
-            }
+        if ($employee->branch_id && isset($data['branch_id']) && (int) $employee->branch_id !== (int) $data['branch_id']) {
+            $messages['branch_id'] = 'The selected branch does not match the marketing executive profile.';
+        }
+
+        if ($employee->agent_id && isset($data['agent_id']) && (int) $employee->agent_id !== (int) $data['agent_id']) {
+            $messages['agent_id'] = 'The selected agent does not match the marketing executive profile.';
+        }
+
+        if ($employee->rank && isset($data['rank']) && $employee->rank !== $data['rank']) {
+            $messages['rank'] = 'The selected rank does not match the marketing executive profile.';
         }
 
         if ($messages) {
             throw ValidationException::withMessages($messages);
         }
 
-        $data['branch_id'] = (int) $data['branch_id'];
-        $data['agent_id'] = (int) $data['agent_id'];
+        if (isset($data['branch_id'])) {
+            $data['branch_id'] = (int) $data['branch_id'];
+        }
+
+        if (isset($data['agent_id'])) {
+            $data['agent_id'] = (int) $data['agent_id'];
+        }
 
         return $data;
+    }
+
+    private function assertExistingSourceAlignment(SalesOrder $salesOrder, array $data): void
+    {
+        $source = $salesOrder->sourceMe;
+
+        if (! $source) {
+            return;
+        }
+
+        $messages = [];
+
+        if (array_key_exists('branch_id', $data) && ! is_null($data['branch_id']) && $source->branch_id && (int) $data['branch_id'] !== (int) $source->branch_id) {
+            $messages['branch_id'] = 'The selected branch does not match the marketing executive profile.';
+        }
+
+        if (array_key_exists('agent_id', $data) && ! is_null($data['agent_id']) && $source->agent_id && (int) $data['agent_id'] !== (int) $source->agent_id) {
+            $messages['agent_id'] = 'The selected agent does not match the marketing executive profile.';
+        }
+
+        if (array_key_exists('rank', $data) && ! is_null($data['rank']) && $source->rank && $source->rank !== $data['rank']) {
+            $messages['rank'] = 'The selected rank does not match the marketing executive profile.';
+        }
+
+        if ($messages) {
+            throw ValidationException::withMessages($messages);
+        }
     }
 
     private function ensureAgentBelongsToBranch(?int $agentId, ?int $branchId): void
