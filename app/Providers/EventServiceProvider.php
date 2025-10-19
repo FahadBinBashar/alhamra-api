@@ -22,8 +22,8 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         PaymentRecorded::class => [
-            ProcessPaymentCommissions::class,
             RecordPaymentLedgerEntry::class,
+            ProcessPaymentCommissions::class,
         ],
     ];
 

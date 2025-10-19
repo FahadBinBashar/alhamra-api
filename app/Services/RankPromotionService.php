@@ -12,6 +12,19 @@ use Illuminate\Support\Collection;
 
 class RankPromotionService
 {
+    public function promoteToMarketingOfficer(Employee $employee): bool
+    {
+        if ($employee->rank !== Employee::RANK_ME) {
+            return false;
+        }
+
+        return DB::transaction(function () use ($employee) {
+            $employee->forceFill(['rank' => Employee::RANK_MO])->save();
+
+            return true;
+        });
+    }
+
     public function evaluate(): void
     {
         $requirements = RankRequirement::orderBy('sequence')->get();
