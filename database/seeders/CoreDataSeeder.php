@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\CommissionRule;
+use App\Models\CommissionSetting;
 use App\Models\LedgerAccount;
 use App\Models\Rank;
 use App\Models\RankRequirement;
@@ -21,7 +22,79 @@ class CoreDataSeeder extends Seeder
         $this->seedRanks();
         $this->seedRankRequirements();
         $this->seedLedgerAccounts();
+        $this->seedCommissionSettings();
         $this->seedCommissionRules();
+    }
+
+    private function seedCommissionSettings(): void
+    {
+        $settings = [
+            'share_value' => 500000,
+            'agent_rates' => [
+                'down_payment' => 5,
+                'installment' => 1,
+            ],
+            'branch_rates' => [
+                'down_payment' => 5,
+                'installment' => 1,
+            ],
+            'development_bonus' => [
+                'MO' => [
+                    'down_payment' => 15,
+                    'installment' => 5,
+                ],
+                'MM' => [
+                    'down_payment' => 18,
+                    'installment' => 6,
+                ],
+                'DGM' => [
+                    'down_payment' => 25,
+                    'installment' => 9,
+                ],
+                'GM' => [
+                    'down_payment' => 30,
+                    'installment' => 11,
+                ],
+            ],
+            'monthly_incentives' => [
+                'MO' => 10000,
+                'MM' => 20000,
+                'DGM' => 40000,
+                'GM' => 100000,
+                'PD' => 200000,
+                'ED' => 200000,
+                'DMD' => 200000,
+                'DIR' => 200000,
+            ],
+            'director_fund' => [
+                'PD' => [
+                    'percentage' => 2,
+                    'frequency' => 'quarterly',
+                ],
+                'ED' => [
+                    'percentage' => 2,
+                    'frequency' => 'half_yearly',
+                ],
+                'DMD' => [
+                    'percentage' => 1,
+                    'frequency' => 'yearly',
+                ],
+                'DIR' => [
+                    'percentage' => 20,
+                    'per_person_share' => 1,
+                ],
+            ],
+            'service_sales' => [
+                'percentage' => 15,
+            ],
+        ];
+
+        foreach ($settings as $key => $value) {
+            CommissionSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
     }
 
     private function seedBranches(): void
@@ -77,14 +150,15 @@ class CoreDataSeeder extends Seeder
     private function seedRanks(): void
     {
         $ranks = [
-            ['code' => 'ME', 'name' => 'ME', 'sort_order' => 1],
-            ['code' => 'MM', 'name' => 'MM', 'sort_order' => 2],
-            ['code' => 'DGM', 'name' => 'DGM', 'sort_order' => 3],
-            ['code' => 'GM', 'name' => 'GM', 'sort_order' => 4],
-            ['code' => 'PD', 'name' => 'PD', 'sort_order' => 5],
-            ['code' => 'ED', 'name' => 'ED', 'sort_order' => 6],
-            ['code' => 'DMD', 'name' => 'DMD', 'sort_order' => 7],
-            ['code' => 'HD', 'name' => 'HD', 'sort_order' => 8],
+            ['code' => 'ME', 'name' => 'Marketing Executive', 'sort_order' => 1],
+            ['code' => 'MO', 'name' => 'Marketing Officer', 'sort_order' => 2],
+            ['code' => 'MM', 'name' => 'Marketing Manager', 'sort_order' => 3],
+            ['code' => 'DGM', 'name' => 'Deputy General Manager', 'sort_order' => 4],
+            ['code' => 'GM', 'name' => 'General Manager', 'sort_order' => 5],
+            ['code' => 'PD', 'name' => 'Project Director', 'sort_order' => 6],
+            ['code' => 'ED', 'name' => 'Executive Director', 'sort_order' => 7],
+            ['code' => 'DMD', 'name' => 'Deputy Managing Director', 'sort_order' => 8],
+            ['code' => 'DIR', 'name' => 'Director', 'sort_order' => 9],
         ];
 
         foreach ($ranks as $rank) {
@@ -93,6 +167,8 @@ class CoreDataSeeder extends Seeder
                 Arr::except($rank, ['code'])
             );
         }
+
+        Rank::whereNotIn('code', array_column($ranks, 'code'))->delete();
     }
 
     private function seedRankRequirements(): void
@@ -106,89 +182,126 @@ class CoreDataSeeder extends Seeder
                 'bonus_installment' => 0,
                 'direct_required' => 0,
                 'meta' => [
-                    'description' => 'Entry level marketers recruited by MM and above ranks.',
-                    'incentive' => 0,
+                    'shares_required' => 0,
+                    'share_value' => 500000,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                ],
+            ],
+            [
+                'rank' => 'MO',
+                'sequence' => 2,
+                'personal_sales_target' => 500000,
+                'bonus_down_payment' => 15,
+                'bonus_installment' => 5,
+                'direct_required' => 0,
+                'meta' => [
+                    'shares_required' => 1,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                    'monthly_incentive' => 10000,
                 ],
             ],
             [
                 'rank' => 'MM',
-                'sequence' => 2,
-                'personal_sales_target' => 100000,
-                'bonus_down_payment' => 5,
-                'bonus_installment' => 2,
+                'sequence' => 3,
+                'personal_sales_target' => 1000000,
+                'bonus_down_payment' => 18,
+                'bonus_installment' => 6,
                 'direct_required' => 0,
                 'meta' => [
+                    'shares_required' => 3,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
                     'monthly_incentive' => 20000,
                 ],
             ],
             [
                 'rank' => 'DGM',
-                'sequence' => 3,
-                'personal_sales_target' => 100000,
-                'bonus_down_payment' => 10,
-                'bonus_installment' => 4,
-                'direct_required' => 5,
+                'sequence' => 4,
+                'personal_sales_target' => 1500000,
+                'bonus_down_payment' => 25,
+                'bonus_installment' => 9,
+                'direct_required' => 0,
                 'meta' => [
-                    'monthly_incentive' => 50000,
+                    'shares_required' => 6,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                    'monthly_incentive' => 40000,
                 ],
             ],
             [
                 'rank' => 'GM',
-                'sequence' => 4,
-                'personal_sales_target' => 100000,
-                'bonus_down_payment' => 15,
-                'bonus_installment' => 6,
-                'direct_required' => 10,
+                'sequence' => 5,
+                'personal_sales_target' => 2000000,
+                'bonus_down_payment' => 30,
+                'bonus_installment' => 11,
+                'direct_required' => 0,
                 'meta' => [
+                    'shares_required' => 10,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
                     'monthly_incentive' => 100000,
                 ],
             ],
             [
                 'rank' => 'PD',
-                'sequence' => 5,
-                'personal_sales_target' => 150000,
-                'bonus_down_payment' => 15,
-                'bonus_installment' => 6,
-                'direct_required' => 20,
+                'sequence' => 6,
+                'personal_sales_target' => 2500000,
+                'bonus_down_payment' => 30,
+                'bonus_installment' => 11,
+                'direct_required' => 0,
                 'meta' => [
-                    'monthly_incentive' => 200000,
-                    'fund_percentage' => 3,
+                    'shares_required' => 12,
+                    'direct_mm_required' => 12,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                    'fund_percentage' => 2,
                 ],
             ],
             [
                 'rank' => 'ED',
-                'sequence' => 6,
-                'personal_sales_target' => 200000,
-                'bonus_down_payment' => 15,
-                'bonus_installment' => 6,
-                'direct_required' => 30,
+                'sequence' => 7,
+                'personal_sales_target' => 3000000,
+                'bonus_down_payment' => 30,
+                'bonus_installment' => 11,
+                'direct_required' => 0,
                 'meta' => [
-                    'quarterly_incentive' => 300000,
-                    'fund_percentage' => 1,
+                    'shares_required' => 18,
+                    'direct_mm_required' => 25,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                    'fund_percentage' => 2,
                 ],
             ],
             [
                 'rank' => 'DMD',
-                'sequence' => 7,
-                'personal_sales_target' => 250000,
-                'bonus_down_payment' => 15,
-                'bonus_installment' => 6,
-                'direct_required' => 40,
+                'sequence' => 8,
+                'personal_sales_target' => 3500000,
+                'bonus_down_payment' => 30,
+                'bonus_installment' => 11,
+                'direct_required' => 0,
                 'meta' => [
-                    'yearly_incentive' => 500000,
+                    'shares_required' => 24,
+                    'direct_mm_required' => 40,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
                     'fund_percentage' => 1,
                 ],
             ],
             [
-                'rank' => 'HD',
-                'sequence' => 8,
-                'personal_sales_target' => 300000,
-                'bonus_down_payment' => 20,
-                'bonus_installment' => 8,
-                'direct_required' => 10,
+                'rank' => 'DIR',
+                'sequence' => 9,
+                'personal_sales_target' => 4000000,
+                'bonus_down_payment' => 30,
+                'bonus_installment' => 11,
+                'direct_required' => 0,
                 'meta' => [
-                    'profit_share' => 20,
-                    'yearly_incentive' => 1000000,
+                    'shares_required' => 30,
+                    'direct_pd_required' => 20,
+                    'minimum_share_per_period' => 1,
+                    'period_months' => 4,
+                    'fund_percentage' => 20,
                 ],
             ],
         ];
@@ -199,6 +312,8 @@ class CoreDataSeeder extends Seeder
                 Arr::except($rank, ['rank'])
             );
         }
+
+        RankRequirement::whereNotIn('rank', array_column($ranks, 'rank'))->delete();
     }
 
     private function seedLedgerAccounts(): void
