@@ -9,7 +9,7 @@ class EvaluateAgentRanks extends Command
 {
     protected $signature = 'ranks:evaluate';
 
-    protected $description = 'Evaluate agent rank promotions and disburse incentives.';
+    protected $description = 'Evaluate marketing employee rank promotions and apply status updates.';
 
     public function handle(RankPromotionService $service): int
     {

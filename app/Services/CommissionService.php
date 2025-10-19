@@ -5,10 +5,10 @@ namespace App\Services;
 use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Commission;
-use App\Models\CommissionRule;
+use App\Models\CommissionSetting;
 use App\Models\Employee;
 use App\Models\Payment;
-use App\Models\User;
+use App\Models\SalesOrder;
 use App\Services\Accounting\LedgerService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,142 +21,273 @@ class CommissionService
 
     public function handlePayment(Payment $payment): Collection
     {
-        $payment->loadMissing('salesOrder.agent', 'salesOrder.branch', 'salesOrder.sourceMe');
+        $payment->loadMissing(
+            'salesOrder.agent',
+            'salesOrder.branch',
+            'salesOrder.sourceMe.superior'
+        );
 
-        $scopes = [$payment->type, CommissionRule::SCOPE_GLOBAL];
-
-        $rank = $payment->salesOrder?->rank;
-
-        if ($rank) {
-            $scopes[] = 'rank:' . $rank;
+        if (! $payment->salesOrder) {
+            return collect();
         }
 
-        $rules = CommissionRule::active()
-            ->where('trigger', CommissionRule::TRIGGER_ON_PAYMENT)
-            ->whereIn('scope', $scopes)
-            ->get()
-            ->filter(fn (CommissionRule $rule) => $this->shouldApplyRuleToPayment($rule, $payment));
+        return DB::transaction(function () use ($payment) {
+            $commissions = collect();
 
-        return DB::transaction(function () use ($payment, $rules) {
-            return $rules->map(function (CommissionRule $rule, int $index) use ($payment) {
-                $recipient = $this->resolveRecipient($rule, $payment);
+            if ($this->isServiceOrder($payment->salesOrder)) {
+                $serviceCommission = $this->createServiceCommission($payment);
 
-                if (! $recipient) {
-                    return null;
+                if ($serviceCommission) {
+                    $commissions->push($serviceCommission);
                 }
 
-                $commissionableAmount = $this->resolveCommissionableAmount($rule, $payment);
+                return $commissions;
+            }
 
-                $amount = $this->calculateAmount($rule, $commissionableAmount);
+            $commissions = $commissions->merge($this->createAgentAndBranchCommissions($payment));
+            $commissions = $commissions->merge($this->createDevelopmentBonuses($payment));
 
-                if ($amount <= 0) {
-                    return null;
-                }
-
-                $commission = Commission::create([
-                    'commission_rule_id' => $rule->id,
-                    'payment_id' => $payment->id,
-                    'sales_order_id' => $payment->sales_order_id,
-                    'recipient_type' => $recipient['type'],
-                    'recipient_id' => $recipient['id'],
-                    'amount' => $amount,
-                    'status' => 'unpaid',
-                    'meta' => array_filter([
-                        'payment_type' => $payment->type,
-                        'rule_scope' => $rule->scope,
-                        'order_created_by' => $payment->salesOrder?->created_by,
-                        'source_me_id' => $payment->salesOrder?->source_me_id,
-                    ]),
-                ]);
-
-                $this->recordCommissionLiability($commission);
-
-                return $commission;
-            })->filter();
+            return $commissions->filter();
         });
     }
 
-    protected function resolveRecipient(CommissionRule $rule, Payment $payment): ?array
+    protected function createServiceCommission(Payment $payment): ?Commission
     {
-        return match ($rule->recipient_type) {
-            'agent' => $payment->salesOrder?->agent ? [
+        $order = $payment->salesOrder;
+        $serviceConfig = CommissionSetting::value('service_sales', null);
+
+        if (is_array($serviceConfig)) {
+            $percentage = (float) ($serviceConfig['percentage'] ?? 15);
+        } elseif ($serviceConfig !== null) {
+            $percentage = (float) $serviceConfig;
+        } else {
+            $percentage = 15.0;
+        }
+
+        if ($percentage <= 0) {
+            return null;
+        }
+
+        $recipient = $this->resolveServiceRecipient($order);
+
+        if (! $recipient) {
+            return null;
+        }
+
+        $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+
+        if ($amount <= 0) {
+            return null;
+        }
+
+        return $this->storeCommission($payment, $recipient['type'], $recipient['id'], $amount, [
+            'category' => 'service_sales',
+            'payment_type' => $payment->type,
+            'order_created_by' => $order->created_by,
+        ]);
+    }
+
+    protected function resolveServiceRecipient(SalesOrder $order): ?array
+    {
+        if ($order->agent) {
+            return [
                 'type' => Agent::class,
-                'id' => $payment->salesOrder->agent->getKey(),
-            ] : null,
-            'branch' => $payment->salesOrder?->branch ? [
-                'type' => Branch::class,
-                'id' => $payment->salesOrder->branch->getKey(),
-            ] : null,
-            'source_me' => $payment->salesOrder?->sourceMe ? [
+                'id' => $order->agent->getKey(),
+            ];
+        }
+
+        $source = $order->sourceMe;
+
+        if ($source && $this->employeeEligibleForCommission($source)) {
+            return [
                 'type' => Employee::class,
-                'id' => $payment->salesOrder->sourceMe->getKey(),
-            ] : null,
-            'order_agent' => $payment->salesOrder?->agent ? [
-                'type' => Agent::class,
-                'id' => $payment->salesOrder->agent->getKey(),
-            ] : null,
-            'order_branch' => $payment->salesOrder?->branch ? [
+                'id' => $source->getKey(),
+            ];
+        }
+
+        if ($order->branch) {
+            return [
                 'type' => Branch::class,
-                'id' => $payment->salesOrder->branch->getKey(),
-            ] : null,
-            'owner', 'director' => $rule->recipient_id ? [
-                'type' => User::class,
-                'id' => $rule->recipient_id,
-            ] : null,
-            default => $rule->recipient_id ? [
-                'type' => $rule->recipient_type,
-                'id' => $rule->recipient_id,
-            ] : null,
-        };
+                'id' => $order->branch->getKey(),
+            ];
+        }
+
+        return null;
     }
 
-    protected function calculateAmount(CommissionRule $rule, $paymentAmount): float
+    protected function createAgentAndBranchCommissions(Payment $payment): Collection
     {
-        $percentage = (float) ($rule->percentage ?? 0);
-        $flat = (float) ($rule->flat_amount ?? 0);
+        $order = $payment->salesOrder;
+        $commissions = collect();
+        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
 
-        if ($percentage > 0) {
-            return round($paymentAmount * $percentage / 100, 2);
+        $agentRates = $this->getArraySetting('agent_rates');
+        $branchRates = $this->getArraySetting('branch_rates');
+
+        if ($order->created_by === SalesOrder::CREATED_BY_AGENT && $order->agent) {
+            $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+
+            if ($percentage > 0) {
+                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+
+                if ($amount > 0) {
+                    $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
+                        'category' => 'agent',
+                        'payment_type' => $payment->type,
+                    ]));
+                }
+            }
+
+            return $commissions;
         }
 
-        return round($flat, 2);
+        if ($order->branch) {
+            $percentage = (float) ($branchRates[$percentageKey] ?? 0);
+
+            if ($percentage > 0) {
+                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+
+                if ($amount > 0) {
+                    $commissions->push($this->storeCommission($payment, Branch::class, $order->branch->getKey(), $amount, [
+                        'category' => 'branch',
+                        'payment_type' => $payment->type,
+                    ]));
+                }
+            }
+        }
+
+        if ($order->agent) {
+            $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+
+            if ($percentage > 0) {
+                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+
+                if ($amount > 0) {
+                    $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
+                        'category' => 'agent',
+                        'payment_type' => $payment->type,
+                    ]));
+                }
+            }
+        }
+
+        return $commissions;
     }
 
-    protected function resolveCommissionableAmount(CommissionRule $rule, Payment $payment): float
+    protected function createDevelopmentBonuses(Payment $payment): Collection
     {
-        $meta = $rule->meta ?? [];
+        $order = $payment->salesOrder;
+        $source = $order->sourceMe;
 
-        $base = null;
-
-        if (is_array($meta) && array_key_exists('commission_base', $meta)) {
-            $base = $meta['commission_base'];
+        if (! $source) {
+            return collect();
         }
 
-        return match ($base) {
-            'amount' => (float) $payment->amount,
-            default => $payment->commissionable_amount,
-        };
+        $chain = $this->buildSuperiorChain($source);
+
+        if ($chain->isEmpty()) {
+            return collect();
+        }
+
+        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+        $definitions = $this->getArraySetting('development_bonus');
+
+        if (empty($definitions)) {
+            return collect();
+        }
+
+        $commissions = collect();
+        $previousPercent = 0.0;
+
+        foreach ($definitions as $rank => $config) {
+            $recipient = $chain->first(fn (Employee $employee) => $employee->rank === $rank);
+
+            if (! $recipient || ! $this->employeeEligibleForCommission($recipient)) {
+                continue;
+            }
+
+            $targetPercent = (float) ($config[$percentageKey] ?? 0);
+
+            if ($targetPercent <= $previousPercent) {
+                continue;
+            }
+
+            $percentage = $targetPercent - $previousPercent;
+            $previousPercent = $targetPercent;
+
+            $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+
+            if ($amount <= 0) {
+                continue;
+            }
+
+            $commissions->push($this->storeCommission($payment, Employee::class, $recipient->getKey(), $amount, [
+                'category' => 'development_bonus',
+                'rank' => $recipient->rank,
+                'payment_type' => $payment->type,
+            ]));
+        }
+
+        return $commissions;
     }
 
-    protected function shouldApplyRuleToPayment(CommissionRule $rule, Payment $payment): bool
+    protected function buildSuperiorChain(Employee $employee): Collection
     {
-        $meta = $rule->meta ?? [];
+        $chain = collect();
+        $current = $employee;
 
-        if (! is_array($meta) || ! array_key_exists('applies_to', $meta)) {
-            return true;
+        while ($current) {
+            $chain->push($current);
+            $current->loadMissing('superior');
+            $current = $current->superior;
         }
 
-        $targets = $meta['applies_to'];
+        return $chain;
+    }
 
-        if (is_string($targets)) {
-            $targets = [$targets];
-        }
+    protected function employeeEligibleForCommission(Employee $employee): bool
+    {
+        $eligibleRanks = array_keys($this->getArraySetting('development_bonus'));
 
-        if (! is_array($targets)) {
-            return true;
-        }
+        return in_array($employee->rank, $eligibleRanks, true);
+    }
 
-        return in_array($payment->type, $targets, true);
+    protected function isServiceOrder(SalesOrder $order): bool
+    {
+        return $order->sales_type === SalesOrder::TYPE_SERVICE;
+    }
+
+    protected function calculatePercentageAmount(float $percentage, float $baseAmount): float
+    {
+        return round($baseAmount * $percentage / 100, 2);
+    }
+
+    protected function getArraySetting(string $key): array
+    {
+        $value = CommissionSetting::value($key, []);
+
+        return is_array($value) ? $value : [];
+    }
+
+    protected function storeCommission(Payment $payment, string $recipientType, int $recipientId, float $amount, array $meta = []): Commission
+    {
+        $commission = Commission::create([
+            'payment_id' => $payment->id,
+            'sales_order_id' => $payment->sales_order_id,
+            'recipient_type' => $recipientType,
+            'recipient_id' => $recipientId,
+            'amount' => $amount,
+            'status' => 'unpaid',
+            'meta' => array_filter(array_merge($meta, [
+                'payment_type' => $payment->type,
+                'order_created_by' => $payment->salesOrder?->created_by,
+                'source_me_id' => $payment->salesOrder?->source_me_id,
+            ])),
+        ]);
+
+        $this->recordCommissionLiability($commission);
+
+        return $commission;
     }
 
     protected function recordCommissionLiability(Commission $commission): void

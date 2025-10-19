@@ -230,12 +230,12 @@ class EmployeeManagementTest extends TestCase
             'user_id' => $hdUser->id,
             'branch_id' => $branch->id,
             'agent_id' => $hdAgent->id,
-            'rank' => Employee::RANK_HD,
+            'rank' => Employee::RANK_DIR,
             'employee_code' => Str::uuid()->toString(),
-            'full_name_en' => 'HD Employee',
+            'full_name_en' => 'Director Employee',
         ]);
 
-        $response = $this->getJson('/api/v1/employees/superiors?rank=' . Employee::RANK_HD);
+        $response = $this->getJson('/api/v1/employees/superiors?rank=' . Employee::RANK_DIR);
 
         $response->assertOk();
         $this->assertSame([], $response->json('data'));

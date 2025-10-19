@@ -6,6 +6,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CommissionRuleController;
+use App\Http\Controllers\CommissionSettingController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InstallmentController;
@@ -67,6 +68,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('customers', CustomerController::class)->only(['index', 'store', 'show']);
     Route::apiResource('sales-orders', SalesOrderController::class);
     Route::apiResource('commission-rules', CommissionRuleController::class);
+    Route::apiResource('commission-settings', CommissionSettingController::class);
     Route::apiResource('commissions', CommissionController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);
