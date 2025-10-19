@@ -2,122 +2,111 @@
 
 namespace App\Services;
 
-use App\Models\Agent;
-use App\Models\RankMembership;
+use App\Models\CommissionSetting;
+use App\Models\Employee;
+use App\Models\SalesOrder;
 use App\Models\RankRequirement;
-use App\Services\Accounting\LedgerService;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class RankPromotionService
 {
-    public function __construct(private LedgerService $ledgerService)
-    {
-    }
-
     public function evaluate(): void
     {
-        Agent::with(['salesOrders', 'rankMemberships'])
-            ->chunkById(100, function ($agents) {
-                $requirements = RankRequirement::orderBy('sequence')->get();
-
-                foreach ($agents as $agent) {
-                    $this->evaluateAgent($agent, $requirements);
-                }
-            });
-    }
-
-    public function evaluateAgent(Agent $agent, $requirements = null): void
-    {
-        $requirements ??= RankRequirement::orderBy('sequence')->get();
+        $requirements = RankRequirement::orderBy('sequence')->get();
 
         if ($requirements->isEmpty()) {
             return;
         }
 
-        $salesTotal = $agent->salesOrders()->sum('total');
-        $downPaymentTotal = $agent->salesOrders()->sum('down_payment');
-        $activeRank = $agent->rankMemberships()->where('active', true)->first();
+        Employee::query()
+            ->with('subordinates')
+            ->chunkById(200, function ($employees) use ($requirements) {
+                foreach ($employees as $employee) {
+                    $this->evaluateEmployee($employee, $requirements);
+                }
+            });
+    }
 
-        $eligibleRank = null;
+    public function evaluateEmployee(Employee $employee, ?Collection $requirements = null): void
+    {
+        $requirements ??= RankRequirement::orderBy('sequence')->get();
+
+        if (! $requirements || $requirements->isEmpty()) {
+            return;
+        }
+
+        $shareValueSetting = CommissionSetting::value('share_value', 500000);
+        $shareValue = is_array($shareValueSetting) ? (float) ($shareValueSetting['amount'] ?? 500000) : (float) $shareValueSetting;
+        $ordersQuery = $employee->salesOrders()
+            ->where('status', '!=', SalesOrder::STATUS_CANCELLED);
+
+        $totalDownPayment = (float) (clone $ordersQuery)->sum('down_payment');
+        $shareCount = $shareValue > 0 ? floor($totalDownPayment / $shareValue) : 0;
+
+        $eligibleRank = $employee->rank;
 
         foreach ($requirements as $requirement) {
-            if ($salesTotal < $requirement->personal_sales_target) {
+            if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery)) {
                 break;
             }
 
-            $directRequirement = (int) $requirement->direct_required;
-            if ($directRequirement > 0) {
-                $directCount = Agent::where('branch_id', $agent->branch_id)
-                    ->whereHas('rankMemberships', function ($query) use ($requirement) {
-                        $query->where('rank', $requirement->rank)->where('active', true);
-                    })
-                    ->count();
-
-                if ($directCount < $directRequirement) {
-                    break;
-                }
-            }
-
-            $eligibleRank = $requirement;
+            $eligibleRank = $requirement->rank;
         }
 
-        if (! $eligibleRank) {
+        if ($eligibleRank === $employee->rank) {
             return;
         }
 
-        if ($activeRank && $activeRank->rank === $eligibleRank->rank) {
-            return;
-        }
-
-        DB::transaction(function () use ($agent, $activeRank, $eligibleRank, $downPaymentTotal) {
-            if ($activeRank) {
-                $activeRank->update(['active' => false]);
-            }
-
-            $membership = RankMembership::create([
-                'agent_id' => $agent->id,
-                'rank' => $eligibleRank->rank,
-                'achieved_at' => Carbon::now(),
-                'active' => true,
-                'meta' => [
-                    'trigger' => 'monthly_evaluation',
-                ],
-            ]);
-
-            $this->disburseIncentive($membership, $eligibleRank, $downPaymentTotal);
+        DB::transaction(function () use ($employee, $eligibleRank) {
+            $employee->forceFill(['rank' => $eligibleRank])->save();
         });
     }
 
-    protected function disburseIncentive(RankMembership $membership, RankRequirement $requirement, float $downPaymentTotal): void
+    protected function meetsRequirement(Employee $employee, RankRequirement $requirement, int $shareCount, float $shareValue, Builder $ordersQuery): bool
     {
-        $bonusPercent = (float) $requirement->bonus_down_payment;
-        $amount = round($downPaymentTotal * $bonusPercent / 100, 2);
+        $meta = $requirement->meta ?? [];
 
-        if ($amount <= 0) {
-            return;
+        $requiredShares = (int) ($meta['shares_required'] ?? 0);
+
+        if ($requiredShares > 0 && $shareCount < $requiredShares) {
+            return false;
         }
 
-        $txId = 'RANK-' . $membership->id;
+        $periodMonths = (int) ($meta['period_months'] ?? 0);
+        $minimumSharePerPeriod = (int) ($meta['minimum_share_per_period'] ?? 0);
 
-        $this->ledgerService->record($txId, now(), [
-            [
-                'account_code' => config('accounting.accounts.incentive_fund.code'),
-                'account_name' => config('accounting.accounts.incentive_fund.name'),
-                'account_type' => 'liability',
-                'debit' => $amount,
-                'credit' => 0,
-            ],
-            [
-                'account_code' => config('accounting.accounts.cash.code'),
-                'account_name' => config('accounting.accounts.cash.name'),
-                'account_type' => 'asset',
-                'debit' => 0,
-                'credit' => $amount,
-            ],
-        ], [
-            'rank_membership_id' => $membership->id,
-            'rank' => $membership->rank,
-        ]);
+        if ($periodMonths > 0 && $minimumSharePerPeriod > 0) {
+            $recentDownPayment = (float) (clone $ordersQuery)
+                ->where('created_at', '>=', now()->subMonths($periodMonths))
+                ->sum('down_payment');
+
+            $recentShares = $shareValue > 0 ? floor($recentDownPayment / $shareValue) : 0;
+
+            if ($recentShares < $minimumSharePerPeriod) {
+                return false;
+            }
+        }
+
+        $directRequirements = collect($meta)
+            ->filter(fn ($value, $key) => str_ends_with($key, '_required') && str_starts_with($key, 'direct_'));
+
+        if ($directRequirements->isEmpty()) {
+            return true;
+        }
+
+        foreach ($directRequirements as $key => $requiredCount) {
+            $rankCode = strtoupper(str_replace(['direct_', '_required'], ['', ''], $key));
+            $count = $employee->subordinates()
+                ->where('rank', $rankCode)
+                ->count();
+
+            if ($count < (int) $requiredCount) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
