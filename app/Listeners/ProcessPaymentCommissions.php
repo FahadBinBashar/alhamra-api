@@ -22,6 +22,7 @@ class ProcessPaymentCommissions
         $payment = $event->payment;
 
         $this->promoteMarketingExecutiveIfEligible($payment);
+        $this->evaluateRankProgress($payment);
 
         // $this->commissionService->handlePayment($payment);
     }
@@ -54,6 +55,20 @@ class ProcessPaymentCommissions
 
         if ($payment->relationLoaded('salesOrder')) {
             $payment->salesOrder->setRelation('sourceMe', $sourceEmployee);
+        }
+    }
+
+    protected function evaluateRankProgress(Payment $payment): void
+    {
+        $payment->loadMissing('salesOrder.sourceMe.superior');
+
+        $employee = $payment->salesOrder?->sourceMe;
+
+        while ($employee) {
+            $this->rankPromotionService->evaluateEmployee($employee);
+
+            $employee->loadMissing('superior');
+            $employee = $employee->superior;
         }
     }
 }
