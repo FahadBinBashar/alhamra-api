@@ -39,11 +39,11 @@ class CoreDataSeeder extends Seeder
                 'installment' => 1,
             ],
             'development_bonus' => [
-                'MO' => [
+                'MM' => [
                     'down_payment' => 15,
                     'installment' => 5,
                 ],
-                'MM' => [
+                'AGM' => [
                     'down_payment' => 18,
                     'installment' => 6,
                 ],
@@ -57,8 +57,8 @@ class CoreDataSeeder extends Seeder
                 ],
             ],
             'monthly_incentives' => [
-                'MO' => 10000,
-                'MM' => 20000,
+                'MM' => 10000,
+                'AGM' => 20000,
                 'DGM' => 40000,
                 'GM' => 100000,
                 'PD' => 200000,
@@ -151,8 +151,8 @@ class CoreDataSeeder extends Seeder
     {
         $ranks = [
             ['code' => 'ME', 'name' => 'Marketing Executive', 'sort_order' => 1],
-            ['code' => 'MO', 'name' => 'Marketing Officer', 'sort_order' => 2],
-            ['code' => 'MM', 'name' => 'Marketing Manager', 'sort_order' => 3],
+            ['code' => 'MM', 'name' => 'Marketing Manager', 'sort_order' => 2],
+            ['code' => 'AGM', 'name' => 'Assistant General Manager', 'sort_order' => 3],
             ['code' => 'DGM', 'name' => 'Deputy General Manager', 'sort_order' => 4],
             ['code' => 'GM', 'name' => 'General Manager', 'sort_order' => 5],
             ['code' => 'PD', 'name' => 'Project Director', 'sort_order' => 6],
@@ -189,7 +189,7 @@ class CoreDataSeeder extends Seeder
                 ],
             ],
             [
-                'rank' => 'MO',
+                'rank' => 'MM',
                 'sequence' => 2,
                 'personal_sales_target' => 500000,
                 'bonus_down_payment' => 15,
@@ -203,7 +203,7 @@ class CoreDataSeeder extends Seeder
                 ],
             ],
             [
-                'rank' => 'MM',
+                'rank' => 'AGM',
                 'sequence' => 3,
                 'personal_sales_target' => 1000000,
                 'bonus_down_payment' => 18,
