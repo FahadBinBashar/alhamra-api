@@ -1485,7 +1485,8 @@
                 "{{sales_order_id}}",
                 "payments"
               ]
-            }
+            },
+            "description": "Record a payment against a sales order. Development commissions now remain in a pending state until the month-end processing job runs (php artisan commissions:process), so no commission records are created at payment time."
           },
           "response": []
         }
@@ -2305,7 +2306,8 @@
                 "reports",
                 "commissions"
               ]
-            }
+            },
+            "description": "Summarize commission totals with gap logic distribution. The response separates paid amounts from pending potential commissions calculated from payments that have not yet been processed."
           },
           "response": []
         },
