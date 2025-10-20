@@ -80,12 +80,8 @@ class ProcessPaymentCommissionsTest extends TestCase
 
         $this->assertSame(Employee::RANK_MM, $employee->fresh()->rank);
 
-        $this->assertDatabaseHas('commissions', [
-            'payment_id' => $payment->id,
-            'recipient_type' => Employee::class,
-            'recipient_id' => $employee->id,
-            'amount' => 6000.0,
-        ]);
+        $this->assertDatabaseCount('commissions', 0);
+        $this->assertNull($payment->fresh()->commission_processed_at);
     }
 
     public function test_employee_is_not_promoted_when_threshold_is_not_met(): void
@@ -143,6 +139,7 @@ class ProcessPaymentCommissionsTest extends TestCase
         $this->assertSame(Employee::RANK_ME, $employee->fresh()->rank);
 
         $this->assertDatabaseCount('commissions', 0);
+        $this->assertNull($payment->fresh()->commission_processed_at);
     }
 
     protected function ensureRanks(array $codes): void

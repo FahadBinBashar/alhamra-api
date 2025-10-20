@@ -7,9 +7,11 @@ use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\CommissionSetting;
 use App\Models\Employee;
+use App\Models\EmployeeWallet;
 use App\Models\Payment;
 use App\Models\SalesOrder;
 use App\Services\Accounting\LedgerService;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +21,7 @@ class CommissionService
     {
     }
 
-    public function handlePayment(Payment $payment): Collection
+    public function handlePayment(Payment $payment, bool $persist = false): Collection
     {
         $payment->loadMissing(
             'salesOrder.agent',
@@ -31,27 +33,28 @@ class CommissionService
             return collect();
         }
 
-        return DB::transaction(function () use ($payment) {
-            $commissions = collect();
+        $commissions = collect();
 
-            if ($this->isServiceOrder($payment->salesOrder)) {
-                $serviceCommission = $this->createServiceCommission($payment);
+        if ($this->isServiceOrder($payment->salesOrder)) {
+            $serviceCommission = $this->createServiceCommissionPayload($payment);
 
-                if ($serviceCommission) {
-                    $commissions->push($serviceCommission);
-                }
-
-                return $commissions;
+            if ($serviceCommission) {
+                $commissions->push($serviceCommission);
             }
+        } else {
+            $commissions = $commissions->merge($this->createDevelopmentGapCommissions($payment));
+        }
 
-            $commissions = $commissions->merge($this->createAgentAndBranchCommissions($payment));
-            $commissions = $commissions->merge($this->createDevelopmentBonuses($payment));
-
+        if (! $persist) {
             return $commissions->filter();
+        }
+
+        return DB::transaction(function () use ($payment, $commissions) {
+            return $commissions->map(fn (array $payload) => $this->storeCommissionFromPayload($payment, $payload));
         });
     }
 
-    protected function createServiceCommission(Payment $payment): ?Commission
+    protected function createServiceCommissionPayload(Payment $payment): ?array
     {
         $order = $payment->salesOrder;
         $serviceConfig = CommissionSetting::value('service_sales', null);
@@ -80,11 +83,16 @@ class CommissionService
             return null;
         }
 
-        return $this->storeCommission($payment, $recipient['type'], $recipient['id'], $amount, [
-            'category' => 'service_sales',
-            'payment_type' => $payment->type,
-            'order_created_by' => $order->created_by,
-        ]);
+        return [
+            'recipient_type' => $recipient['type'],
+            'recipient_id' => $recipient['id'],
+            'amount' => $amount,
+            'meta' => [
+                'category' => 'service_sales',
+                'payment_type' => $payment->type,
+                'order_created_by' => $order->created_by,
+            ],
+        ];
     }
 
     protected function resolveServiceRecipient(SalesOrder $order): ?array
@@ -115,121 +123,70 @@ class CommissionService
         return null;
     }
 
-    // protected function createAgentAndBranchCommissions(Payment $payment): Collection
-    // {
-    //     $order = $payment->salesOrder;
-    //     $commissions = collect();
-    //     $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+    protected function createDevelopmentGapCommissions(Payment $payment): Collection
+    {
+        $order = $payment->salesOrder;
+        $source = $order->sourceMe;
 
-    //     $agentRates = $this->getArraySetting('agent_rates');
-    //     $branchRates = $this->getArraySetting('branch_rates');
+        if (! $source) {
+            return collect();
+        }
 
-    //     if ($order->created_by === SalesOrder::CREATED_BY_AGENT && $order->agent) {
-    //         $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+        $chain = $this->buildSuperiorChain($source)
+            ->filter(fn (Employee $employee) => $this->employeeEligibleForCommission($employee));
 
-    //         if ($percentage > 0) {
-    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+        if ($chain->isEmpty()) {
+            return collect();
+        }
 
-    //             if ($amount > 0) {
-    //                 $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
-    //                     'category' => 'agent',
-    //                     'payment_type' => $payment->type,
-    //                 ]));
-    //             }
-    //         }
+        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+        $definitions = $this->getArraySetting('development_bonus');
 
-    //         return $commissions;
-    //     }
+        if (empty($definitions)) {
+            return collect();
+        }
 
-    //     if ($order->branch) {
-    //         $percentage = (float) ($branchRates[$percentageKey] ?? 0);
+        $commissions = collect();
+        $previousPercent = 0.0;
 
-    //         if ($percentage > 0) {
-    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+        foreach ($chain as $employee) {
+            $rank = $employee->rank;
+            $config = $definitions[$rank] ?? null;
 
-    //             if ($amount > 0) {
-    //                 $commissions->push($this->storeCommission($payment, Branch::class, $order->branch->getKey(), $amount, [
-    //                     'category' => 'branch',
-    //                     'payment_type' => $payment->type,
-    //                 ]));
-    //             }
-    //         }
-    //     }
+            if (! $config || ! array_key_exists($percentageKey, $config)) {
+                continue;
+            }
 
-    //     if ($order->agent) {
-    //         $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+            $targetPercent = (float) $config[$percentageKey];
 
-    //         if ($percentage > 0) {
-    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+            if ($targetPercent <= $previousPercent) {
+                continue;
+            }
 
-    //             if ($amount > 0) {
-    //                 $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
-    //                     'category' => 'agent',
-    //                     'payment_type' => $payment->type,
-    //                 ]));
-    //             }
-    //         }
-    //     }
+            $percentage = $targetPercent - $previousPercent;
+            $previousPercent = $targetPercent;
 
-    //     return $commissions;
-    // }
+            $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
 
-    // protected function createDevelopmentBonuses(Payment $payment): Collection
-    // {
-    //     $order = $payment->salesOrder;
-    //     $source = $order->sourceMe;
+            if ($amount <= 0) {
+                continue;
+            }
 
-    //     if (! $source) {
-    //         return collect();
-    //     }
+            $commissions->push([
+                'recipient_type' => Employee::class,
+                'recipient_id' => $employee->getKey(),
+                'amount' => $amount,
+                'percentage' => $percentage,
+                'meta' => [
+                    'category' => 'development_bonus',
+                    'rank' => $employee->rank,
+                    'payment_type' => $payment->type,
+                ],
+            ]);
+        }
 
-    //     $chain = $this->buildSuperiorChain($source);
-
-    //     if ($chain->isEmpty()) {
-    //         return collect();
-    //     }
-
-    //     $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
-    //     $definitions = $this->getArraySetting('development_bonus');
-
-    //     if (empty($definitions)) {
-    //         return collect();
-    //     }
-
-    //     $commissions = collect();
-    //     $previousPercent = 0.0;
-
-    //     foreach ($definitions as $rank => $config) {
-    //         $recipient = $chain->first(fn (Employee $employee) => $employee->rank === $rank);
-
-    //         if (! $recipient || ! $this->employeeEligibleForCommission($recipient)) {
-    //             continue;
-    //         }
-
-    //         $targetPercent = (float) ($config[$percentageKey] ?? 0);
-
-    //         if ($targetPercent <= $previousPercent) {
-    //             continue;
-    //         }
-
-    //         $percentage = $targetPercent - $previousPercent;
-    //         $previousPercent = $targetPercent;
-
-    //         $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
-
-    //         if ($amount <= 0) {
-    //             continue;
-    //         }
-
-    //         $commissions->push($this->storeCommission($payment, Employee::class, $recipient->getKey(), $amount, [
-    //             'category' => 'development_bonus',
-    //             'rank' => $recipient->rank,
-    //             'payment_type' => $payment->type,
-    //         ]));
-    //     }
-
-    //     return $commissions;
-    // }
+        return $commissions;
+    }
 
     protected function buildSuperiorChain(Employee $employee): Collection
     {
@@ -269,7 +226,110 @@ class CommissionService
         return is_array($value) ? $value : [];
     }
 
-    protected function storeCommission(Payment $payment, string $recipientType, int $recipientId, float $amount, array $meta = []): Commission
+    public function processPendingCommissions(?Carbon $upTo = null): Collection
+    {
+        $query = Payment::query()->whereNull('commission_processed_at');
+
+        if ($upTo) {
+            $query->whereDate('paid_at', '<=', $upTo->toDateString());
+        }
+
+        $payments = $query->get();
+        $created = collect();
+
+        foreach ($payments as $payment) {
+            $payment->loadMissing(
+                'salesOrder.agent',
+                'salesOrder.branch',
+                'salesOrder.sourceMe.superior'
+            );
+
+            if (! $payment->salesOrder) {
+                $payment->forceFill(['commission_processed_at' => now()])->save();
+                continue;
+            }
+
+            $payloads = $this->handlePayment($payment);
+
+            DB::transaction(function () use ($payment, $payloads, &$created) {
+                $processedAt = now();
+
+                foreach ($payloads as $payload) {
+                    $payload['status'] = 'paid';
+                    $payload['paid_at'] = $processedAt;
+                    $commission = $this->storeCommissionFromPayload($payment, $payload);
+                    $created->push($commission);
+                }
+
+                $payment->forceFill([
+                    'commission_processed_at' => $processedAt,
+                ])->save();
+            });
+        }
+
+        return $created;
+    }
+
+    protected function storeCommissionFromPayload(Payment $payment, array $payload): Commission
+    {
+        $meta = $payload['meta'] ?? [];
+
+        if (isset($payload['percentage'])) {
+            $meta['percentage'] = $payload['percentage'];
+        }
+
+        $status = $payload['status'] ?? 'unpaid';
+        $paidAt = $payload['paid_at'] ?? null;
+
+        if ($paidAt && ! $paidAt instanceof Carbon) {
+            $paidAt = Carbon::parse($paidAt);
+        }
+
+        $commission = $this->storeCommission(
+            $payment,
+            $payload['recipient_type'],
+            (int) $payload['recipient_id'],
+            (float) $payload['amount'],
+            $meta,
+            $status,
+            $paidAt
+        );
+
+        if ($status === 'paid' && $commission->recipient_type === Employee::class) {
+            $this->creditEmployeeWallet((int) $commission->recipient_id, (float) $commission->amount);
+        }
+
+        return $commission;
+    }
+
+    protected function creditEmployeeWallet(int $employeeId, float $amount): void
+    {
+        $wallet = EmployeeWallet::query()
+            ->where('employee_id', $employeeId)
+            ->lockForUpdate()
+            ->first();
+
+        if (! $wallet) {
+            $wallet = new EmployeeWallet([
+                'employee_id' => $employeeId,
+                'balance' => 0,
+            ]);
+        }
+
+        $wallet->balance = (float) $wallet->balance + $amount;
+        $wallet->employee_id = $employeeId;
+        $wallet->save();
+    }
+
+    protected function storeCommission(
+        Payment $payment,
+        string $recipientType,
+        int $recipientId,
+        float $amount,
+        array $meta = [],
+        string $status = 'unpaid',
+        ?Carbon $paidAt = null
+    ): Commission
     {
         $commission = Commission::create([
             'payment_id' => $payment->id,
@@ -277,7 +337,8 @@ class CommissionService
             'recipient_type' => $recipientType,
             'recipient_id' => $recipientId,
             'amount' => $amount,
-            'status' => 'unpaid',
+            'status' => $status,
+            'paid_at' => $paidAt,
             'meta' => array_filter(array_merge($meta, [
                 'payment_type' => $payment->type,
                 'order_created_by' => $payment->salesOrder?->created_by,

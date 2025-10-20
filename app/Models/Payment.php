@@ -42,6 +42,7 @@ class Payment extends Model
         'paid_at',
         'amount',
         'commission_base_amount',
+        'commission_processed_at',
         'type',
         'intent_type',
         'method',
@@ -52,6 +53,7 @@ class Payment extends Model
         'paid_at' => 'date',
         'amount' => 'decimal:2',
         'commission_base_amount' => 'decimal:2',
+        'commission_processed_at' => 'datetime',
         'meta' => 'array',
     ];
 

@@ -7,12 +7,14 @@ use App\Http\Resources\StockMovementResource;
 use App\Http\Resources\UserResource;
 use App\Models\Agent;
 use App\Models\Commission;
+use App\Models\Payment;
 use App\Models\CustomerInstallment;
 use App\Models\LedgerEntry;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
 use App\Models\User;
+use App\Services\CommissionService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -54,13 +56,7 @@ class ReportController extends Controller
 
     public function commissions()
     {
-        $summary = [
-            'total' => Commission::sum('amount'),
-            'unpaid' => Commission::where('status', 'unpaid')->sum('amount'),
-            'paid' => Commission::where('status', 'paid')->sum('amount'),
-        ];
-
-        return response()->json($summary);
+        return response()->json($this->commissionSummary());
     }
 
     public function rankFunds()
@@ -104,10 +100,7 @@ class ReportController extends Controller
         $receivables = CustomerInstallment::whereColumn('amount', '>', 'paid')
             ->get()
             ->sum(fn ($installment) => $installment->amount - $installment->paid);
-        $commissionSummary = [
-            'total' => Commission::sum('amount'),
-            'unpaid' => Commission::where('status', 'unpaid')->sum('amount'),
-        ];
+        $commissionSummary = $this->commissionSummary();
         $rankFund = LedgerEntry::whereHas('account', fn ($q) => $q->where('code', config('accounting.accounts.incentive_fund.code')))
             ->get()
             ->sum(fn ($entry) => $entry->credit - $entry->debit);
@@ -233,5 +226,28 @@ class ReportController extends Controller
             ->appends($request->query());
 
         return StockMovementResource::collection($movements);
+    }
+
+    protected function commissionSummary(): array
+    {
+        $commissionService = app(CommissionService::class);
+
+        $pendingPayments = Payment::query()
+            ->whereNull('commission_processed_at')
+            ->with('salesOrder.agent', 'salesOrder.branch', 'salesOrder.sourceMe.superior')
+            ->get();
+
+        $pendingTotal = $pendingPayments
+            ->flatMap(fn (Payment $payment) => $commissionService->handlePayment($payment))
+            ->sum(fn (array $commission) => (float) ($commission['amount'] ?? 0));
+
+        $paidTotal = Commission::where('status', 'paid')->sum('amount');
+
+        return [
+            'total' => $paidTotal + $pendingTotal,
+            'paid' => $paidTotal,
+            'pending' => $pendingTotal,
+            'unpaid' => 0.0,
+        ];
     }
 }
