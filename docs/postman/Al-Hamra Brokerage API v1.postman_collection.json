@@ -1263,6 +1263,7 @@
                                 {
                                         "name": "Create Sales Order",
                                         "request": {
+                                                "description": "Admin or Branch Admin entries must keep agent_id null. Only authenticated agents get their own agent_id assigned automatically.",
                                                 "method": "POST",
                                                 "header": [
                                                         {
@@ -1280,7 +1281,7 @@
                                                 ],
                                                 "body": {
                                                         "mode": "raw",
-                                                        "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"branch_id\": 1,\n  \"source_me_id\": 2,\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
+                                                        "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"branch_id\": 1,\n  \"agent_id\": null,\n  \"source_me_id\": 2,\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
                                                         "options": {
                                                                 "raw": {
                                                                         "language": "json"

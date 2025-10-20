@@ -365,6 +365,10 @@ class SalesOrderController extends Controller
             return $data;
         }
 
+        if (in_array($user->role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true)) {
+            $data['agent_id'] = null;
+        }
+
         if (in_array($user->role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
             $agentProfile = $user->agent;
 
@@ -407,10 +411,6 @@ class SalesOrderController extends Controller
             $data['branch_id'] = $employee->branch_id;
         }
 
-        if (! array_key_exists('agent_id', $data) || is_null($data['agent_id'])) {
-            $data['agent_id'] = $employee->agent_id;
-        }
-
         if (! array_key_exists('rank', $data) || is_null($data['rank'])) {
             $data['rank'] = $employee->rank;
         }
@@ -437,7 +437,7 @@ class SalesOrderController extends Controller
             $data['branch_id'] = (int) $data['branch_id'];
         }
 
-        if (isset($data['agent_id'])) {
+        if (isset($data['agent_id']) && ! is_null($data['agent_id'])) {
             $data['agent_id'] = (int) $data['agent_id'];
         }
 
