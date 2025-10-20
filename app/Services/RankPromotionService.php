@@ -52,7 +52,8 @@ class RankPromotionService
 
         $shareValueSetting = CommissionSetting::value('share_value', 500000);
         $shareValue = is_array($shareValueSetting) ? (float) ($shareValueSetting['amount'] ?? 500000) : (float) $shareValueSetting;
-        $ordersQuery = $employee->salesOrders()
+        $ordersQuery = SalesOrder::query()
+            ->where('employee_id', $employee->id)
             ->where('status', '!=', SalesOrder::STATUS_CANCELLED);
 
         $totalDownPayment = (float) (clone $ordersQuery)->sum('down_payment');
