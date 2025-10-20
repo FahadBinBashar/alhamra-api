@@ -68,7 +68,7 @@ class ProcessPaymentCommissionsTest extends TestCase
         CommissionSetting::create([
             'key' => 'development_bonus',
             'value' => [
-                Employee::RANK_MO => [
+                Employee::RANK_MM => [
                     'down_payment' => 10,
                 ],
             ],
@@ -78,7 +78,7 @@ class ProcessPaymentCommissionsTest extends TestCase
 
         $listener->handle(new PaymentRecorded($payment));
 
-        $this->assertSame(Employee::RANK_MO, $employee->fresh()->rank);
+        $this->assertSame(Employee::RANK_MM, $employee->fresh()->rank);
 
         $this->assertDatabaseHas('commissions', [
             'payment_id' => $payment->id,
@@ -130,7 +130,7 @@ class ProcessPaymentCommissionsTest extends TestCase
         CommissionSetting::create([
             'key' => 'development_bonus',
             'value' => [
-                Employee::RANK_MO => [
+                Employee::RANK_MM => [
                     'down_payment' => 10,
                 ],
             ],

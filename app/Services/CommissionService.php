@@ -115,121 +115,121 @@ class CommissionService
         return null;
     }
 
-    protected function createAgentAndBranchCommissions(Payment $payment): Collection
-    {
-        $order = $payment->salesOrder;
-        $commissions = collect();
-        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+    // protected function createAgentAndBranchCommissions(Payment $payment): Collection
+    // {
+    //     $order = $payment->salesOrder;
+    //     $commissions = collect();
+    //     $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
 
-        $agentRates = $this->getArraySetting('agent_rates');
-        $branchRates = $this->getArraySetting('branch_rates');
+    //     $agentRates = $this->getArraySetting('agent_rates');
+    //     $branchRates = $this->getArraySetting('branch_rates');
 
-        if ($order->created_by === SalesOrder::CREATED_BY_AGENT && $order->agent) {
-            $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+    //     if ($order->created_by === SalesOrder::CREATED_BY_AGENT && $order->agent) {
+    //         $percentage = (float) ($agentRates[$percentageKey] ?? 0);
 
-            if ($percentage > 0) {
-                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+    //         if ($percentage > 0) {
+    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
 
-                if ($amount > 0) {
-                    $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
-                        'category' => 'agent',
-                        'payment_type' => $payment->type,
-                    ]));
-                }
-            }
+    //             if ($amount > 0) {
+    //                 $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
+    //                     'category' => 'agent',
+    //                     'payment_type' => $payment->type,
+    //                 ]));
+    //             }
+    //         }
 
-            return $commissions;
-        }
+    //         return $commissions;
+    //     }
 
-        if ($order->branch) {
-            $percentage = (float) ($branchRates[$percentageKey] ?? 0);
+    //     if ($order->branch) {
+    //         $percentage = (float) ($branchRates[$percentageKey] ?? 0);
 
-            if ($percentage > 0) {
-                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+    //         if ($percentage > 0) {
+    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
 
-                if ($amount > 0) {
-                    $commissions->push($this->storeCommission($payment, Branch::class, $order->branch->getKey(), $amount, [
-                        'category' => 'branch',
-                        'payment_type' => $payment->type,
-                    ]));
-                }
-            }
-        }
+    //             if ($amount > 0) {
+    //                 $commissions->push($this->storeCommission($payment, Branch::class, $order->branch->getKey(), $amount, [
+    //                     'category' => 'branch',
+    //                     'payment_type' => $payment->type,
+    //                 ]));
+    //             }
+    //         }
+    //     }
 
-        if ($order->agent) {
-            $percentage = (float) ($agentRates[$percentageKey] ?? 0);
+    //     if ($order->agent) {
+    //         $percentage = (float) ($agentRates[$percentageKey] ?? 0);
 
-            if ($percentage > 0) {
-                $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+    //         if ($percentage > 0) {
+    //             $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
 
-                if ($amount > 0) {
-                    $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
-                        'category' => 'agent',
-                        'payment_type' => $payment->type,
-                    ]));
-                }
-            }
-        }
+    //             if ($amount > 0) {
+    //                 $commissions->push($this->storeCommission($payment, Agent::class, $order->agent->getKey(), $amount, [
+    //                     'category' => 'agent',
+    //                     'payment_type' => $payment->type,
+    //                 ]));
+    //             }
+    //         }
+    //     }
 
-        return $commissions;
-    }
+    //     return $commissions;
+    // }
 
-    protected function createDevelopmentBonuses(Payment $payment): Collection
-    {
-        $order = $payment->salesOrder;
-        $source = $order->sourceMe;
+    // protected function createDevelopmentBonuses(Payment $payment): Collection
+    // {
+    //     $order = $payment->salesOrder;
+    //     $source = $order->sourceMe;
 
-        if (! $source) {
-            return collect();
-        }
+    //     if (! $source) {
+    //         return collect();
+    //     }
 
-        $chain = $this->buildSuperiorChain($source);
+    //     $chain = $this->buildSuperiorChain($source);
 
-        if ($chain->isEmpty()) {
-            return collect();
-        }
+    //     if ($chain->isEmpty()) {
+    //         return collect();
+    //     }
 
-        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
-        $definitions = $this->getArraySetting('development_bonus');
+    //     $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+    //     $definitions = $this->getArraySetting('development_bonus');
 
-        if (empty($definitions)) {
-            return collect();
-        }
+    //     if (empty($definitions)) {
+    //         return collect();
+    //     }
 
-        $commissions = collect();
-        $previousPercent = 0.0;
+    //     $commissions = collect();
+    //     $previousPercent = 0.0;
 
-        foreach ($definitions as $rank => $config) {
-            $recipient = $chain->first(fn (Employee $employee) => $employee->rank === $rank);
+    //     foreach ($definitions as $rank => $config) {
+    //         $recipient = $chain->first(fn (Employee $employee) => $employee->rank === $rank);
 
-            if (! $recipient || ! $this->employeeEligibleForCommission($recipient)) {
-                continue;
-            }
+    //         if (! $recipient || ! $this->employeeEligibleForCommission($recipient)) {
+    //             continue;
+    //         }
 
-            $targetPercent = (float) ($config[$percentageKey] ?? 0);
+    //         $targetPercent = (float) ($config[$percentageKey] ?? 0);
 
-            if ($targetPercent <= $previousPercent) {
-                continue;
-            }
+    //         if ($targetPercent <= $previousPercent) {
+    //             continue;
+    //         }
 
-            $percentage = $targetPercent - $previousPercent;
-            $previousPercent = $targetPercent;
+    //         $percentage = $targetPercent - $previousPercent;
+    //         $previousPercent = $targetPercent;
 
-            $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+    //         $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
 
-            if ($amount <= 0) {
-                continue;
-            }
+    //         if ($amount <= 0) {
+    //             continue;
+    //         }
 
-            $commissions->push($this->storeCommission($payment, Employee::class, $recipient->getKey(), $amount, [
-                'category' => 'development_bonus',
-                'rank' => $recipient->rank,
-                'payment_type' => $payment->type,
-            ]));
-        }
+    //         $commissions->push($this->storeCommission($payment, Employee::class, $recipient->getKey(), $amount, [
+    //             'category' => 'development_bonus',
+    //             'rank' => $recipient->rank,
+    //             'payment_type' => $payment->type,
+    //         ]));
+    //     }
 
-        return $commissions;
-    }
+    //     return $commissions;
+    // }
 
     protected function buildSuperiorChain(Employee $employee): Collection
     {

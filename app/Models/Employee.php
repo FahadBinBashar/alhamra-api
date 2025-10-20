@@ -17,8 +17,8 @@ class Employee extends Model
     use LogsActivityChanges;
 
     public const RANK_ME = 'ME';
-    public const RANK_MO = 'MO';
     public const RANK_MM = 'MM';
+    public const RANK_AGM = 'AGM';
     public const RANK_DGM = 'DGM';
     public const RANK_GM = 'GM';
     public const RANK_PD = 'PD';
@@ -28,8 +28,8 @@ class Employee extends Model
 
     public const RANKS = [
         self::RANK_ME,
-        self::RANK_MO,
         self::RANK_MM,
+        self::RANK_AGM,
         self::RANK_DGM,
         self::RANK_GM,
         self::RANK_PD,

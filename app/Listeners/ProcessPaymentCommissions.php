@@ -23,7 +23,7 @@ class ProcessPaymentCommissions
 
         $this->promoteMarketingExecutiveIfEligible($payment);
 
-        $this->commissionService->handlePayment($payment);
+        // $this->commissionService->handlePayment($payment);
     }
 
     protected function promoteMarketingExecutiveIfEligible(Payment $payment): void

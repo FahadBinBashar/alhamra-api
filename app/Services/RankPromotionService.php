@@ -19,7 +19,7 @@ class RankPromotionService
         }
 
         return DB::transaction(function () use ($employee) {
-            $employee->forceFill(['rank' => Employee::RANK_MO])->save();
+            $employee->forceFill(['rank' => Employee::RANK_MM])->save();
 
             return true;
         });
