@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('commission-rules', CommissionRuleController::class);
     Route::apiResource('commission-settings', CommissionSettingController::class);
     Route::apiResource('commissions', CommissionController::class);
+    Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
