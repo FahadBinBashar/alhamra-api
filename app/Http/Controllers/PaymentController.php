@@ -53,8 +53,10 @@ class PaymentController extends Controller
                         'allocated' => $allocated,
                     ]);
 
-                    $installment->paid += $allocated;
-                    $installment->status = $installment->paid >= $installment->amount ? 'paid' : 'partial';
+                    $installment->paid = round(((float) $installment->paid) + $allocated, 2);
+
+                    $dueAmount = round((float) $installment->amount, 2);
+                    $installment->status = $installment->paid >= $dueAmount ? 'paid' : 'partial';
                     $installment->save();
                 }
             }

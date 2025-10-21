@@ -176,30 +176,35 @@ class InstallmentController extends Controller
         $count = (int) $data['count'];
         $startDate = Carbon::parse($data['start_date']);
         $graceDays = (int) ($data['grace_days'] ?? 0);
+        $totalCents = (int) round($principal * 100);
 
-        $installments = DB::transaction(function () use ($order, $includes, $principal, $frequency, $count, $startDate, $graceDays) {
+        if ($totalCents === 0 && $principal > 0) {
+            $totalCents = 1;
+        }
+
+        $installments = DB::transaction(function () use ($order, $includes, $frequency, $count, $startDate, $graceDays, $totalCents) {
             $order->installments()->delete();
 
-            $perInstallment = round($principal / $count, 2);
-            $allocated = 0.0;
+            $baseAmountCents = $count > 0 ? intdiv($totalCents, $count) : 0;
+            $remainder = $count > 0 ? $totalCents % $count : 0;
             $payload = [];
 
             for ($index = 0; $index < $count; $index++) {
-                $amount = $index === $count - 1
-                    ? round($principal - $allocated, 2)
-                    : $perInstallment;
+                $amountCents = $baseAmountCents;
 
-                $allocated += $amount;
+                if ($index < $remainder) {
+                    $amountCents += 1;
+                }
 
                 $dueDate = $this->resolveDueDate($startDate, $frequency, $index, $graceDays);
 
-                if ($amount < 0) {
-                    $amount = 0.0;
+                if ($amountCents < 0) {
+                    $amountCents = 0;
                 }
 
                 $payload[] = [
                     'due_date' => $dueDate->toDateString(),
-                    'amount' => $amount,
+                    'amount' => number_format($amountCents / 100, 2, '.', ''),
                     'paid' => 0,
                     'status' => 'due',
                 ];
