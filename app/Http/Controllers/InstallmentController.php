@@ -11,10 +11,22 @@ use App\Models\SalesOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class InstallmentController extends Controller
 {
     use ResolvesIncludes;
+
+    private const SUPPORTED_FREQUENCIES = [
+        'daily',
+        'weekly',
+        'biweekly',
+        'monthly',
+        'quarterly',
+        'yearly',
+    ];
 
     /**
      * Display a listing of the resource.
@@ -131,8 +143,117 @@ class InstallmentController extends Controller
 
     public function generate(Request $request, SalesOrder $order): JsonResponse
     {
-        return response()->json([
-            'message' => 'Installment schedule generation is not implemented yet.',
-        ], 501);
+        $data = $request->validate([
+            'frequency' => ['required', 'string', Rule::in(self::SUPPORTED_FREQUENCIES)],
+            'count' => ['required', 'integer', 'min:1', 'max:360'],
+            'start_date' => ['required', 'date'],
+            'grace_days' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:365'],
+        ]);
+
+        $existingWithPayments = $order->installments()
+            ->where(function ($query) {
+                $query->where('paid', '>', 0)
+                    ->orWhereIn('status', ['partial', 'paid']);
+            })
+            ->exists();
+
+        if ($existingWithPayments) {
+            return response()->json([
+                'message' => 'Installments with recorded payments cannot be regenerated.',
+            ], 422);
+        }
+
+        $principal = round((float) $order->total - (float) $order->down_payment, 2);
+
+        if ($principal <= 0) {
+            return response()->json([
+                'message' => 'The sales order does not have an outstanding balance to schedule.',
+            ], 422);
+        }
+
+        $includes = $this->resolveIncludes($request, ['salesOrder', 'allocations']);
+        $frequency = $data['frequency'];
+        $count = (int) $data['count'];
+        $startDate = Carbon::parse($data['start_date']);
+        $graceDays = (int) ($data['grace_days'] ?? 0);
+
+        $installments = DB::transaction(function () use ($order, $includes, $principal, $frequency, $count, $startDate, $graceDays) {
+            $order->installments()->delete();
+
+            $perInstallment = round($principal / $count, 2);
+            $allocated = 0.0;
+            $payload = [];
+
+            for ($index = 0; $index < $count; $index++) {
+                $amount = $index === $count - 1
+                    ? round($principal - $allocated, 2)
+                    : $perInstallment;
+
+                $allocated += $amount;
+
+                $dueDate = $this->resolveDueDate($startDate, $frequency, $index, $graceDays);
+
+                if ($amount < 0) {
+                    $amount = 0.0;
+                }
+
+                $payload[] = [
+                    'due_date' => $dueDate->toDateString(),
+                    'amount' => $amount,
+                    'paid' => 0,
+                    'status' => 'due',
+                ];
+            }
+
+            $order->installments()->createMany($payload);
+
+            $query = CustomerInstallment::query()
+                ->where('sales_order_id', $order->id)
+                ->orderBy('due_date');
+
+            if (! empty($includes)) {
+                $query->with($includes);
+            }
+
+            return $query->get();
+        });
+
+        return InstallmentResource::collection($installments)
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    private function resolveDueDate(Carbon $startDate, string $frequency, int $index, int $graceDays): Carbon
+    {
+        $dueDate = $startDate->copy();
+
+        if ($index > 0) {
+            switch ($frequency) {
+                case 'daily':
+                    $dueDate->addDays($index);
+                    break;
+                case 'weekly':
+                    $dueDate->addWeeks($index);
+                    break;
+                case 'biweekly':
+                    $dueDate->addWeeks($index * 2);
+                    break;
+                case 'monthly':
+                    $dueDate->addMonthsNoOverflow($index);
+                    break;
+                case 'quarterly':
+                    $dueDate->addMonthsNoOverflow($index * 3);
+                    break;
+                case 'yearly':
+                    $dueDate->addYears($index);
+                    break;
+            }
+        }
+
+        if ($graceDays > 0) {
+            $dueDate->addDays($graceDays);
+        }
+
+        return $dueDate;
     }
 }
