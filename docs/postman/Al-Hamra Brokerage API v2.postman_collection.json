@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "1e12646b-a15f-4e0f-b016-20ed527c926a",
-    "name": "Al-Hamra Brokerage API v1",
-    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v1 REST interface.",
+    "name": "Al-Hamra Brokerage API v2",
+    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights new installment CRUD endpoints for managing payment schedules.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27980978",
     "_collection_link": "https://blue-sunset-638226.postman.co/workspace/Team-Workspace~99a2ec44-cf11-4803-8795-179b7759dfeb/collection/27980978-1e12646b-a15f-4e0f-b016-20ed527c926a?action=share&source=collection_link&creator=27980978"
@@ -1487,6 +1487,198 @@
               ]
             },
             "description": "Record a payment against a sales order. Development commissions now remain in a pending state until the month-end processing job runs (php artisan commissions:process), so no commission records are created at payment time."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Installments",
+      "description": "CRUD endpoints for managing customer installments.",
+      "item": [
+        {
+          "name": "List Installments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/installments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "installments"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                },
+                {
+                  "key": "sales_order_id",
+                  "value": "{{sales_order_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "due,partial",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Installment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sales_order_id\": {{sales_order_id}},\n  \"due_date\": \"2025-02-01\",\n  \"amount\": 5000,\n  \"status\": \"due\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/installments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "installments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Installment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/installments/{{installment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "installments",
+                "{{installment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Installment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"due_date\": \"2025-03-01\",\n  \"amount\": 4500,\n  \"paid\": 2500,\n  \"status\": \"partial\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/installments/{{installment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "installments",
+                "{{installment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Installment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/installments/{{installment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "installments",
+                "{{installment_id}}"
+              ]
+            }
           },
           "response": []
         }
