@@ -1493,6 +1493,112 @@
       ]
     },
     {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "25",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "down_payment,installment",
+                  "disabled": true
+                },
+                {
+                  "key": "intent_type",
+                  "value": "down_payment,installment_payment",
+                  "disabled": true
+                },
+                {
+                  "key": "method",
+                  "value": "cash,bank",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "customer_id",
+                  "value": "{{customer_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "agent_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "branch_id",
+                  "value": "{{branch_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "sales_type",
+                  "value": "order,service",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active,completed",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "SO-1001",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve paginated payment history with flexible filters across customer, agent, branch and sales order metadata. Enable the optional export or print flags to download CSV output or consume a print-friendly JSON payload."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Installments",
       "description": "CRUD endpoints for managing customer installments.",
       "item": [
@@ -2691,6 +2797,473 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Commission Detail Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/commissions/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "commissions",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "25",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "paid,unpaid",
+                  "disabled": true
+                },
+                {
+                  "key": "recipient_type",
+                  "value": "agent,employee",
+                  "disabled": true
+                },
+                {
+                  "key": "recipient_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "agent_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "branch_id",
+                  "value": "{{branch_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Detailed commission ledger including agent, employee and branch filters. Use export=excel for CSV downloads or print=1 for a print-friendly payload."
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Detail Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/sales/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "sales",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "25",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active,completed",
+                  "disabled": true
+                },
+                {
+                  "key": "sales_type",
+                  "value": "order,service",
+                  "disabled": true
+                },
+                {
+                  "key": "agent_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "branch_id",
+                  "value": "{{branch_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "customer_id",
+                  "value": "{{customer_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "SO-1001",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Comprehensive sales order report with customer, agent and branch context. Supports CSV export and print-friendly formats."
+          },
+          "response": []
+        },
+        {
+          "name": "Stock Detail Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/stock/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "stock",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "product_type",
+                  "value": "inventory,service",
+                  "disabled": true
+                },
+                {
+                  "key": "category_id",
+                  "value": "{{category_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "Bricks",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Current stock position with category filters and CSV/print options for offline analysis."
+          },
+          "response": []
+        },
+        {
+          "name": "Income Ledger Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/incomes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "incomes"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "25",
+                  "disabled": true
+                },
+                {
+                  "key": "account_type",
+                  "value": "income",
+                  "disabled": true
+                },
+                {
+                  "key": "account_code",
+                  "value": "410",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Ledger view of income accounts. Apply account filters or export results for financial reconciliation."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Ledger Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/ledger/customer",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "ledger",
+                "customer"
+              ],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "{{customer_id}}"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Customer-specific ledger with running balance. Requires a valid customer_id."
+          },
+          "response": []
+        },
+        {
+          "name": "Supplier Ledger Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/ledger/supplier",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "ledger",
+                "supplier"
+              ],
+              "query": [
+                {
+                  "key": "supplier_id",
+                  "value": "{{supplier_id}}"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Supplier ledger driven by entries tagged with supplier meta information."
+          },
+          "response": []
+        },
+        {
+          "name": "Account Statement",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/ledger/account",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "ledger",
+                "account"
+              ],
+              "query": [
+                {
+                  "key": "account_id",
+                  "value": "{{ledger_account_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "account_code",
+                  "value": "{{ledger_account_code}}"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "export",
+                  "value": "excel",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Account-specific statement view supporting either account_id or account_code filters."
+          },
+          "response": []
         }
       ]
     },
@@ -3836,6 +4409,21 @@
     {
       "key": "employee_id",
       "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "supplier_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "ledger_account_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "ledger_account_code",
+      "value": "101",
       "type": "string"
     }
   ]

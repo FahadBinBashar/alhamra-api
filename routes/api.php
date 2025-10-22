@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
@@ -74,6 +75,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
+    Route::get('payments', [PaymentController::class,'index']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
     Route::post('documents', [DocumentController::class,'store']);
     Route::apiResource('rank-requirements', RankRequirementController::class);
@@ -85,7 +87,13 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/stock/current', [ReportController::class,'currentStock']);
     Route::get('reports/stock/low', [ReportController::class,'lowStock']);
     Route::get('reports/stock/movements', [ReportController::class,'stockMovements']);
+    Route::get('reports/commissions/detail', [AdminReportController::class,'commissionReport']);
+    Route::get('reports/sales/detail', [AdminReportController::class,'salesReport']);
+    Route::get('reports/stock/detail', [AdminReportController::class,'stockReport']);
+    Route::get('reports/incomes', [AdminReportController::class,'incomeReport']);
+    Route::get('reports/ledger/customer', [AdminReportController::class,'customerLedger']);
+    Route::get('reports/ledger/supplier', [AdminReportController::class,'supplierLedger']);
+    Route::get('reports/ledger/account', [AdminReportController::class,'accountStatement']);
     Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });
-
