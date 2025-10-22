@@ -11,6 +11,7 @@ use App\Models\Commission;
 use App\Models\Employee;
 use App\Models\LedgerAccount;
 use App\Models\LedgerEntry;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\User;
@@ -342,6 +343,133 @@ class AdminReportController extends Controller
         ]);
     }
 
+    public function employeePerformance(Request $request)
+    {
+        $paymentsSub = Payment::query()
+            ->selectRaw('sales_order_id, SUM(amount) as total_collections')
+            ->groupBy('sales_order_id');
+
+        $query = SalesOrder::query()
+            ->leftJoinSub($paymentsSub, 'payment_totals', 'payment_totals.sales_order_id', '=', 'sales_orders.id')
+            ->leftJoin('employees', 'employees.id', '=', 'sales_orders.employee_id')
+            ->leftJoin('users', 'users.id', '=', 'employees.user_id')
+            ->leftJoin('branches', 'branches.id', '=', 'employees.branch_id')
+            ->selectRaw(
+                'sales_orders.employee_id,
+                COALESCE(users.name, employees.full_name_en, employees.full_name_bn) as employee_name,
+                employees.employee_code,
+                employees.rank,
+                branches.name as branch_name,
+                COUNT(DISTINCT sales_orders.id) as orders_count,
+                SUM(sales_orders.total) as total_sales,
+                SUM(sales_orders.down_payment) as total_down_payment,
+                SUM(COALESCE(payment_totals.total_collections, 0)) as total_collections'
+            )
+            ->whereNotNull('sales_orders.employee_id');
+
+        if ($request->filled('employee_id')) {
+            $query->whereIn('sales_orders.employee_id', array_map('intval', $this->parseCsv($request, 'employee_id')));
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->whereIn('sales_orders.branch_id', array_map('intval', $this->parseCsv($request, 'branch_id')));
+        }
+
+        if ($request->filled('agent_id')) {
+            $query->whereIn('sales_orders.agent_id', array_map('intval', $this->parseCsv($request, 'agent_id')));
+        }
+
+        if ($request->filled('sales_type')) {
+            $query->whereIn('sales_orders.sales_type', $this->parseCsv($request, 'sales_type'));
+        }
+
+        if ($request->filled('status')) {
+            $query->whereIn('sales_orders.status', $this->parseCsv($request, 'status'));
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('sales_orders.created_at', '>=', $request->date('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('sales_orders.created_at', '<=', $request->date('to'));
+        }
+
+        if ($request->filled('search')) {
+            $search = trim((string) $request->query('search'));
+            $query->where(function ($builder) use ($search) {
+                $builder
+                    ->where('employees.employee_code', 'like', '%' . $search . '%')
+                    ->orWhere('employees.full_name_en', 'like', '%' . $search . '%')
+                    ->orWhere('employees.full_name_bn', 'like', '%' . $search . '%')
+                    ->orWhere('users.name', 'like', '%' . $search . '%');
+            });
+        }
+
+        $query->groupBy(
+            'sales_orders.employee_id',
+            'users.name',
+            'employees.full_name_en',
+            'employees.full_name_bn',
+            'employees.employee_code',
+            'employees.rank',
+            'branches.name'
+        );
+
+        $summaryRows = (clone $query)->get();
+
+        $sort = $request->query('sort', 'total_sales');
+        $direction = strtolower((string) $request->query('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $sortable = [
+            'employee_name',
+            'orders_count',
+            'total_sales',
+            'total_down_payment',
+            'total_collections',
+        ];
+
+        if (! in_array($sort, $sortable, true)) {
+            $sort = 'total_sales';
+        }
+
+        $query->orderBy($sort, $direction);
+
+        $perPage = max(1, (int) $request->query('per_page', 15));
+        $paginated = $query
+            ->paginate($perPage)
+            ->appends($request->query());
+
+        $paginated->setCollection(
+            $paginated->getCollection()->map(fn ($row) => $this->transformEmployeePerformanceRow($row))
+        );
+
+        $summary = [
+            'employee_count' => $summaryRows->count(),
+            'orders_count' => (int) $summaryRows->sum('orders_count'),
+            'total_sales' => round((float) $summaryRows->sum('total_sales'), 2),
+            'total_down_payment' => round((float) $summaryRows->sum('total_down_payment'), 2),
+            'total_collections' => round((float) $summaryRows->sum('total_collections'), 2),
+            'average_order_value' => $summaryRows->sum('orders_count') > 0
+                ? round($summaryRows->sum('total_sales') / $summaryRows->sum('orders_count'), 2)
+                : 0.0,
+            'collection_rate' => $summaryRows->sum('total_sales') > 0
+                ? round(($summaryRows->sum('total_collections') / $summaryRows->sum('total_sales')) * 100, 2)
+                : 0.0,
+        ];
+
+        return response()->json([
+            'data' => $paginated->getCollection()->values()->all(),
+            'summary' => $summary,
+            'meta' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+            ],
+        ]);
+    }
+
     public function customerLedger(Request $request)
     {
         $validated = $request->validate([
@@ -633,6 +761,31 @@ class AdminReportController extends Controller
         }
 
         return '';
+    }
+
+    protected function transformEmployeePerformanceRow($row): array
+    {
+        $ordersCount = (int) ($row->orders_count ?? 0);
+        $totalSales = (float) ($row->total_sales ?? 0);
+        $totalDownPayment = (float) ($row->total_down_payment ?? 0);
+        $totalCollections = (float) ($row->total_collections ?? 0);
+
+        $averageOrderValue = $ordersCount > 0 ? round($totalSales / $ordersCount, 2) : 0.0;
+        $collectionRate = $totalSales > 0 ? round(($totalCollections / $totalSales) * 100, 2) : 0.0;
+
+        return [
+            'employee_id' => (int) $row->employee_id,
+            'employee_code' => $row->employee_code,
+            'employee_name' => $row->employee_name,
+            'rank' => $row->rank,
+            'branch_name' => $row->branch_name,
+            'orders_count' => $ordersCount,
+            'total_sales' => round($totalSales, 2),
+            'total_down_payment' => round($totalDownPayment, 2),
+            'total_collections' => round($totalCollections, 2),
+            'average_order_value' => $averageOrderValue,
+            'collection_rate' => $collectionRate,
+        ];
     }
 
     protected function summarizeCommissions(Collection $commissions): array

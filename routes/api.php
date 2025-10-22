@@ -90,6 +90,7 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/commissions/detail', [AdminReportController::class,'commissionReport']);
     Route::get('reports/sales/detail', [AdminReportController::class,'salesReport']);
     Route::get('reports/stock/detail', [AdminReportController::class,'stockReport']);
+    Route::get('reports/employee-performance', [AdminReportController::class,'employeePerformance']);
     Route::get('reports/incomes', [AdminReportController::class,'incomeReport']);
     Route::get('reports/ledger/customer', [AdminReportController::class,'customerLedger']);
     Route::get('reports/ledger/supplier', [AdminReportController::class,'supplierLedger']);
