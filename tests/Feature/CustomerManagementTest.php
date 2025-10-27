@@ -114,7 +114,7 @@ class CustomerManagementTest extends TestCase
         $this->assertNull($createdCustomer->added_by_agent_id);
     }
 
-    public function test_agent_only_sees_assigned_customers(): void
+    public function test_agent_only_sees_own_customers(): void
     {
         $agentUser = User::factory()->create([
             'role' => User::ROLE_AGENT_ADMIN,
@@ -135,6 +135,12 @@ class CustomerManagementTest extends TestCase
 
         $otherCustomer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
+        ]);
+
+        $createdCustomer = User::factory()->create([
+            'role' => User::ROLE_CUSTOMER,
+            'added_by_role' => User::ROLE_AGENT_ADMIN,
+            'added_by_agent_id' => $agent->id,
         ]);
 
         SalesOrder::create([
@@ -175,8 +181,9 @@ class CustomerManagementTest extends TestCase
         $response = $this->getJson('/api/v1/customers');
 
         $response->assertOk();
-        $response->assertJsonCount(2, 'data');
+        $response->assertJsonCount(3, 'data');
         $response->assertJsonMissing(['id' => $otherCustomer->id]);
+        $response->assertJsonFragment(['id' => $createdCustomer->id]);
     }
 
     public function test_branch_admin_only_sees_customers_from_their_branch(): void
@@ -202,14 +209,22 @@ class CustomerManagementTest extends TestCase
 
         $branchCustomer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
+            'added_by_role' => User::ROLE_BRANCH_ADMIN,
+            'added_by_branch_id' => $branchOne->id,
+        ]);
+
+        $branchOrderCustomer = User::factory()->create([
+            'role' => User::ROLE_CUSTOMER,
         ]);
 
         $otherBranchCustomer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
+            'added_by_role' => User::ROLE_BRANCH_ADMIN,
+            'added_by_branch_id' => $branchTwo->id,
         ]);
 
         SalesOrder::create([
-            'customer_id' => $branchCustomer->id,
+            'customer_id' => $branchOrderCustomer->id,
             'branch_id' => $branchOne->id,
             'down_payment' => 0,
             'total' => 1200,
@@ -229,9 +244,12 @@ class CustomerManagementTest extends TestCase
         $response = $this->getJson('/api/v1/customers');
 
         $response->assertOk();
-        $response->assertJsonCount(1, 'data');
+        $response->assertJsonCount(2, 'data');
         $response->assertJsonFragment([
             'id' => $branchCustomer->id,
+        ]);
+        $response->assertJsonFragment([
+            'id' => $branchOrderCustomer->id,
         ]);
         $response->assertJsonMissing([
             'id' => $otherBranchCustomer->id,
@@ -261,18 +279,14 @@ class CustomerManagementTest extends TestCase
 
         $branchCustomer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
+            'added_by_role' => User::ROLE_BRANCH_ADMIN,
+            'added_by_branch_id' => $branchOne->id,
         ]);
 
         $otherBranchCustomer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
-        ]);
-
-        SalesOrder::create([
-            'customer_id' => $branchCustomer->id,
-            'branch_id' => $branchOne->id,
-            'down_payment' => 0,
-            'total' => 1100,
-            'status' => SalesOrder::STATUS_ACTIVE,
+            'added_by_role' => User::ROLE_BRANCH_ADMIN,
+            'added_by_branch_id' => $branchTwo->id,
         ]);
 
         SalesOrder::create([
@@ -348,6 +362,12 @@ class CustomerManagementTest extends TestCase
             'role' => User::ROLE_CUSTOMER,
         ]);
 
+        $createdCustomer = User::factory()->create([
+            'role' => User::ROLE_CUSTOMER,
+            'added_by_role' => User::ROLE_AGENT_ADMIN,
+            'added_by_agent_id' => $agent->id,
+        ]);
+
         SalesOrder::create([
             'customer_id' => $customer->id,
             'agent_id' => $agent->id,
@@ -359,6 +379,8 @@ class CustomerManagementTest extends TestCase
         Sanctum::actingAs($agentUser);
 
         $this->getJson("/api/v1/customers/{$customer->id}")->assertOk();
+
+        $this->getJson("/api/v1/customers/{$createdCustomer->id}")->assertOk();
 
         $this->getJson("/api/v1/customers/{$otherCustomer->id}")->assertForbidden();
     }

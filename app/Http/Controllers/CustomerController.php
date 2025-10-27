@@ -51,6 +51,7 @@ class CustomerController extends Controller
         $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
             'added_by_role' => $this->resolveAddedByRole($user),
+            'added_by_branch_id' => $this->resolveBranchId($user),
             'added_by_agent_id' => $this->resolveAgent($user)?->id,
         ]));
 
@@ -71,6 +72,10 @@ class CustomerController extends Controller
         $agent = $this->resolveAgent($user);
 
         if ($agent) {
+            if ((int) $customer->added_by_agent_id === $agent->id) {
+                return new UserResource($customer);
+            }
+
             $assigned = SalesOrder::query()
                 ->where('agent_id', $agent->id)
                 ->where('customer_id', $customer->id)
@@ -84,6 +89,10 @@ class CustomerController extends Controller
 
             if (! $branchId) {
                 abort(403, 'You are not authorised to view this customer.');
+            }
+
+            if ((int) $customer->added_by_branch_id === $branchId) {
+                return new UserResource($customer);
             }
 
             $assigned = SalesOrder::query()
@@ -118,10 +127,12 @@ class CustomerController extends Controller
         $agent = $this->resolveAgent($user);
 
         if ($agent) {
-            $query->whereIn('id', function ($subQuery) use ($agent) {
-                $subQuery->select('customer_id')
-                    ->from('sales_orders')
-                    ->where('agent_id', $agent->id);
+            $query->where(function (Builder $builder) use ($agent) {
+                $builder->whereIn('id', function ($subQuery) use ($agent) {
+                    $subQuery->select('customer_id')
+                        ->from('sales_orders')
+                        ->where('agent_id', $agent->id);
+                })->orWhere('added_by_agent_id', $agent->id);
             });
 
             return;
@@ -136,10 +147,12 @@ class CustomerController extends Controller
                 return;
             }
 
-            $query->whereIn('id', function ($subQuery) use ($branchId) {
-                $subQuery->select('customer_id')
-                    ->from('sales_orders')
-                    ->where('branch_id', $branchId);
+            $query->where(function (Builder $builder) use ($branchId) {
+                $builder->whereIn('id', function ($subQuery) use ($branchId) {
+                    $subQuery->select('customer_id')
+                        ->from('sales_orders')
+                        ->where('branch_id', $branchId);
+                })->orWhere('added_by_branch_id', $branchId);
             });
 
             return;

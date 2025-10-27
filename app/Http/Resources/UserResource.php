@@ -45,6 +45,7 @@ class UserResource extends JsonResource
             'authorized_person_address' => $this->authorized_person_address,
             'joint_applicants' => $this->joint_applicants,
             'added_by_role' => $this->added_by_role,
+            'added_by_branch_id' => $this->added_by_branch_id,
             'added_by_agent_id' => $this->added_by_agent_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

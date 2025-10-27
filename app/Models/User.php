@@ -70,6 +70,7 @@ class User extends Authenticatable
         'authorized_person_address',
         'joint_applicants',
         'added_by_role',
+        'added_by_branch_id',
         'added_by_agent_id',
     ];
 

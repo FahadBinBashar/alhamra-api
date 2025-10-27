@@ -35,7 +35,10 @@ return new class extends Migration
             $table->text('authorized_person_address')->nullable()->after('authorized_person_name');
             $table->text('joint_applicants')->nullable()->after('authorized_person_address');
             $table->string('added_by_role')->nullable()->after('joint_applicants');
-            $table->foreignId('added_by_agent_id')->nullable()->after('added_by_role')
+            $table->foreignId('added_by_branch_id')->nullable()->after('added_by_role')
+                ->constrained('branches')
+                ->nullOnDelete();
+            $table->foreignId('added_by_agent_id')->nullable()->after('added_by_branch_id')
                 ->constrained('agents')
                 ->nullOnDelete();
         });
@@ -48,6 +51,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropConstrainedForeignId('added_by_agent_id');
+            $table->dropConstrainedForeignId('added_by_branch_id');
             $table->dropColumn([
                 'father_name',
                 'mother_name',
@@ -72,7 +76,9 @@ return new class extends Migration
                 'authorized_person_address',
                 'joint_applicants',
                 'added_by_role',
+                'added_by_branch_id',
             ]);
         });
     }
 };
+
