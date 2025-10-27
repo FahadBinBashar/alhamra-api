@@ -48,12 +48,11 @@ class CustomerController extends Controller
 
         $data = $request->validated();
 
-        $customer = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
+        $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
-        ]);
+            'added_by_role' => $this->resolveAddedByRole($user),
+            'added_by_agent_id' => $this->resolveAgent($user)?->id,
+        ]));
 
         return (new UserResource($customer))
             ->response()
@@ -74,6 +73,21 @@ class CustomerController extends Controller
         if ($agent) {
             $assigned = SalesOrder::query()
                 ->where('agent_id', $agent->id)
+                ->where('customer_id', $customer->id)
+                ->exists();
+
+            if (! $assigned) {
+                abort(403, 'You are not authorised to view this customer.');
+            }
+        } elseif ($this->isBranchAdmin($user)) {
+            $branchId = $this->resolveBranchId($user);
+
+            if (! $branchId) {
+                abort(403, 'You are not authorised to view this customer.');
+            }
+
+            $assigned = SalesOrder::query()
+                ->where('branch_id', $branchId)
                 ->where('customer_id', $customer->id)
                 ->exists();
 
@@ -113,6 +127,24 @@ class CustomerController extends Controller
             return;
         }
 
+        if ($this->isBranchAdmin($user)) {
+            $branchId = $this->resolveBranchId($user);
+
+            if (! $branchId) {
+                $query->whereRaw('0 = 1');
+
+                return;
+            }
+
+            $query->whereIn('id', function ($subQuery) use ($branchId) {
+                $subQuery->select('customer_id')
+                    ->from('sales_orders')
+                    ->where('branch_id', $branchId);
+            });
+
+            return;
+        }
+
         if ($this->requiresAgentScope($user)) {
             $query->whereRaw('0 = 1');
         }
@@ -125,6 +157,21 @@ class CustomerController extends Controller
         }
 
         return $user->agent;
+    }
+
+    private function resolveBranchId(?User $user): ?int
+    {
+        return $user?->employee?->branch_id;
+    }
+
+    private function resolveAddedByRole(?User $user): ?string
+    {
+        return $user?->role;
+    }
+
+    private function isBranchAdmin(?User $user): bool
+    {
+        return $user?->role === User::ROLE_BRANCH_ADMIN;
     }
 
     private function requiresAgentScope(?User $user): bool
