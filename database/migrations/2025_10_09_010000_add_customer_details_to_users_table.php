@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\\Database\\Migrations\\Migration;
-use Illuminate\\Database\\Schema\\Blueprint;
-use Illuminate\\Support\\Facades\\Schema;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -11,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
             $table->string('father_name')->nullable()->after('name');
             $table->string('mother_name')->nullable()->after('father_name');
             $table->string('marital_status')->nullable()->after('mother_name');
@@ -49,7 +48,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
             $table->dropConstrainedForeignId('added_by_agent_id');
             $table->dropConstrainedForeignId('added_by_branch_id');
             $table->dropColumn([
@@ -81,4 +80,3 @@ return new class extends Migration
         });
     }
 };
-
