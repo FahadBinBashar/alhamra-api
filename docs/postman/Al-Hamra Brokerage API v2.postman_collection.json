@@ -1146,7 +1146,8 @@
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Admins receive the full customer list. Agents and branch admins only see the customers they created or customers linked to their branch."
           },
           "response": []
         },
@@ -1170,7 +1171,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"password\": \"secret123\"\n}"
+              "raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"password\": \"secret123\",\n    \"father_name\": \"John Doe\",\n    \"mother_name\": \"Mary Doe\",\n    \"marital_status\": \"Married\",\n    \"spouse_name\": \"Richard Roe\",\n    \"profession\": \"Engineer\",\n    \"permanent_address\": \"123 Main Road, Dhaka\",\n    \"present_address\": \"Apt 4B, Dhaka\",\n    \"contact_number\": \"01700000000\",\n    \"residence_phone\": \"01700000001\",\n    \"whatsapp_number\": \"01700000002\",\n    \"national_id\": \"NID1234567890\",\n    \"passport_number\": \"PA1234567\",\n    \"nationality\": \"Bangladeshi\",\n    \"religion\": \"Islam\",\n    \"date_of_birth\": \"1990-01-01\",\n    \"blood_group\": \"A+\",\n    \"nominee_name\": \"Nominee Name\",\n    \"nominee_relation\": \"Brother\",\n    \"nominee_phone\": \"01700000003\",\n    \"authorized_person_name\": \"Authorized Person\",\n    \"authorized_person_address\": \"456 Market Road, Dhaka\",\n    \"joint_applicants\": \"Applicant One, Applicant Two\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/customers",
@@ -1182,7 +1188,8 @@
                 "v1",
                 "customers"
               ]
-            }
+            },
+            "description": "Creates a customer record with the extended profile fields. Creator metadata is stored automatically based on the authenticated user."
           },
           "response": []
         },
@@ -1211,7 +1218,8 @@
                 "customers",
                 "{{customer_id}}"
               ]
-            }
+            },
+            "description": "Returns the full customer profile including creator metadata (`added_by_role`, `added_by_branch_id`, `added_by_agent_id`)."
           },
           "response": []
         }

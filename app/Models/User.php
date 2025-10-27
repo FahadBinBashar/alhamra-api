@@ -47,6 +47,31 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'father_name',
+        'mother_name',
+        'marital_status',
+        'spouse_name',
+        'profession',
+        'permanent_address',
+        'present_address',
+        'contact_number',
+        'residence_phone',
+        'whatsapp_number',
+        'national_id',
+        'passport_number',
+        'nationality',
+        'religion',
+        'date_of_birth',
+        'blood_group',
+        'nominee_name',
+        'nominee_relation',
+        'nominee_phone',
+        'authorized_person_name',
+        'authorized_person_address',
+        'joint_applicants',
+        'added_by_role',
+        'added_by_branch_id',
+        'added_by_agent_id',
     ];
 
     /**
@@ -67,6 +92,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'date_of_birth' => 'date',
     ];
 
     public function employee(): HasOne
