@@ -71,18 +71,66 @@ class AgentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(StoreAgentRequest $request): AgentResource
+    // {
+    //     $data = $request->validated();
+
+    //     [$agent, $user, $password] = DB::transaction(function () use ($data) {
+    //         $password = Str::password(12);
+
+    //         $user = User::create([
+    //             'name' => $data['name'],
+    //             'email' => $data['email'],
+    //             'password' => $password,
+    //             'role' => User::ROLE_AGENT,
+    //         ]);
+
+    //         if (method_exists($user, 'assignRole')) {
+    //             $role = Role::findOrCreate(User::ROLE_AGENT, 'web');
+    //             $user->assignRole($role);
+    //         }
+
+    //         $agentData = Arr::only($data, ['branch_id', 'agent_code', 'mobile', 'address']);
+    //         $agentData['user_id'] = $user->id;
+
+    //         $agent = Agent::create($agentData);
+
+    //         return [$agent, $user, $password];
+    //     });
+
+    //     $user->notify(new AgentCredentialNotification($user->email, $password));
+
+    //     $agent->loadCount(['salesOrders']);
+
+    //     $includes = $this->resolveIncludes($request, ['user', 'branch', 'rankMemberships', 'activeRank']);
+
+    //     if (empty($includes)) {
+    //         $includes = ['user', 'branch'];
+    //     }
+
+    //     if (! empty($includes)) {
+    //         $agent->load($includes);
+    //     }
+
+    //     return (new AgentResource($agent))->additional([
+    //         'password' => $password,
+    //     ]);
+    // }
+    // app/Http/Controllers/AgentController.php
+
     public function store(StoreAgentRequest $request): AgentResource
     {
         $data = $request->validated();
 
-        [$agent, $user, $password] = DB::transaction(function () use ($data) {
-            $password = Str::password(12);
+        [$agent, $user, $plainPassword] = DB::transaction(function () use ($data) {
+            // use password from request
+            $plainPassword = $data['password'];
 
             $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => $password,
-                'role' => User::ROLE_AGENT,
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'password' => $plainPassword, // hashed automatically by $casts in User model
+                'role'     => User::ROLE_AGENT,
             ]);
 
             if (method_exists($user, 'assignRole')) {
@@ -95,27 +143,26 @@ class AgentController extends Controller
 
             $agent = Agent::create($agentData);
 
-            return [$agent, $user, $password];
+            return [$agent, $user, $plainPassword];
         });
 
-        $user->notify(new AgentCredentialNotification($user->email, $password));
+        // Send credentials to the agent's email
+        $user->notify(new AgentCredentialNotification($user->email, $plainPassword));
 
         $agent->loadCount(['salesOrders']);
 
         $includes = $this->resolveIncludes($request, ['user', 'branch', 'rankMemberships', 'activeRank']);
-
         if (empty($includes)) {
             $includes = ['user', 'branch'];
         }
-
         if (! empty($includes)) {
             $agent->load($includes);
         }
 
-        return (new AgentResource($agent))->additional([
-            'password' => $password,
-        ]);
+        // IMPORTANT: do NOT include the password in the API response
+        return new AgentResource($agent);
     }
+
 
     /**
      * Display the specified resource.
