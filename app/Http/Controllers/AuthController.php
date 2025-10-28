@@ -63,10 +63,30 @@ class AuthController extends Controller
             ]);
         }
 
+        $relationsToLoad = [];
+
+        if ($user->role === User::ROLE_AGENT) {
+            $relationsToLoad[] = 'agent';
+        }
+
+        if ($user->role === User::ROLE_EMPLOYEE) {
+            $relationsToLoad[] = 'employee';
+        }
+
+        if (! empty($relationsToLoad)) {
+            $user->loadMissing($relationsToLoad);
+        }
+
+        $userData = $user->toArray();
+
+        if ($user->relationLoaded('agent') && $user->agent) {
+            $userData['agent_id'] = $user->agent->id;
+        }
+
         $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => $userData,
             'token' => $token,
         ]);
     }
