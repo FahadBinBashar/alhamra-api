@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Agent;
 use App\Models\SalesOrder;
 use App\Models\User;
+use App\Notifications\CustomerCredentialNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,6 +48,7 @@ class CustomerController extends Controller
         $this->ensureCustomerAccess($user);
 
         $data = $request->validated();
+        $password = $data['password'];
 
         $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
@@ -54,6 +56,8 @@ class CustomerController extends Controller
             'added_by_branch_id' => $this->resolveBranchId($user),
             'added_by_agent_id' => $this->resolveAgent($user)?->id,
         ]));
+
+        $customer->notify(new CustomerCredentialNotification($customer->email, $password));
 
         return (new UserResource($customer))
             ->response()
