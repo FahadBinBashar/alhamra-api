@@ -169,7 +169,13 @@ class CustomerController extends Controller
             return null;
         }
 
-        return $user->agent;
+        $agent = $user->agent;
+
+        if ($agent instanceof Agent) {
+            return $agent;
+        }
+
+        return $user->employee?->agent;
     }
 
     private function resolveBranchId(?User $user): ?int

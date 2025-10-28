@@ -343,6 +343,52 @@ class CustomerManagementTest extends TestCase
         $this->assertSame($agent->id, $createdCustomer->added_by_agent_id);
     }
 
+    public function test_agent_employee_inherits_agent_when_creating_customer(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Dhaka Central',
+            'code' => 'DHK-CEN',
+            'address' => '123 Example Road, Dhaka',
+        ]);
+
+        $agentAdminUser = User::factory()->create([
+            'role' => User::ROLE_AGENT_ADMIN,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentAdminUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $agentEmployeeUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        Employee::create([
+            'user_id' => $agentEmployeeUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $agent->id,
+        ]);
+
+        Sanctum::actingAs($agentEmployeeUser);
+
+        $response = $this->postJson('/api/v1/customers', [
+            'name' => 'Agent Employee Customer',
+            'email' => 'agent-employee-customer@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonPath('data.added_by_role', User::ROLE_AGENT);
+        $response->assertJsonPath('data.added_by_agent_id', $agent->id);
+
+        $createdCustomer = User::where('email', 'agent-employee-customer@example.com')->first();
+
+        $this->assertNotNull($createdCustomer);
+        $this->assertSame($agent->id, $createdCustomer->added_by_agent_id);
+    }
+
     public function test_agent_cannot_view_unassigned_customer(): void
     {
         $agentUser = User::factory()->create([
