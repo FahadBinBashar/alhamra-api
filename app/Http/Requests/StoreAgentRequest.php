@@ -23,7 +23,7 @@ class StoreAgentRequest extends FormRequest
             'agent_code' => ['required', 'string', 'max:255', 'unique:agents,agent_code'],
             'mobile' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string'],
-            'password'              => ['required', 'string', 'min:8', 'confirmed'],
+            'password'=> ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 }
