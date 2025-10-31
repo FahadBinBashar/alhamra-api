@@ -106,4 +106,35 @@ class AuthController extends Controller
             'message' => 'Logged out successfully.',
         ]);
     }
+    public function changePassword(Request $request)
+    {
+        // Validate input data
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'], // 'confirmed' assumes 'new_password_confirmation' is provided
+        ]);
+
+        // Get the currently authenticated user
+        $user = $request->user();
+
+        // Check if the current password matches
+        if (! Hash::check($data['current_password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The provided password does not match our records.'],
+            ]);
+        }
+
+        // Update the password
+        $user->password = Hash::make($data['new_password']);
+        $user->save();
+
+        // Optionally, invalidate any existing tokens (if you want the user to log in again after changing the password)
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        return response()->json([
+            'message' => 'Password updated successfully.',
+        ]);
+    }
 }
