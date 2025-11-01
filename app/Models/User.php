@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -72,6 +73,7 @@ class User extends Authenticatable
         'added_by_role',
         'added_by_branch_id',
         'added_by_agent_id',
+        'source_me_id',
     ];
 
     /**
@@ -103,5 +105,10 @@ class User extends Authenticatable
     public function agent(): HasOne
     {
         return $this->hasOne(Agent::class);
+    }
+
+    public function sourceMe(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'source_me_id');
     }
 }

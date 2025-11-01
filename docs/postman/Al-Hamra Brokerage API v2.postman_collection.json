@@ -1271,7 +1271,7 @@
         {
           "name": "Create Sales Order",
           "request": {
-            "description": "Admin or Branch Admin entries must keep agent_id null. Only authenticated agents get their own agent_id assigned automatically.",
+            "description": "Branch, agent and marketing executive context is now derived automatically from the customer's stored sourcing information.",
             "method": "POST",
             "header": [
               {
@@ -1289,7 +1289,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"branch_id\": 1,\n  \"agent_id\": null,\n  \"source_me_id\": 2,\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
+              "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1359,7 +1359,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"active\",\n  \"source_me_id\": {{source_me_id}},\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
+              "raw": "{\n  \"status\": \"active\",\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"

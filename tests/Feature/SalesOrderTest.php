@@ -60,7 +60,11 @@ class SalesOrderTest extends TestCase
             'rank' => Employee::RANK_ME,
         ]);
 
-        $customer = User::factory()->create();
+        $customer = User::factory()->create([
+            'source_me_id' => $marketingExecutive->id,
+            'added_by_branch_id' => $branch->id,
+            'added_by_agent_id' => $agent->id,
+        ]);
 
         $category = Category::create([
             'name' => 'Land',
@@ -80,7 +84,6 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_LAND,
-            'source_me_id' => $marketingExecutive->id,
             'down_payment' => 50000,
             'total' => 500000,
             'items' => [
@@ -202,6 +205,61 @@ class SalesOrderTest extends TestCase
         ]);
     }
 
+    public function test_agent_sales_order_inherits_customer_marketing_executive(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Rajshahi Branch',
+            'code' => 'RAJ',
+            'address' => 'Rajshahi',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $agent->id,
+            'rank' => Employee::RANK_ME,
+        ]);
+
+        $customer = User::factory()->create([
+            'source_me_id' => $marketingExecutive->id,
+            'added_by_agent_id' => $agent->id,
+            'added_by_branch_id' => $branch->id,
+        ]);
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_ORDER,
+            'down_payment' => 1000,
+            'total' => 5000,
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonPath('data.source_me_id', $marketingExecutive->id);
+        $response->assertJsonPath('data.employee_id', $marketingExecutive->id);
+
+        $this->assertDatabaseHas('sales_orders', [
+            'customer_id' => $customer->id,
+            'source_me_id' => $marketingExecutive->id,
+            'employee_id' => $marketingExecutive->id,
+        ]);
+    }
+
     public function test_agent_cannot_assign_marketing_executive_to_sales_order(): void
     {
         $branch = Branch::create([
@@ -273,7 +331,7 @@ class SalesOrderTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['source_me_id']);
+        $response->assertJsonValidationErrors(['customer_id']);
 
         $this->assertDatabaseCount('sales_orders', 0);
     }
