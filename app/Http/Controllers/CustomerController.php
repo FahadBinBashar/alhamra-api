@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Agent;
+use App\Models\Employee;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Notifications\CustomerCredentialNotification;
@@ -49,12 +50,14 @@ class CustomerController extends Controller
 
         $data = $request->validated();
         $password = $data['password'];
+        $sourceEmployee = $this->resolveSourceEmployee($data['source_me_id'] ?? null);
 
         $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
             'added_by_role' => $this->resolveAddedByRole($user),
-            'added_by_branch_id' => $this->resolveBranchId($user),
-            'added_by_agent_id' => $this->resolveAgent($user)?->id,
+            'added_by_branch_id' => $this->resolveBranchId($user) ?? $sourceEmployee?->branch_id,
+            'added_by_agent_id' => $this->resolveAgent($user)?->id ?? $sourceEmployee?->agent_id,
+            'source_me_id' => $sourceEmployee?->id,
         ]));
 
         $customer->notify(new CustomerCredentialNotification($customer->email, $password));
@@ -126,6 +129,15 @@ class CustomerController extends Controller
         }
     }
 
+    private function resolveSourceEmployee(?int $employeeId): ?Employee
+    {
+        if (! $employeeId) {
+            return null;
+        }
+
+        return Employee::find($employeeId);
+    }
+
     private function applyAgentScope(Builder $query, ?User $user): void
     {
         $agent = $this->resolveAgent($user);
@@ -184,7 +196,11 @@ class CustomerController extends Controller
 
     private function resolveBranchId(?User $user): ?int
     {
-        return $user?->employee?->branch_id;
+        if (! $user) {
+            return null;
+        }
+
+        return $user->employee?->branch_id ?? $this->resolveAgent($user)?->branch_id;
     }
 
     private function resolveAddedByRole(?User $user): ?string

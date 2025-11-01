@@ -112,6 +112,62 @@ class CustomerManagementTest extends TestCase
         $this->assertSame('Applicant One, Applicant Two', $createdCustomer->joint_applicants);
         $this->assertSame(User::ROLE_ADMIN, $createdCustomer->added_by_role);
         $this->assertNull($createdCustomer->added_by_agent_id);
+        $this->assertNull($createdCustomer->source_me_id);
+    }
+
+    public function test_admin_can_assign_marketing_executive_when_creating_customer(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $branch = Branch::create([
+            'name' => 'Uttara Branch',
+            'code' => 'UTR',
+            'address' => 'Dhaka',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $agent->id,
+            'rank' => Employee::RANK_ME,
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->postJson('/api/v1/customers', [
+            'name' => 'Sourced Customer',
+            'email' => 'sourced@example.com',
+            'password' => 'password123',
+            'source_me_id' => $marketingExecutive->id,
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonPath('data.source_me_id', $marketingExecutive->id);
+        $response->assertJsonPath('data.added_by_branch_id', $branch->id);
+        $response->assertJsonPath('data.added_by_agent_id', $agent->id);
+
+        $createdCustomer = User::where('email', 'sourced@example.com')->first();
+
+        $this->assertNotNull($createdCustomer);
+        $this->assertSame($marketingExecutive->id, $createdCustomer->source_me_id);
+        $this->assertSame($branch->id, $createdCustomer->added_by_branch_id);
+        $this->assertSame($agent->id, $createdCustomer->added_by_agent_id);
     }
 
     public function test_agent_only_sees_own_customers(): void
