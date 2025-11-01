@@ -80,7 +80,17 @@ class ProcessPaymentCommissionsTest extends TestCase
 
         $this->assertSame(Employee::RANK_MM, $employee->fresh()->rank);
 
+        $payment->refresh();
+        $this->assertNotNull($payment->commissionCalculationUnit);
+        $unitId = $payment->commissionCalculationUnit->id;
         $this->assertDatabaseCount('commissions', 0);
+        $this->assertDatabaseHas('commission_calculation_units', [
+            'payment_id' => $payment->id,
+            'status' => 'draft',
+        ]);
+        $this->assertDatabaseHas('commission_calculation_items', [
+            'commission_calculation_unit_id' => $unitId,
+        ]);
         $this->assertNull($payment->fresh()->commission_processed_at);
     }
 
@@ -138,7 +148,14 @@ class ProcessPaymentCommissionsTest extends TestCase
 
         $this->assertSame(Employee::RANK_ME, $employee->fresh()->rank);
 
+        $payment->refresh();
+        $this->assertNotNull($payment->commissionCalculationUnit);
         $this->assertDatabaseCount('commissions', 0);
+        $this->assertDatabaseHas('commission_calculation_units', [
+            'payment_id' => $payment->id,
+            'status' => 'draft',
+        ]);
+        $this->assertDatabaseCount('commission_calculation_items', 0);
         $this->assertNull($payment->fresh()->commission_processed_at);
     }
 

@@ -7,14 +7,13 @@ use App\Http\Resources\StockMovementResource;
 use App\Http\Resources\UserResource;
 use App\Models\Agent;
 use App\Models\Commission;
-use App\Models\Payment;
+use App\Models\CommissionCalculationItem;
 use App\Models\CustomerInstallment;
 use App\Models\LedgerEntry;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
 use App\Models\User;
-use App\Services\CommissionService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -230,16 +229,9 @@ class ReportController extends Controller
 
     protected function commissionSummary(): array
     {
-        $commissionService = app(CommissionService::class);
-
-        $pendingPayments = Payment::query()
-            ->whereNull('commission_processed_at')
-            ->with('salesOrder.agent', 'salesOrder.branch', 'salesOrder.sourceMe.superior')
-            ->get();
-
-        $pendingTotal = $pendingPayments
-            ->flatMap(fn (Payment $payment) => $commissionService->handlePayment($payment))
-            ->sum(fn (array $commission) => (float) ($commission['amount'] ?? 0));
+        $pendingTotal = CommissionCalculationItem::query()
+            ->whereHas('unit', fn ($query) => $query->where('status', 'draft'))
+            ->sum('amount');
 
         $paidTotal = Commission::where('status', 'paid')->sum('amount');
 
