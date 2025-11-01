@@ -3959,6 +3959,398 @@
       ]
     },
     {
+      "name": "Employee Dashboard",
+      "item": [
+        {
+          "name": "List Dashboard Customers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/customers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "description": "Filter customers for a specific employee (requires admin or manager role).",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "john",
+                  "description": "Search by customer name, email, or phone number.",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Results per page (defaults to 15).",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Dashboard Sales Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/sales",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "description": "Filter sales orders for a specific employee (requires admin or manager role).",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "confirmed",
+                  "description": "Filter by sales order status (repeat the parameter to pass multiple statuses).",
+                  "disabled": true
+                },
+                {
+                  "key": "from_date",
+                  "value": "2025-01-01",
+                  "description": "Filter sales created on or after this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "to_date",
+                  "value": "2025-01-31",
+                  "description": "Filter sales created on or before this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Results per page (defaults to 15).",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Dashboard Commissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/commissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "commissions"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "description": "Filter commissions for a specific employee (requires admin or manager role).",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter by commission status (repeat the parameter to pass multiple statuses).",
+                  "disabled": true
+                },
+                {
+                  "key": "from_date",
+                  "value": "2025-01-01",
+                  "description": "Filter commissions created on or after this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "to_date",
+                  "value": "2025-01-31",
+                  "description": "Filter commissions created on or before this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Results per page (defaults to 15).",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View Employee Wallet",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/wallet",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "wallet"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "description": "View the wallet for a specific employee (requires admin or manager role).",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve the current wallet balance for the authenticated employee. Administrators can supply an employee_id to inspect another employee's wallet."
+          },
+          "response": []
+        },
+        {
+          "name": "List Dashboard Activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/activities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "activities"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "{{employee_id}}",
+                  "description": "Filter activities for a specific employee (requires admin or manager role).",
+                  "disabled": true
+                },
+                {
+                  "key": "from_date",
+                  "value": "2025-01-01",
+                  "description": "Filter activities on or after this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "to_date",
+                  "value": "2025-01-31",
+                  "description": "Filter activities on or before this date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Results per page (defaults to 15).",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Dashboard Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"employee_id\": 5,\n  \"activity_date\": \"2025-01-15\",\n  \"title\": \"Site Visit\",\n  \"location\": \"Dhaka Head Office\",\n  \"customer_id\": 12,\n  \"sales_order_id\": 45,\n  \"notes\": \"Discussed project timeline and gathered follow-up requirements.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 60\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/activities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "activities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Dashboard Activity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"title\": \"Updated Site Visit\",\n  \"notes\": \"Captured updated requirements after follow-up call.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 75\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/activities/{{activity_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "activities",
+                "{{activity_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Dashboard Activity",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/activities/{{activity_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "activities",
+                "{{activity_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Employees",
       "item": [
         {
