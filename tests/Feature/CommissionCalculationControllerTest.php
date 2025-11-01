@@ -10,87 +10,94 @@ use App\Models\SalesOrder;
 use App\Models\User;
 use App\Services\CommissionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CommissionServiceTest extends TestCase
+class CommissionCalculationControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    public function test_admin_can_list_pending_calculations(): void
     {
-        parent::setUp();
-
-        $this->seedCommissionSettings();
-    }
-
-    public function test_handle_payment_returns_gap_commissions_without_persisting(): void
-    {
-        $payment = $this->createPaymentWithChain();
-
-        $commissions = app(CommissionService::class)->handlePayment($payment);
-
-        $this->assertCount(4, $commissions);
-        $this->assertSame(15000.0, $commissions[0]['amount']);
-        $this->assertSame(5000.0, $commissions[1]['amount']);
-        $this->assertSame(5000.0, $commissions[2]['amount']);
-        $this->assertSame(5000.0, $commissions[3]['amount']);
-        $this->assertDatabaseCount('commissions', 0);
-    }
-
-    public function test_handle_payment_persists_when_requested(): void
-    {
-        $payment = $this->createPaymentWithChain();
-
-        $items = app(CommissionService::class)->handlePayment($payment, true);
-
-        $payment->refresh();
-        $unitId = $payment->commissionCalculationUnit->id;
-
-        $this->assertCount(4, $items);
-        $this->assertDatabaseHas('commission_calculation_units', [
-            'payment_id' => $payment->id,
-            'status' => 'draft',
-        ]);
-        $this->assertDatabaseHas('commission_calculation_items', [
-            'commission_calculation_unit_id' => $unitId,
-            'amount' => '15000.00',
-        ]);
-        $this->assertDatabaseCount('commissions', 0);
-    }
-
-    public function test_process_pending_commissions_marks_payment_and_updates_wallet(): void
-    {
+        $this->actingAsAdmin();
         $payment = $this->createPaymentWithChain();
 
         app(CommissionService::class)->handlePayment($payment, true);
 
-        app(CommissionService::class)->processPendingCommissions();
+        $response = $this->getJson('/api/v1/commission-calculations?include=items,payment.salesOrder');
 
-        $payment->refresh();
+        $response->assertOk();
+        $response->assertJsonPath('summary.units', 1);
+        $response->assertJsonPath('summary.items', 4);
+        $response->assertJsonPath('summary.total_amount', 30000.0);
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonCount(4, 'data.0.items');
+    }
 
-        $this->assertNotNull($payment->commission_processed_at);
-        $this->assertDatabaseHas('commissions', [
-            'payment_id' => $payment->id,
-            'status' => 'paid',
+    public function test_employee_can_filter_calculations_by_recipient(): void
+    {
+        $payment = $this->createPaymentWithChain();
+        $items = app(CommissionService::class)->handlePayment($payment, true);
+        $mmId = $items->firstWhere('recipient_type', Employee::class)['recipient_id'];
+
+        $employeeUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
         ]);
+
+        Sanctum::actingAs($employeeUser);
+
+        $response = $this->getJson(sprintf(
+            '/api/v1/commission-calculations?include=items&recipient_type=%s&recipient_id=%d',
+            urlencode(Employee::class),
+            $mmId
+        ));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonCount(4, 'data.0.items');
+    }
+
+    public function test_admin_can_process_pending_calculations(): void
+    {
+        $this->actingAsAdmin();
+        $payment = $this->createPaymentWithChain();
+
+        app(CommissionService::class)->handlePayment($payment, true);
+
+        $response = $this->postJson('/api/v1/commission-calculations/process', [
+            'date' => now()->toDateString(),
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('processed', 4);
+        $response->assertJsonPath('total_amount', 30000.0);
+
         $this->assertDatabaseHas('commission_calculation_units', [
             'payment_id' => $payment->id,
             'status' => 'paid',
         ]);
 
-        $mm = Employee::where('rank', Employee::RANK_MM)->first();
-        $agm = Employee::where('rank', Employee::RANK_AGM)->first();
-        $dgm = Employee::where('rank', Employee::RANK_DGM)->first();
-        $gm = Employee::where('rank', Employee::RANK_GM)->first();
+        $this->assertDatabaseHas('commissions', [
+            'payment_id' => $payment->id,
+            'status' => 'paid',
+        ]);
+    }
 
-        $this->assertSame(15000.0, (float) $mm->wallet->balance);
-        $this->assertSame(5000.0, (float) $agm->wallet->balance);
-        $this->assertSame(5000.0, (float) $dgm->wallet->balance);
-        $this->assertSame(5000.0, (float) $gm->wallet->balance);
+    protected function actingAsAdmin(): User
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        return $admin;
     }
 
     protected function createPaymentWithChain(): Payment
     {
+        $this->seedDevelopmentSettings();
+
         $branch = Branch::create([
             'name' => 'Dhaka',
             'code' => 'DHK',
@@ -139,6 +146,7 @@ class CommissionServiceTest extends TestCase
             'status' => SalesOrder::STATUS_ACTIVE,
             'down_payment' => 100000,
             'total' => 100000,
+            'created_by' => SalesOrder::CREATED_BY_SYSTEM,
         ]);
 
         return Payment::create([
@@ -149,7 +157,7 @@ class CommissionServiceTest extends TestCase
         ]);
     }
 
-    protected function seedCommissionSettings(): void
+    protected function seedDevelopmentSettings(): void
     {
         CommissionSetting::updateOrCreate([
             'key' => 'development_bonus',

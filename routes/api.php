@@ -5,6 +5,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommissionCalculationController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CommissionRuleController;
 use App\Http\Controllers\CommissionSettingController;
@@ -73,6 +74,9 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('commission-rules', CommissionRuleController::class);
     Route::apiResource('commission-settings', CommissionSettingController::class);
     Route::apiResource('commissions', CommissionController::class);
+    Route::get('commission-calculations', [CommissionCalculationController::class, 'index']);
+    Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show']);
+    Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
     Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);

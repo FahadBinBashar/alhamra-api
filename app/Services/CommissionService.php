@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Commission;
+use App\Models\CommissionCalculationUnit;
 use App\Models\CommissionSetting;
 use App\Models\Employee;
 use App\Models\EmployeeWallet;
@@ -45,13 +46,15 @@ class CommissionService
             $commissions = $commissions->merge($this->createDevelopmentGapCommissions($payment));
         }
 
+        $commissions = $commissions->filter()->values();
+
         if (! $persist) {
-            return $commissions->filter();
+            return $commissions;
         }
 
-        return DB::transaction(function () use ($payment, $commissions) {
-            return $commissions->map(fn (array $payload) => $this->storeCommissionFromPayload($payment, $payload));
-        });
+        $unit = $this->storeCalculationUnitFromPayloads($payment, $commissions);
+
+        return $unit->items;
     }
 
     protected function createServiceCommissionPayload(Payment $payment): ?array
@@ -228,38 +231,55 @@ class CommissionService
 
     public function processPendingCommissions(?Carbon $upTo = null): Collection
     {
-        $query = Payment::query()->whereNull('commission_processed_at');
+        $query = CommissionCalculationUnit::query()
+            ->where('status', 'draft')
+            ->with(['payment.salesOrder.agent', 'payment.salesOrder.branch', 'payment.salesOrder.sourceMe.superior', 'items']);
 
         if ($upTo) {
-            $query->whereDate('paid_at', '<=', $upTo->toDateString());
+            $query->whereHas('payment', function ($paymentQuery) use ($upTo) {
+                $paymentQuery->whereDate('paid_at', '<=', $upTo->toDateString());
+            });
         }
 
-        $payments = $query->get();
+        $units = $query->get();
         $created = collect();
 
-        foreach ($payments as $payment) {
-            $payment->loadMissing(
-                'salesOrder.agent',
-                'salesOrder.branch',
-                'salesOrder.sourceMe.superior'
-            );
+        foreach ($units as $unit) {
+            $payment = $unit->payment;
 
-            if (! $payment->salesOrder) {
-                $payment->forceFill(['commission_processed_at' => now()])->save();
+            if (! $payment || ! $payment->salesOrder) {
+                $unit->delete();
                 continue;
             }
 
-            $payloads = $this->handlePayment($payment);
-
-            DB::transaction(function () use ($payment, $payloads, &$created) {
+            DB::transaction(function () use (&$created, $payment, $unit) {
                 $processedAt = now();
 
-                foreach ($payloads as $payload) {
-                    $payload['status'] = 'paid';
-                    $payload['paid_at'] = $processedAt;
+                foreach ($unit->items as $item) {
+                    $payload = [
+                        'recipient_type' => $item->recipient_type,
+                        'recipient_id' => $item->recipient_id,
+                        'amount' => (float) $item->amount,
+                        'status' => 'paid',
+                        'paid_at' => $processedAt,
+                        'meta' => array_merge($item->meta ?? [], [
+                            'calculation_unit_id' => $unit->id,
+                            'calculation_item_id' => $item->id,
+                        ]),
+                    ];
+
+                    if ($item->percentage !== null) {
+                        $payload['percentage'] = (float) $item->percentage;
+                    }
+
                     $commission = $this->storeCommissionFromPayload($payment, $payload);
                     $created->push($commission);
                 }
+
+                $unit->forceFill([
+                    'status' => 'paid',
+                    'processed_at' => $processedAt,
+                ])->save();
 
                 $payment->forceFill([
                     'commission_processed_at' => $processedAt,
@@ -300,6 +320,57 @@ class CommissionService
         }
 
         return $commission;
+    }
+
+    protected function storeCalculationUnitFromPayloads(Payment $payment, Collection $payloads): CommissionCalculationUnit
+    {
+        return DB::transaction(function () use ($payment, $payloads) {
+            /** @var CommissionCalculationUnit $unit */
+            $unit = CommissionCalculationUnit::query()->firstOrNew([
+                'payment_id' => $payment->id,
+            ]);
+
+            $meta = array_merge($unit->meta ?? [], [
+                'commissionable_amount' => $payment->commissionable_amount,
+                'payment_type' => $payment->type,
+                'order_created_by' => $payment->salesOrder?->created_by,
+            ]);
+
+            $unit->fill([
+                'sales_order_id' => $payment->sales_order_id,
+                'status' => $unit->status === 'paid' ? 'paid' : 'draft',
+                'calculated_at' => now(),
+                'meta' => $meta,
+            ]);
+
+            if ($unit->status !== 'paid') {
+                $unit->status = 'draft';
+            }
+
+            $unit->save();
+
+            if ($unit->status === 'draft') {
+                $unit->items()->delete();
+
+                foreach ($payloads as $payload) {
+                    $itemMeta = $payload['meta'] ?? [];
+
+                    if (isset($payload['percentage'])) {
+                        $itemMeta['percentage'] = $payload['percentage'];
+                    }
+
+                    $unit->items()->create([
+                        'recipient_type' => $payload['recipient_type'],
+                        'recipient_id' => $payload['recipient_id'],
+                        'amount' => $payload['amount'],
+                        'percentage' => $payload['percentage'] ?? null,
+                        'meta' => $itemMeta,
+                    ]);
+                }
+            }
+
+            return $unit->load('items');
+        });
     }
 
     protected function creditEmployeeWallet(int $employeeId, float $amount): void
