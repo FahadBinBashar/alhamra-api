@@ -11,6 +11,7 @@ use App\Http\Controllers\CommissionRuleController;
 use App\Http\Controllers\CommissionSettingController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -66,6 +67,16 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('agents', AgentController::class);
     Route::get('employees/superiors', [EmployeeController::class,'superiors']);
     Route::apiResource('employees', EmployeeController::class);
+    Route::prefix('employees/dashboard')->group(function () {
+      Route::get('customers', [EmployeeDashboardController::class, 'customers']);
+      Route::get('sales', [EmployeeDashboardController::class, 'sales']);
+      Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
+      Route::get('wallet', [EmployeeDashboardController::class, 'wallet']);
+      Route::get('activities', [EmployeeDashboardController::class, 'activities']);
+      Route::post('activities', [EmployeeDashboardController::class, 'storeActivity']);
+      Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
+      Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
+    });
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('services', ServiceController::class);
