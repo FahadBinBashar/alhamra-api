@@ -50,9 +50,9 @@ class SalesOrderController extends Controller
         $data = $request->validate([
             'customer_id' => ['required', 'integer', 'exists:users,id'],
             'sales_type' => ['required', 'string', Rule::in(SalesOrder::SALES_TYPES)],
-            'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
-            'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
-            'source_me_id' => ['nullable', 'integer', 'exists:employees,id'],
+            'branch_id' => ['prohibited'],
+            'agent_id' => ['prohibited'],
+            'source_me_id' => ['prohibited'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['required', 'numeric', 'min:0'],
@@ -65,7 +65,8 @@ class SalesOrderController extends Controller
         ]);
 
         $data = $this->applyEntryRoleConstraints($user, $data);
-        $data = $this->applySourceContextForStore($user, $data);
+        $data = $this->applyCustomerContextDefaults($data);
+        $data = $this->applySourceContext($user, $data, true);
         $data['created_by'] = $this->resolveCreatedByFlag($user);
 
         $preparedItems = null;
@@ -153,9 +154,9 @@ class SalesOrderController extends Controller
         $data = $request->validate([
             'customer_id' => ['sometimes', 'integer', 'exists:users,id'],
             'sales_type' => ['sometimes', 'string', Rule::in(SalesOrder::SALES_TYPES)],
-            'branch_id' => ['sometimes', 'integer', 'exists:branches,id'],
-            'agent_id' => ['sometimes', 'integer', 'exists:agents,id'],
-            'source_me_id' => ['sometimes', 'integer', 'exists:employees,id'],
+            'branch_id' => ['prohibited'],
+            'agent_id' => ['prohibited'],
+            'source_me_id' => ['prohibited'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['sometimes', 'nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => ['sometimes', 'numeric', 'min:0'],
@@ -169,12 +170,16 @@ class SalesOrderController extends Controller
         ]);
 
         $data = $this->applyEntryRoleConstraints($request->user(), $data);
+        $data = $this->applyCustomerContextDefaults($data, $salesOrder);
 
-        [$data, $sourceProvided] = $this->applySourceContextForUpdate($request->user(), $salesOrder, $data);
+        $isSwitchingCustomer = array_key_exists('customer_id', $data)
+            && (int) $data['customer_id'] !== (int) $salesOrder->customer_id;
 
-        if (! $sourceProvided) {
-            $this->assertExistingSourceAlignment($salesOrder, $data);
+        if (! array_key_exists('rank', $data) && ! $isSwitchingCustomer) {
+            $data['rank'] = $salesOrder->rank;
         }
+
+        $data = $this->applySourceContext($request->user(), $data, false, $salesOrder, $isSwitchingCustomer);
 
         $itemsProvided = array_key_exists('items', $data);
         $preparedItems = ['items' => []];
@@ -271,92 +276,42 @@ class SalesOrderController extends Controller
         };
     }
 
-    private function applySourceContextForStore(?User $user, array $data): array
-    {
+    private function applySourceContext(
+        ?User $user,
+        array $data,
+        bool $isNewOrder,
+        ?SalesOrder $existing = null,
+        bool $isSwitchingCustomer = false
+    ): array {
         $sourceId = $data['source_me_id'] ?? null;
         $role = $user?->role;
+        $requiresSource = $user && in_array($role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true);
 
-        if ($user && in_array($role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
-            if ($sourceId) {
+        if (! $sourceId) {
+            if ($requiresSource && ($isNewOrder || $isSwitchingCustomer || ! $existing)) {
                 throw ValidationException::withMessages([
-                    'source_me_id' => 'Agents may not assign a marketing executive to their own sales orders.',
+                    'customer_id' => 'The selected customer does not have a marketing executive assigned.',
                 ]);
             }
 
-            $data['source_me_id'] = null;
-            $data['employee_id'] = null;
+            if ($existing && ! $isSwitchingCustomer) {
+                $data['employee_id'] = $existing->employee_id;
+            } else {
+                $data['employee_id'] = null;
+            }
 
             return $data;
         }
 
-        if ($user && in_array($role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true) && ! $sourceId) {
+        $sourceEmployee = Employee::find($sourceId);
+
+        if (! $sourceEmployee) {
             throw ValidationException::withMessages([
-                'source_me_id' => 'A marketing executive is required for admin-entered sales orders.',
+                'customer_id' => 'The marketing executive associated with this customer could not be found.',
             ]);
         }
 
-        if ($sourceId) {
-            $sourceEmployee = Employee::find($sourceId);
-
-            if (! $sourceEmployee) {
-                throw ValidationException::withMessages([
-                    'source_me_id' => 'The selected marketing executive could not be found.',
-                ]);
-            }
-
-            return $this->resolveSourceContext($data, $sourceEmployee);
-        }
-
-        $data['source_me_id'] = null;
-        $data['employee_id'] = null;
-
-        return $data;
-    }
-
-    private function applySourceContextForUpdate(?User $user, SalesOrder $salesOrder, array $data): array
-    {
-        $sourceProvided = array_key_exists('source_me_id', $data);
-        $sourceId = $data['source_me_id'] ?? null;
-        $role = $user?->role;
-
-        if ($user && in_array($role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true)) {
-            if ($sourceProvided && ! is_null($sourceId)) {
-                throw ValidationException::withMessages([
-                    'source_me_id' => 'Agents may not assign a marketing executive to their own sales orders.',
-                ]);
-            }
-
-            if ($sourceProvided) {
-                $data['source_me_id'] = null;
-                $data['employee_id'] = null;
-            }
-
-            return [$data, $sourceProvided];
-        }
-
-        if ($sourceProvided) {
-            if ($user && in_array($role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true) && ! $sourceId) {
-                throw ValidationException::withMessages([
-                    'source_me_id' => 'A marketing executive is required for admin-entered sales orders.',
-                ]);
-            }
-
-            if ($sourceId) {
-                $sourceEmployee = Employee::find($sourceId);
-
-                if (! $sourceEmployee) {
-                    throw ValidationException::withMessages([
-                        'source_me_id' => 'The selected marketing executive could not be found.',
-                    ]);
-                }
-
-                $data = $this->resolveSourceContext($data, $sourceEmployee);
-            } else {
-                $data['employee_id'] = null;
-            }
-        }
-
-        return [$data, $sourceProvided];
+        return $this->resolveSourceContext($data, $sourceEmployee);
     }
 
     private function applyEntryRoleConstraints(?User $user, array $data): array
@@ -402,6 +357,51 @@ class SalesOrderController extends Controller
         return $data;
     }
 
+    private function applyCustomerContextDefaults(array $data, ?SalesOrder $existing = null): array
+    {
+        $customerId = $data['customer_id'] ?? $existing?->customer_id;
+
+        if (! $customerId) {
+            if ($existing) {
+                $data['branch_id'] = $data['branch_id'] ?? $existing->branch_id;
+                $data['agent_id'] = $data['agent_id'] ?? $existing->agent_id;
+                $data['source_me_id'] = $data['source_me_id'] ?? $existing->source_me_id;
+            }
+
+            return $data;
+        }
+
+        $customer = User::find($customerId);
+
+        if (! $customer) {
+            return $data;
+        }
+
+        $isSwitchingCustomer = $existing
+            && array_key_exists('customer_id', $data)
+            && (int) $existing->customer_id !== (int) $customerId;
+
+        if ($existing) {
+            if ($isSwitchingCustomer) {
+                $data['branch_id'] = $customer->added_by_branch_id;
+                $data['agent_id'] = $customer->added_by_agent_id;
+                $data['source_me_id'] = $customer->source_me_id;
+            } else {
+                $data['branch_id'] = $data['branch_id'] ?? $existing->branch_id ?? $customer->added_by_branch_id;
+                $data['agent_id'] = $data['agent_id'] ?? $existing->agent_id ?? $customer->added_by_agent_id;
+                $data['source_me_id'] = $data['source_me_id'] ?? $existing->source_me_id ?? $customer->source_me_id;
+            }
+
+            return $data;
+        }
+
+        $data['branch_id'] = $data['branch_id'] ?? $customer->added_by_branch_id;
+        $data['agent_id'] = $data['agent_id'] ?? $customer->added_by_agent_id;
+        $data['source_me_id'] = $data['source_me_id'] ?? $customer->source_me_id;
+
+        return $data;
+    }
+
     private function resolveSourceContext(array $data, Employee $employee): array
     {
         $data['source_me_id'] = $employee->id;
@@ -442,33 +442,6 @@ class SalesOrderController extends Controller
         }
 
         return $data;
-    }
-
-    private function assertExistingSourceAlignment(SalesOrder $salesOrder, array $data): void
-    {
-        $source = $salesOrder->sourceMe;
-
-        if (! $source) {
-            return;
-        }
-
-        $messages = [];
-
-        if (array_key_exists('branch_id', $data) && ! is_null($data['branch_id']) && $source->branch_id && (int) $data['branch_id'] !== (int) $source->branch_id) {
-            $messages['branch_id'] = 'The selected branch does not match the marketing executive profile.';
-        }
-
-        if (array_key_exists('agent_id', $data) && ! is_null($data['agent_id']) && $source->agent_id && (int) $data['agent_id'] !== (int) $source->agent_id) {
-            $messages['agent_id'] = 'The selected agent does not match the marketing executive profile.';
-        }
-
-        if (array_key_exists('rank', $data) && ! is_null($data['rank']) && $source->rank && $source->rank !== $data['rank']) {
-            $messages['rank'] = 'The selected rank does not match the marketing executive profile.';
-        }
-
-        if ($messages) {
-            throw ValidationException::withMessages($messages);
-        }
     }
 
     private function ensureAgentBelongsToBranch(?int $agentId, ?int $branchId): void
