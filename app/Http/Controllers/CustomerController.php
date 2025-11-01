@@ -56,9 +56,13 @@ class CustomerController extends Controller
             'role' => User::ROLE_CUSTOMER,
             'added_by_role' => $this->resolveAddedByRole($user),
             'added_by_branch_id' => $this->resolveBranchId($user) ?? $sourceEmployee?->branch_id,
-            'added_by_agent_id' => $this->resolveAgent($user)?->id ?? $sourceEmployee?->agent_id,
+            'added_by_agent_id' => $sourceEmployee
+                ? null // if source_me_id is given, keep agent_id null
+                : ($this->resolveAgent($user)?->id ?? null),
             'source_me_id' => $sourceEmployee?->id,
         ]));
+
+        
 
         $customer->notify(new CustomerCredentialNotification($customer->email, $password));
 
