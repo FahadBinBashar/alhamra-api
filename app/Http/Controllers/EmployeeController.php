@@ -307,6 +307,8 @@ class EmployeeController extends Controller
         if ($request->file('signature')) {
             $this->storeEmployeeDocument($employee, $request->file('signature'), 'signature');
         }
+        
+        $user->notify(new EmployeeCredentialNotification($user->email, $password));
 
         return response()->json([
             'data' => $employee->load([
