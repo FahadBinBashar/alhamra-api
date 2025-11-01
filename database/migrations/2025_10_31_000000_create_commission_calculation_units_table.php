@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\\Database\\Migrations\\Migration;
-use Illuminate\\Database\\Schema\\Blueprint;
-use Illuminate\\Support\\Facades\\Schema;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -21,15 +21,19 @@ return new class extends Migration
 
         Schema::create('commission_calculation_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('commission_calculation_unit_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('commission_calculation_unit_id');
             $table->string('recipient_type');
             $table->unsignedBigInteger('recipient_id')->nullable();
-            $table->decimal('amount', 14, 2);
+            $table->decimal('amount', 14, 2)->default(0);
             $table->decimal('percentage', 6, 3)->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();
+
+            // ✅ Shortened foreign key name
+            $table->foreign('commission_calculation_unit_id', 'ccu_item_fk')
+                ->references('id')
+                ->on('commission_calculation_units')
+                ->cascadeOnDelete();
         });
     }
 
