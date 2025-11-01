@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Events\PaymentRecorded;
+use App\Models\CommissionCalculationUnit;
 use App\Traits\LogsActivityChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Payment extends Model
 {
@@ -83,6 +85,11 @@ class Payment extends Model
     public function commissions(): HasMany
     {
         return $this->hasMany(Commission::class);
+    }
+
+    public function commissionCalculationUnit(): HasOne
+    {
+        return $this->hasOne(CommissionCalculationUnit::class);
     }
 
     public function getCommissionableAmountAttribute(): float

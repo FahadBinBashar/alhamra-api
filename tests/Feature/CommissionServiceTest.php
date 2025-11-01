@@ -41,19 +41,28 @@ class CommissionServiceTest extends TestCase
     {
         $payment = $this->createPaymentWithChain();
 
-        $created = app(CommissionService::class)->handlePayment($payment, true);
+        $items = app(CommissionService::class)->handlePayment($payment, true);
 
-        $this->assertCount(4, $created);
-        $this->assertDatabaseHas('commissions', [
+        $payment->refresh();
+        $unitId = $payment->commissionCalculationUnit->id;
+
+        $this->assertCount(4, $items);
+        $this->assertDatabaseHas('commission_calculation_units', [
             'payment_id' => $payment->id,
-            'recipient_type' => Employee::class,
-            'status' => 'unpaid',
+            'status' => 'draft',
         ]);
+        $this->assertDatabaseHas('commission_calculation_items', [
+            'commission_calculation_unit_id' => $unitId,
+            'amount' => '15000.00',
+        ]);
+        $this->assertDatabaseCount('commissions', 0);
     }
 
     public function test_process_pending_commissions_marks_payment_and_updates_wallet(): void
     {
         $payment = $this->createPaymentWithChain();
+
+        app(CommissionService::class)->handlePayment($payment, true);
 
         app(CommissionService::class)->processPendingCommissions();
 
@@ -61,6 +70,10 @@ class CommissionServiceTest extends TestCase
 
         $this->assertNotNull($payment->commission_processed_at);
         $this->assertDatabaseHas('commissions', [
+            'payment_id' => $payment->id,
+            'status' => 'paid',
+        ]);
+        $this->assertDatabaseHas('commission_calculation_units', [
             'payment_id' => $payment->id,
             'status' => 'paid',
         ]);
