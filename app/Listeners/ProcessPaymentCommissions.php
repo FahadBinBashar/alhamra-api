@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\PaymentRecorded;
 use App\Models\Employee;
+use App\Models\SalesOrder;
 use App\Models\RankRequirement;
 use App\Models\Payment;
 use App\Services\CommissionService;
@@ -42,9 +43,18 @@ class ProcessPaymentCommissions
             return;
         }
 
-        $promotionThreshold = (float) RankRequirement::query()->where('rank', Employee::RANK_MM)->value('personal_sales_target') ?: 50000;
+        $promotionThreshold = (float) RankRequirement::query()
+            ->where('rank', Employee::RANK_MM)
+            ->value('personal_sales_target') ?: 50000;
 
-        if ((float) $payment->amount < $promotionThreshold) {
+        $totalPaidDownPayment = (float) Payment::query()
+            ->where('type', Payment::TYPE_DOWN_PAYMENT)
+            ->whereHas('salesOrder', function ($query) use ($sourceEmployee) {
+                $query->where('source_me_id', $sourceEmployee->id)
+                    ->where('status', '!=', SalesOrder::STATUS_CANCELLED);
+            })->sum('amount');
+
+        if ($totalPaidDownPayment < $promotionThreshold) {
             return;
         }
 
