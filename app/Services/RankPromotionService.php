@@ -50,8 +50,7 @@ class RankPromotionService
             return;
         }
 
-        $shareValueSetting = CommissionSetting::value('share_value', 500000);
-        $shareValue = is_array($shareValueSetting) ? (float) ($shareValueSetting['amount'] ?? 500000) : (float) $shareValueSetting;
+        $shareValue = (float) CommissionSetting::value('share_value', 50000);
         $ordersQuery = SalesOrder::query()
             ->where('employee_id', $employee->id)
             ->where('status', '!=', SalesOrder::STATUS_CANCELLED);
