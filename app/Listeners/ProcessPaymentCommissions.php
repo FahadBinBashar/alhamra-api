@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\PaymentRecorded;
 use App\Models\Employee;
+use App\Models\RankRequirement;
 use App\Models\Payment;
 use App\Services\CommissionService;
 use App\Services\RankPromotionService;
@@ -41,7 +42,9 @@ class ProcessPaymentCommissions
             return;
         }
 
-        if ((float) $payment->amount < 50000) {
+        $promotionThreshold = (float) RankRequirement::query()->where('rank', Employee::RANK_MM)->value('personal_sales_target') ?: 50000;
+
+        if ((float) $payment->amount < $promotionThreshold) {
             return;
         }
 
