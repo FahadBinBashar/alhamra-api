@@ -25,9 +25,9 @@ class CommissionService
     public function handlePayment(Payment $payment, bool $persist = false): Collection
     {
         $payment->loadMissing(
-            'salesOrder.agent',
+            'salesOrder.agent.user',
             'salesOrder.branch',
-            'salesOrder.sourceMe.superior'
+            'salesOrder.sourceMe.user', 'salesOrder.sourceMe.superior'
         );
 
         if (! $payment->salesOrder) {
@@ -43,7 +43,11 @@ class CommissionService
                 $commissions->push($serviceCommission);
             }
         } else {
-            $commissions = $commissions->merge($this->createDevelopmentGapCommissions($payment));
+            $agentCommission = $this->createAgentCommissionPayload($payment);
+            if ($agentCommission) {
+                $commissions->push($agentCommission);
+            }
+            $commissions = $commissions->merge($this->createDevelopmentGapCommissions($payment, (bool) $agentCommission));
         }
 
         $commissions = $commissions->filter()->values();
@@ -126,12 +130,17 @@ class CommissionService
         return null;
     }
 
-    protected function createDevelopmentGapCommissions(Payment $payment): Collection
+    protected function createDevelopmentGapCommissions(Payment $payment, bool $agentCommissionExists = false): Collection
     {
         $order = $payment->salesOrder;
         $source = $order->sourceMe;
 
         if (! $source) {
+            // If there's no employee chain, and an agent commission has already been added,
+            // we can exit, as there are no development bonuses to calculate.
+            if ($agentCommissionExists) {
+                return collect();
+            }
             return collect();
         }
 
@@ -178,6 +187,7 @@ class CommissionService
             $commissions->push([
                 'recipient_type' => Employee::class,
                 'recipient_id' => $employee->getKey(),
+                'recipient_name' => $employee->user?->name,
                 'amount' => $amount,
                 'percentage' => $percentage,
                 'meta' => [
@@ -189,6 +199,41 @@ class CommissionService
         }
 
         return $commissions;
+    }
+
+    protected function createAgentCommissionPayload(Payment $payment): ?array
+    {
+        $order = $payment->salesOrder;
+
+        if (! $order->agent_id) {
+            return null;
+        }
+
+        $percentageKey = $payment->type === Payment::TYPE_INSTALLMENT ? 'installment' : 'down_payment';
+        $rates = $this->getArraySetting('agent_rates');
+
+        if (empty($rates) || ! isset($rates[$percentageKey])) {
+            return null;
+        }
+
+        $percentage = (float) $rates[$percentageKey];
+        if ($percentage <= 0) {
+            return null;
+        }
+
+        $amount = $this->calculatePercentageAmount($percentage, $payment->commissionable_amount);
+        if ($amount <= 0) {
+            return null;
+        }
+
+        return [
+            'recipient_type' => Agent::class,
+            'recipient_id' => $order->agent_id,
+            'recipient_name' => $order->agent?->user?->name,
+            'amount' => $amount,
+            'percentage' => $percentage,
+            'meta' => ['category' => 'agent_commission', 'payment_type' => $payment->type],
+        ];
     }
 
     protected function buildSuperiorChain(Employee $employee): Collection
@@ -357,6 +402,10 @@ class CommissionService
 
                     if (isset($payload['percentage'])) {
                         $itemMeta['percentage'] = $payload['percentage'];
+                    }
+
+                    if (isset($payload['recipient_name'])) {
+                        $itemMeta['recipient_name'] = $payload['recipient_name'];
                     }
 
                     $unit->items()->create([
