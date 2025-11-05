@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\CommissionSetting;
 use App\Models\Employee;
@@ -89,6 +90,25 @@ class CommissionServiceTest extends TestCase
         $this->assertSame(5000.0, (float) $gm->wallet->balance);
     }
 
+    public function test_process_pending_commissions_updates_agent_wallet(): void
+    {
+        $payment = $this->createPaymentWithAgent();
+
+        app(CommissionService::class)->handlePayment($payment, true);
+
+        app(CommissionService::class)->processPendingCommissions();
+
+        $agent = $payment->salesOrder->agent;
+
+        $this->assertDatabaseHas('commissions', [
+            'recipient_type' => Agent::class,
+            'recipient_id' => $agent->id,
+            'status' => 'paid',
+        ]);
+
+        $this->assertSame(5000.0, (float) $agent->wallet->balance);
+    }
+
     protected function createPaymentWithChain(): Payment
     {
         $branch = Branch::create([
@@ -106,6 +126,8 @@ class CommissionServiceTest extends TestCase
             'user_id' => $gmUser->id,
             'branch_id' => $branch->id,
             'rank' => Employee::RANK_GM,
+            'employee_code' => 'EMP-'.uniqid(),
+            'full_name_en' => 'General Manager',
         ]);
 
         $dgm = Employee::create([
@@ -113,6 +135,8 @@ class CommissionServiceTest extends TestCase
             'branch_id' => $branch->id,
             'rank' => Employee::RANK_DGM,
             'superior_id' => $gm->id,
+            'employee_code' => 'EMP-'.uniqid(),
+            'full_name_en' => 'Deputy General Manager',
         ]);
 
         $agm = Employee::create([
@@ -120,6 +144,8 @@ class CommissionServiceTest extends TestCase
             'branch_id' => $branch->id,
             'rank' => Employee::RANK_AGM,
             'superior_id' => $dgm->id,
+            'employee_code' => 'EMP-'.uniqid(),
+            'full_name_en' => 'Assistant General Manager',
         ]);
 
         $mm = Employee::create([
@@ -127,6 +153,8 @@ class CommissionServiceTest extends TestCase
             'branch_id' => $branch->id,
             'rank' => Employee::RANK_MM,
             'superior_id' => $agm->id,
+            'employee_code' => 'EMP-'.uniqid(),
+            'full_name_en' => 'Marketing Executive',
         ]);
 
         $customer = User::factory()->create();
@@ -134,6 +162,44 @@ class CommissionServiceTest extends TestCase
         $order = SalesOrder::create([
             'customer_id' => $customer->id,
             'source_me_id' => $mm->id,
+            'branch_id' => $branch->id,
+            'sales_type' => SalesOrder::TYPE_LAND,
+            'status' => SalesOrder::STATUS_ACTIVE,
+            'down_payment' => 100000,
+            'total' => 100000,
+        ]);
+
+        return Payment::create([
+            'sales_order_id' => $order->id,
+            'paid_at' => now(),
+            'amount' => 100000,
+            'type' => Payment::TYPE_DOWN_PAYMENT,
+        ]);
+    }
+
+    protected function createPaymentWithAgent(): Payment
+    {
+        $branch = Branch::create([
+            'name' => 'Chattogram',
+            'code' => 'CTG',
+            'address' => 'Chattogram',
+        ]);
+
+        $agentUser = User::factory()->create(['role' => User::ROLE_AGENT]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => 'AGT-'.uniqid(),
+            'mobile' => '+8801000000000',
+            'address' => 'Chattogram',
+        ]);
+
+        $customer = User::factory()->create();
+
+        $order = SalesOrder::create([
+            'customer_id' => $customer->id,
+            'agent_id' => $agent->id,
             'branch_id' => $branch->id,
             'sales_type' => SalesOrder::TYPE_LAND,
             'status' => SalesOrder::STATUS_ACTIVE,
@@ -159,6 +225,15 @@ class CommissionServiceTest extends TestCase
                 Employee::RANK_AGM => ['down_payment' => 20],
                 Employee::RANK_DGM => ['down_payment' => 25],
                 Employee::RANK_GM => ['down_payment' => 30],
+            ],
+        ]);
+
+        CommissionSetting::updateOrCreate([
+            'key' => 'agent_rates',
+        ], [
+            'value' => [
+                'down_payment' => 5,
+                'installment' => 1,
             ],
         ]);
     }

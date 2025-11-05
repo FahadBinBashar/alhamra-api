@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Agent;
+use App\Models\AgentWallet;
 use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\CommissionCalculationUnit;
@@ -360,8 +361,12 @@ class CommissionService
             $paidAt
         );
 
-        if ($status === 'paid' && $commission->recipient_type === Employee::class) {
-            $this->creditEmployeeWallet((int) $commission->recipient_id, (float) $commission->amount);
+        if ($status === 'paid') {
+            if ($commission->recipient_type === Employee::class) {
+                $this->creditEmployeeWallet((int) $commission->recipient_id, (float) $commission->amount);
+            } elseif ($commission->recipient_type === Agent::class) {
+                $this->creditAgentWallet((int) $commission->recipient_id, (float) $commission->amount);
+            }
         }
 
         return $commission;
@@ -438,6 +443,25 @@ class CommissionService
 
         $wallet->balance = (float) $wallet->balance + $amount;
         $wallet->employee_id = $employeeId;
+        $wallet->save();
+    }
+
+    protected function creditAgentWallet(int $agentId, float $amount): void
+    {
+        $wallet = AgentWallet::query()
+            ->where('agent_id', $agentId)
+            ->lockForUpdate()
+            ->first();
+
+        if (! $wallet) {
+            $wallet = new AgentWallet([
+                'agent_id' => $agentId,
+                'balance' => 0,
+            ]);
+        }
+
+        $wallet->balance = (float) $wallet->balance + $amount;
+        $wallet->agent_id = $agentId;
         $wallet->save();
     }
 

@@ -46,4 +46,9 @@ class Agent extends Model
     {
         return $this->hasOne(RankMembership::class)->where('active', true);
     }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(AgentWallet::class);
+    }
 }

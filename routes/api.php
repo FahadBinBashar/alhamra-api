@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
@@ -65,6 +66,10 @@ Route::prefix('v1')->group(function () {
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     Route::apiResource('branches', BranchController::class);
     Route::apiResource('agents', AgentController::class);
+    Route::prefix('agents/dashboard')->group(function () {
+      Route::get('commissions', [AgentDashboardController::class, 'commissions']);
+      Route::get('wallet', [AgentDashboardController::class, 'wallet']);
+    });
     Route::get('employees/superiors', [EmployeeController::class,'superiors']);
     Route::apiResource('employees', EmployeeController::class);
     Route::prefix('employees/dashboard')->group(function () {
