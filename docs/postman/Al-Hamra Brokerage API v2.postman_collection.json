@@ -1103,6 +1103,74 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Agent Wallet",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/wallet",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "wallet"
+              ]
+            },
+            "description": "Retrieve the wallet balance for the authenticated agent. Admins can pass an `agent_id` query parameter to inspect a specific agent."
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Commissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/commissions?status[]=paid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "commissions"
+              ],
+              "query": [
+                {
+                  "key": "status[]",
+                  "value": "paid"
+                }
+              ]
+            },
+            "description": "List commissions for the authenticated agent. Supports optional filters: `status[]`, `from_date`, `to_date`, and `agent_id` (admin only)."
+          },
+          "response": []
         }
       ]
     },
