@@ -192,6 +192,7 @@ class DemoDataSeeder extends Seeder
                 'category_id' => $landCategory,
                 'product_type' => 'land',
                 'price' => 5000000,
+                'ccu_percentage' => 0,
                 'attributes' => [
                     'size' => '5 katha',
                     'location' => 'Bashundhara Block D',
@@ -208,6 +209,7 @@ class DemoDataSeeder extends Seeder
                 'category_id' => $apartmentCategory,
                 'product_type' => 'big',
                 'price' => 8000000,
+                'ccu_percentage' => 0,
                 'attributes' => [
                     'bedrooms' => 4,
                     'bathrooms' => 3,

@@ -125,4 +125,68 @@ class SalesOrder extends Model
     {
         return $this->belongsTo(Rank::class, 'rank', 'code');
     }
+
+    public function calculateCommissionableBaseFor(float $amount): float
+    {
+        $ratio = $this->calculateCommissionableRatio();
+
+        return round(max($amount, 0.0) * $ratio, 2);
+    }
+
+    public function calculateCommissionableRatio(): float
+    {
+        $this->loadMissing('items.itemable');
+
+        $items = $this->items ?? collect();
+
+        if ($items->isEmpty()) {
+            return 1.0;
+        }
+
+        $commissionableTotal = 0.0;
+        $lineTotal = 0.0;
+
+        foreach ($items as $item) {
+            $lineAmount = (float) $item->line_total;
+            $lineTotal += $lineAmount;
+
+            $itemable = $item->itemable;
+            $ccu = 0.0;
+
+            if ($itemable instanceof Product) {
+                $ccu = (float) ($itemable->ccu_percentage ?? 0);
+            }
+
+            $ratio = max(min(100 - $ccu, 100), 0) / 100;
+
+            $commissionableTotal += $lineAmount * $ratio;
+        }
+
+        $orderTotal = (float) $this->total;
+
+        if ($orderTotal > 0) {
+            return $this->clampCommissionRatio($commissionableTotal / $orderTotal);
+        }
+
+        if ($lineTotal > 0) {
+            return $this->clampCommissionRatio($commissionableTotal / $lineTotal);
+        }
+
+        return 1.0;
+    }
+
+    protected function clampCommissionRatio(float $value): float
+    {
+        $ratio = round($value, 8);
+
+        if ($ratio < 0) {
+            return 0.0;
+        }
+
+        if ($ratio > 1) {
+            return 1.0;
+        }
+
+        return $ratio;
+    }
 }

@@ -24,6 +24,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'product_type' => $this->product_type,
             'price' => $this->price,
+            'ccu_percentage' => $this->ccu_percentage,
             'attributes' => $this->getAttribute('attributes') ?? [],
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,

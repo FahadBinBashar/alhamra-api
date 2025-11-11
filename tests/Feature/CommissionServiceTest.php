@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Agent;
 use App\Models\Branch;
+use App\Models\Category;
 use App\Models\CommissionSetting;
 use App\Models\Employee;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Services\CommissionService;
@@ -28,13 +30,15 @@ class CommissionServiceTest extends TestCase
     {
         $payment = $this->createPaymentWithChain();
 
+        $this->assertSame(42000.0, (float) $payment->commission_base_amount);
+
         $commissions = app(CommissionService::class)->handlePayment($payment);
 
         $this->assertCount(4, $commissions);
-        $this->assertSame(15000.0, $commissions[0]['amount']);
-        $this->assertSame(5000.0, $commissions[1]['amount']);
-        $this->assertSame(5000.0, $commissions[2]['amount']);
-        $this->assertSame(5000.0, $commissions[3]['amount']);
+        $this->assertSame(6300.0, $commissions[0]['amount']);
+        $this->assertSame(2100.0, $commissions[1]['amount']);
+        $this->assertSame(2100.0, $commissions[2]['amount']);
+        $this->assertSame(2100.0, $commissions[3]['amount']);
         $this->assertDatabaseCount('commissions', 0);
     }
 
@@ -54,7 +58,7 @@ class CommissionServiceTest extends TestCase
         ]);
         $this->assertDatabaseHas('commission_calculation_items', [
             'commission_calculation_unit_id' => $unitId,
-            'amount' => '15000.00',
+            'amount' => '6300.00',
         ]);
         $this->assertDatabaseCount('commissions', 0);
     }
@@ -84,10 +88,10 @@ class CommissionServiceTest extends TestCase
         $dgm = Employee::where('rank', Employee::RANK_DGM)->first();
         $gm = Employee::where('rank', Employee::RANK_GM)->first();
 
-        $this->assertSame(15000.0, (float) $mm->wallet->balance);
-        $this->assertSame(5000.0, (float) $agm->wallet->balance);
-        $this->assertSame(5000.0, (float) $dgm->wallet->balance);
-        $this->assertSame(5000.0, (float) $gm->wallet->balance);
+        $this->assertSame(6300.0, (float) $mm->wallet->balance);
+        $this->assertSame(2100.0, (float) $agm->wallet->balance);
+        $this->assertSame(2100.0, (float) $dgm->wallet->balance);
+        $this->assertSame(2100.0, (float) $gm->wallet->balance);
     }
 
     public function test_process_pending_commissions_updates_agent_wallet(): void
@@ -106,7 +110,7 @@ class CommissionServiceTest extends TestCase
             'status' => 'paid',
         ]);
 
-        $this->assertSame(5000.0, (float) $agent->wallet->balance);
+        $this->assertSame(2100.0, (float) $agent->wallet->balance);
     }
 
     protected function createPaymentWithChain(): Payment
@@ -159,20 +163,42 @@ class CommissionServiceTest extends TestCase
 
         $customer = User::factory()->create();
 
+        $category = Category::create([
+            'name' => 'Land',
+            'type' => 'product',
+        ]);
+
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Test Plot',
+            'product_type' => 'land',
+            'price' => 200000,
+            'ccu_percentage' => 30,
+            'is_stock_managed' => false,
+        ]);
+
         $order = SalesOrder::create([
             'customer_id' => $customer->id,
             'source_me_id' => $mm->id,
             'branch_id' => $branch->id,
             'sales_type' => SalesOrder::TYPE_LAND,
             'status' => SalesOrder::STATUS_ACTIVE,
-            'down_payment' => 100000,
-            'total' => 100000,
+            'down_payment' => 60000,
+            'total' => 200000,
+        ]);
+
+        $order->items()->create([
+            'itemable_type' => Product::class,
+            'itemable_id' => $product->id,
+            'qty' => 1,
+            'unit_price' => 200000,
+            'line_total' => 200000,
         ]);
 
         return Payment::create([
             'sales_order_id' => $order->id,
             'paid_at' => now(),
-            'amount' => 100000,
+            'amount' => 60000,
             'type' => Payment::TYPE_DOWN_PAYMENT,
         ]);
     }
@@ -197,20 +223,42 @@ class CommissionServiceTest extends TestCase
 
         $customer = User::factory()->create();
 
+        $category = Category::create([
+            'name' => 'Apartment',
+            'type' => 'product',
+        ]);
+
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Test Apartment',
+            'product_type' => 'big',
+            'price' => 200000,
+            'ccu_percentage' => 30,
+            'is_stock_managed' => false,
+        ]);
+
         $order = SalesOrder::create([
             'customer_id' => $customer->id,
             'agent_id' => $agent->id,
             'branch_id' => $branch->id,
             'sales_type' => SalesOrder::TYPE_LAND,
             'status' => SalesOrder::STATUS_ACTIVE,
-            'down_payment' => 100000,
-            'total' => 100000,
+            'down_payment' => 60000,
+            'total' => 200000,
+        ]);
+
+        $order->items()->create([
+            'itemable_type' => Product::class,
+            'itemable_id' => $product->id,
+            'qty' => 1,
+            'unit_price' => 200000,
+            'line_total' => 200000,
         ]);
 
         return Payment::create([
             'sales_order_id' => $order->id,
             'paid_at' => now(),
-            'amount' => 100000,
+            'amount' => 60000,
             'type' => Payment::TYPE_DOWN_PAYMENT,
         ]);
     }

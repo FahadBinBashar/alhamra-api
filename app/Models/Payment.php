@@ -63,6 +63,17 @@ class Payment extends Model
         'created' => PaymentRecorded::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (Payment $payment): void {
+            if (! $payment->sales_order_id || $payment->amount === null) {
+                return;
+            }
+
+            $payment->commission_base_amount = $payment->calculateCommissionBaseAmount();
+        });
+    }
+
     public static function resolveTypeFromIntent(string $intent): string
     {
         return match ($intent) {
@@ -109,5 +120,32 @@ class Payment extends Model
         $base = $this->commission_base_amount ?? $baseFromMeta ?? $this->amount;
 
         return (float) $base;
+    }
+
+    public function calculateCommissionBaseAmount(?float $amount = null): float
+    {
+        $amount ??= (float) $this->amount;
+
+        if (! $this->sales_order_id || $amount <= 0) {
+            return round(max($amount, 0.0), 2);
+        }
+
+        $order = $this->relationLoaded('salesOrder')
+            ? $this->salesOrder
+            : $this->salesOrder()->with('items.itemable')->first();
+
+        if (! $order) {
+            return round(max($amount, 0.0), 2);
+        }
+
+        if (! $order->relationLoaded('items')) {
+            $order->loadMissing('items.itemable');
+        }
+
+        if (method_exists($order, 'calculateCommissionableBaseFor')) {
+            return $order->calculateCommissionableBaseFor($amount);
+        }
+
+        return round(max($amount, 0.0), 2);
     }
 }
