@@ -29,10 +29,10 @@ class Product extends Model
     /**
      * @var array<string, string>
      */
-    protected $casts = [
+   protected $casts = [
         'attributes' => 'array',
         'price' => 'decimal:2',
-        'ccu_percentage' => 'decimal:2',
+        'ccu_percentage' => 'integer',
         'stock_qty' => 'decimal:2',
         'min_stock_alert' => 'decimal:2',
         'is_stock_managed' => 'boolean',
