@@ -416,7 +416,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  },\n  \"stock_qty\": 2,\n  \"min_stock_alert\": 1,\n  \"is_stock_managed\": true\n}",
+              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"ccu_percentage\": 30,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  },\n  \"stock_qty\": 2,\n  \"min_stock_alert\": 1,\n  \"is_stock_managed\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -493,7 +493,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"price\": 5200000,\n  \"attributes\": {\n    \"plot_size\": \"5.5 katha\"\n  }\n}",
+              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"price\": 5200000,\n  \"ccu_percentage\": 25,\n  \"attributes\": {\n    \"plot_size\": \"5.5 katha\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"

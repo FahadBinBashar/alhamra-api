@@ -19,6 +19,7 @@ class Product extends Model
         'name',
         'product_type',
         'price',
+        'ccu_percentage',
         'attributes',
         'stock_qty',
         'min_stock_alert',
@@ -31,6 +32,7 @@ class Product extends Model
     protected $casts = [
         'attributes' => 'array',
         'price' => 'decimal:2',
+        'ccu_percentage' => 'decimal:2',
         'stock_qty' => 'decimal:2',
         'min_stock_alert' => 'decimal:2',
         'is_stock_managed' => 'boolean',
