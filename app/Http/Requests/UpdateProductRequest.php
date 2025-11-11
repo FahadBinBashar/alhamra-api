@@ -19,7 +19,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'category_id' => ['sometimes', 'required', 'integer', 'exists:categories,id'],
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'product_type' => ['sometimes', 'required', 'in:small,big,land,share,other'],
+            'product_type' => ['sometimes', 'required', 'in:consumer,flat,land,share,other'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['sometimes', 'nullable', 'array'],
