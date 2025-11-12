@@ -20,7 +20,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $includes = $this->resolveIncludes($request, ['category']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
 
         if (empty($includes)) {
             $includes = ['category'];
@@ -48,7 +48,7 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        $includes = $this->resolveIncludes($request, ['category']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
 
         if (empty($includes)) {
             $includes = ['category'];
@@ -64,7 +64,7 @@ class ProductController extends Controller
      */
     public function show(Request $request, Product $product): ProductResource
     {
-        $includes = $this->resolveIncludes($request, ['category']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
 
         if (empty($includes)) {
             $includes = ['category'];
@@ -82,7 +82,7 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        $includes = $this->resolveIncludes($request, ['category']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
 
         if (empty($includes)) {
             $includes = ['category'];

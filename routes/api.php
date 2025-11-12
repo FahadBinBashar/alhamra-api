@@ -19,6 +19,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RankController;
 use App\Http\Controllers\RankRequirementController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierPayableController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ServiceController;
@@ -84,6 +86,9 @@ Route::prefix('v1')->group(function () {
     });
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
+    Route::apiResource('suppliers', SupplierController::class);
+    Route::get('supplier-payables', [SupplierPayableController::class, 'index']);
+    Route::post('supplier-payables/process', [SupplierPayableController::class, 'process']);
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('customers', CustomerController::class)->only(['index', 'store', 'show']);
     Route::apiResource('sales-orders', SalesOrderController::class);
@@ -103,6 +108,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('rank-requirements', RankRequirementController::class);
     Route::get('reports/receivables', [ReportController::class,'receivables']);
     Route::get('reports/payables', [ReportController::class,'payables']);
+    Route::get('reports/supplier-payables', [ReportController::class,'supplierPayables']);
     Route::get('reports/commissions', [ReportController::class,'commissions']);
     Route::get('reports/rank-funds', [ReportController::class,'rankFunds']);
     Route::get('reports/agent-performance', [ReportController::class,'agentPerformance']);

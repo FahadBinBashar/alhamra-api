@@ -13,6 +13,8 @@ use App\Models\LedgerEntry;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
+use App\Models\Supplier;
+use App\Models\SupplierPayable;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -50,6 +52,83 @@ class ReportController extends Controller
         return response()->json([
             'total_payable' => $total,
             'breakdown' => $liabilities,
+        ]);
+    }
+
+    public function supplierPayables(Request $request)
+    {
+        $validated = $request->validate([
+            'supplier_id' => ['sometimes', 'integer', 'exists:suppliers,id'],
+            'status' => ['sometimes', 'string'],
+            'from' => ['sometimes', 'date'],
+            'to' => ['sometimes', 'date'],
+        ]);
+
+        $query = SupplierPayable::query();
+
+        if (! empty($validated['supplier_id'])) {
+            $query->where('supplier_id', (int) $validated['supplier_id']);
+        }
+
+        if (! empty($validated['status'])) {
+            $statuses = collect(explode(',', (string) $validated['status']))
+                ->map(fn ($status) => trim($status))
+                ->filter(fn ($status) => in_array($status, [SupplierPayable::STATUS_UNPAID, SupplierPayable::STATUS_PAID], true))
+                ->values();
+
+            if ($statuses->isNotEmpty()) {
+                $query->whereIn('status', $statuses);
+            }
+        }
+
+        if (! empty($validated['from'])) {
+            $query->whereDate('created_at', '>=', $request->date('from'));
+        }
+
+        if (! empty($validated['to'])) {
+            $query->whereDate('created_at', '<=', $request->date('to'));
+        }
+
+        $aggregates = $query
+            ->selectRaw(
+                'supplier_id, '
+                . 'SUM(amount) as total_amount, '
+                . "SUM(CASE WHEN status = ? THEN amount ELSE 0 END) as unpaid_amount, "
+                . "SUM(CASE WHEN status = ? THEN amount ELSE 0 END) as paid_amount",
+                [SupplierPayable::STATUS_UNPAID, SupplierPayable::STATUS_PAID]
+            )
+            ->groupBy('supplier_id')
+            ->get();
+
+        $supplierIds = $aggregates->pluck('supplier_id')->filter()->unique()->all();
+        $suppliers = Supplier::whereIn('id', $supplierIds)->get()->keyBy('id');
+
+        $data = $aggregates->map(function ($row) use ($suppliers) {
+            $supplier = $suppliers->get($row->supplier_id);
+
+            return [
+                'supplier_id' => $row->supplier_id,
+                'supplier' => $supplier ? [
+                    'id' => $supplier->id,
+                    'name' => $supplier->name,
+                    'email' => $supplier->email,
+                    'phone' => $supplier->phone,
+                ] : null,
+                'total_payable' => (float) $row->total_amount,
+                'paid' => (float) $row->paid_amount,
+                'unpaid' => (float) $row->unpaid_amount,
+            ];
+        })->values();
+
+        $summary = [
+            'total_payable' => $data->sum(fn ($item) => $item['total_payable']),
+            'total_paid' => $data->sum(fn ($item) => $item['paid']),
+            'total_unpaid' => $data->sum(fn ($item) => $item['unpaid']),
+        ];
+
+        return response()->json([
+            'data' => $data,
+            'summary' => $summary,
         ]);
     }
 

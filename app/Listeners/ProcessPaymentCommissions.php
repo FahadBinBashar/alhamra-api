@@ -9,12 +9,14 @@ use App\Models\RankRequirement;
 use App\Models\Payment;
 use App\Services\CommissionService;
 use App\Services\RankPromotionService;
+use App\Services\SupplierPayableService;
 
 class ProcessPaymentCommissions
 {
     public function __construct(
         private CommissionService $commissionService,
         private RankPromotionService $rankPromotionService,
+        private SupplierPayableService $supplierPayableService,
     )
     {
     }
@@ -27,6 +29,7 @@ class ProcessPaymentCommissions
         $this->evaluateRankProgress($payment);
 
         $this->commissionService->handlePayment($payment, true);
+        $this->supplierPayableService->handlePayment($payment);
     }
 
     protected function promoteMarketingExecutiveIfEligible(Payment $payment): void

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\PaymentRecorded;
 use App\Models\CommissionCalculationUnit;
+use App\Models\SupplierPayable;
 use App\Traits\LogsActivityChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -96,6 +97,11 @@ class Payment extends Model
     public function commissions(): HasMany
     {
         return $this->hasMany(Commission::class);
+    }
+
+    public function supplierPayables(): HasMany
+    {
+        return $this->hasMany(SupplierPayable::class);
     }
 
     public function commissionCalculationUnit(): HasOne
