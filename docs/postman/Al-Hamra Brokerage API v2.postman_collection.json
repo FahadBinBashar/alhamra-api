@@ -416,7 +416,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"ccu_percentage\": 30,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  },\n  \"stock_qty\": 2,\n  \"min_stock_alert\": 1,\n  \"is_stock_managed\": true\n}",
+              "raw": "{\n  \"category_id\": {{category_id}},\n  \"name\": \"Premium Land Parcel\",\n  \"supplier_id\": {{supplier_id}},\n  \"supplier_percentage\": 20,\n  \"product_type\": \"land\",\n  \"price\": 5000000,\n  \"ccu_percentage\": 30,\n  \"attributes\": {\n    \"plot_size\": \"5 katha\"\n  },\n  \"stock_qty\": 2,\n  \"min_stock_alert\": 1,\n  \"is_stock_managed\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -493,7 +493,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"price\": 5200000,\n  \"ccu_percentage\": 25,\n  \"attributes\": {\n    \"plot_size\": \"5.5 katha\"\n  }\n}",
+              "raw": "{\n  \"name\": \"Premium Land Parcel - North\",\n  \"supplier_id\": {{supplier_id}},\n  \"supplier_percentage\": 22.5,\n  \"price\": 5200000,\n  \"ccu_percentage\": 25,\n  \"attributes\": {\n    \"plot_size\": \"5.5 katha\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -539,6 +539,180 @@
                 "v1",
                 "products",
                 "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Suppliers",
+      "item": [
+        {
+          "name": "List Suppliers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Supplier",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Developers\",\n  \"email\": \"accounts@abcdevelopers.test\",\n  \"phone\": \"+8801700000000\",\n  \"address\": \"House 10, Road 5, Dhanmondi, Dhaka\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                "{{supplier_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Supplier",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Developers Ltd.\",\n  \"email\": \"finance@abcdevelopers.test\",\n  \"phone\": \"+8801711000000\",\n  \"address\": \"House 15, Road 7, Dhanmondi, Dhaka\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                "{{supplier_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Supplier",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "suppliers",
+                "{{supplier_id}}"
               ]
             }
           },
@@ -1675,6 +1849,95 @@
       ]
     },
     {
+      "name": "Supplier Payables",
+      "item": [
+        {
+          "name": "List Supplier Payables",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/supplier-payables?status=unpaid&from=2025-11-01&to=2025-11-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "supplier-payables"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "unpaid"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Supplier Payables",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": {{supplier_id}},\n  \"method\": \"bank\",\n  \"from\": \"2025-11-01\",\n  \"to\": \"2025-11-30\",\n  \"payable_ids\": [1, 2, 3],\n  \"paid_at\": \"2025-11-30 17:00:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/supplier-payables/process",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "supplier-payables",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Installments",
       "description": "CRUD endpoints for managing customer installments.",
       "item": [
@@ -2803,6 +3066,49 @@
                 "v1",
                 "reports",
                 "payables"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Supplier Payables Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/supplier-payables?status=unpaid&from=2025-11-01&to=2025-11-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "supplier-payables"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "unpaid"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30"
+                }
               ]
             }
           },
@@ -5132,6 +5438,11 @@
     {
       "key": "ledger_account_code",
       "value": "101",
+      "type": "string"
+    },
+    {
+      "key": "supplier_payable_id",
+      "value": "1",
       "type": "string"
     }
   ]
