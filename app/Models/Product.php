@@ -17,6 +17,8 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'name',
+        'supplier_id',
+        'supplier_percentage',
         'product_type',
         'price',
         'ccu_percentage',
@@ -29,10 +31,11 @@ class Product extends Model
     /**
      * @var array<string, string>
      */
-   protected $casts = [
+    protected $casts = [
         'attributes' => 'array',
         'price' => 'decimal:2',
         'ccu_percentage' => 'integer',
+        'supplier_percentage' => 'decimal:2',
         'stock_qty' => 'decimal:2',
         'min_stock_alert' => 'decimal:2',
         'is_stock_managed' => 'boolean',
@@ -44,6 +47,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function stockMovements(): HasMany

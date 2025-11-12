@@ -32,5 +32,15 @@ return [
             'name' => 'Incentive Fund Payable',
             'type' => 'liability',
         ],
+        'supplier_cost' => [
+            'code' => '520',
+            'name' => 'Supplier Cost Expense',
+            'type' => 'expense',
+        ],
+        'supplier_payable' => [
+            'code' => '230',
+            'name' => 'Supplier Payable',
+            'type' => 'liability',
+        ],
     ],
 ];

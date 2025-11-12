@@ -19,6 +19,8 @@ class StoreProductRequest extends FormRequest
         return [
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
+            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+            'supplier_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'product_type' => ['required', 'in:consumer,flat,land,share,other'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
