@@ -35,7 +35,7 @@ class Product extends Model
         'attributes' => 'array',
         'price' => 'decimal:2',
         'ccu_percentage' => 'integer',
-        'supplier_percentage' => 'decimal:2',
+        'supplier_percentage' => 'integer',
         'stock_qty' => 'decimal:2',
         'min_stock_alert' => 'decimal:2',
         'is_stock_managed' => 'boolean',
