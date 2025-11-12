@@ -21,6 +21,13 @@ class SupplierPayableService
 
     public function handlePayment(Payment $payment): void
     {
+        $isInstallment = $payment->type === Payment::TYPE_INSTALLMENT
+            || $payment->intent_type === Payment::INTENT_INSTALLMENT;
+
+        if (! $isInstallment) {
+            return;
+        }
+
         $payment->loadMissing('salesOrder.items.itemable');
 
         $order = $payment->salesOrder;
