@@ -66,6 +66,10 @@ class CoreDataSeeder extends Seeder
                 'DMD' => 200000,
                 'DIR' => 200000,
             ],
+            'monthly_incentive_settings' => [
+                'percentage' => 1,
+                'max_levels' => 4,
+            ],
             'director_fund' => [
                 'PD' => [
                     'percentage' => 2,
