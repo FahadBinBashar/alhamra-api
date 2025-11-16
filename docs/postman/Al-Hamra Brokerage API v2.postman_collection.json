@@ -2405,7 +2405,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"holiday_bonus\",\n  \"value\": {\n    \"down_payment\": 2.5,\n    \"installment\": 1.5\n  }\n}",
+              "raw": "{\n  \"key\": \"monthly_incentive_settings\",\n  \"value\": {\n    \"percentage\": 1,\n    \"max_levels\": 4\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2475,7 +2475,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"holiday_bonus\",\n  \"value\": {\n    \"down_payment\": 3,\n    \"installment\": 2\n  }\n}",
+              "raw": "{\n  \"key\": \"monthly_incentive_settings\",\n  \"value\": {\n    \"percentage\": 1.2,\n    \"max_levels\": 5\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4549,6 +4549,43 @@
           "response": []
         },
         {
+          "name": "View Monthly Incentive (Employee)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee/incentives?month=2025-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "incentives"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-01",
+                  "description": "Optional month (YYYY-MM) to view a specific incentive period.",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "List Dashboard Activities",
           "request": {
             "method": "GET",
@@ -4793,7 +4830,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"জন ডো\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
+              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -5360,6 +5397,209 @@
               "response": []
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Monthly Incentives",
+      "item": [
+        {
+          "name": "Generate Monthly Incentives",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/monthly-incentives/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "monthly-incentives",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Approved Monthly Incentives",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/monthly-incentives/process",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "monthly-incentives",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Monthly Incentives",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/monthly-incentives?month=2025-11&status=draft",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "monthly-incentives"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11"
+                },
+                {
+                  "key": "status",
+                  "value": "draft"
+                },
+                {
+                  "key": "employee_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Monthly Incentive",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"note\": \"Ready for payout approval\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/monthly-incentives/1/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "monthly-incentives",
+                "1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Monthly Incentive",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"note\": \"Incorrect subordinate totals\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/monthly-incentives/1/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "monthly-incentives",
+                "1",
+                "reject"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }

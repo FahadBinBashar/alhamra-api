@@ -10,6 +10,7 @@ use App\Http\Controllers\CommissionCalculationController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CommissionRuleController;
 use App\Http\Controllers\CommissionSettingController;
+use App\Http\Controllers\MonthlyIncentiveController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeDashboardController;
@@ -84,6 +85,7 @@ Route::prefix('v1')->group(function () {
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
       Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
     });
+    Route::get('employee/incentives', [MonthlyIncentiveController::class, 'employeeIncentives']);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('suppliers', SupplierController::class);
@@ -98,6 +100,11 @@ Route::prefix('v1')->group(function () {
     Route::get('commission-calculations', [CommissionCalculationController::class, 'index']);
     Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show']);
     Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
+    Route::post('monthly-incentives/generate', [MonthlyIncentiveController::class, 'generate']);
+    Route::post('monthly-incentives/process', [MonthlyIncentiveController::class, 'process']);
+    Route::get('monthly-incentives', [MonthlyIncentiveController::class, 'index']);
+    Route::post('monthly-incentives/{monthlyIncentive}/approve', [MonthlyIncentiveController::class, 'approve']);
+    Route::post('monthly-incentives/{monthlyIncentive}/reject', [MonthlyIncentiveController::class, 'reject']);
     Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);

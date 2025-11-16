@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array<int, class-string>
      */
     protected $commands = [
+        Commands\CalculateMonthlyIncentives::class,
+        Commands\ProcessMonthlyIncentives::class,
         Commands\ProcessPendingCommissions::class,
     ];
 
