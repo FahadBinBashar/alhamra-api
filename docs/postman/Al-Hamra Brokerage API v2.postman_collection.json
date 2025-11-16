@@ -2405,7 +2405,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"holiday_bonus\",\n  \"value\": {\n    \"down_payment\": 2.5,\n    \"installment\": 1.5\n  }\n}",
+              "raw": "{\n  \"key\": \"monthly_incentive_settings\",\n  \"value\": {\n    \"percentage\": 1,\n    \"max_levels\": 4\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2475,7 +2475,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"holiday_bonus\",\n  \"value\": {\n    \"down_payment\": 3,\n    \"installment\": 2\n  }\n}",
+              "raw": "{\n  \"key\": \"monthly_incentive_settings\",\n  \"value\": {\n    \"percentage\": 1.2,\n    \"max_levels\": 5\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
