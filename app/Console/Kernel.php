@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array<int, class-string>
      */
     protected $commands = [
+        Commands\CalculateMonthlyIncentives::class,
+        Commands\ProcessMonthlyIncentives::class,
         Commands\ProcessPendingCommissions::class,
     ];
 
@@ -21,6 +23,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('incentives:calculate')->monthlyOn(1, '03:00');
         $schedule->command('ranks:evaluate')->monthlyOn(1, '02:00');
     }
 
