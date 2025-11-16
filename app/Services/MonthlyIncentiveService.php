@@ -32,8 +32,11 @@ class MonthlyIncentiveService
         $incentives = collect();
 
         foreach ($employees as $employee) {
-            $subordinateIds = $this->collectSubordinateIds($employee->id, $childMap, $maxLevels);
-            $commissionableTotal = $this->sumTotalsFor($subordinateIds, $paymentTotals);
+            $levels = $this->collectSubordinateLevels($employee->id, $childMap, $maxLevels);
+            $subordinateIds = $this->flattenLevelIds($levels);
+            $stepCounts = $this->calculateStepCounts($levels, $maxLevels);
+            $stepSales = $this->calculateStepSales($levels, $paymentTotals, $maxLevels);
+            $commissionableTotal = array_sum($stepSales);
 
             if ($commissionableTotal <= 0) {
                 continue;
@@ -49,16 +52,24 @@ class MonthlyIncentiveService
                 continue;
             }
 
+            $status = $existing?->status ?? MonthlyIncentive::STATUS_DRAFT;
+
             $payload = [
                 'period_end' => $periodEnd->toDateString(),
                 'total_commissionable_sales' => $commissionableTotal,
                 'incentive_rate' => $rate,
                 'amount' => $this->calculateIncentiveAmount($commissionableTotal, $rate),
-                'status' => MonthlyIncentive::STATUS_DRAFT,
+                'status' => $status,
+                'reviewed_by' => $status === MonthlyIncentive::STATUS_DRAFT ? null : $existing?->reviewed_by,
+                'reviewed_at' => $status === MonthlyIncentive::STATUS_DRAFT ? null : $existing?->reviewed_at,
+                'review_note' => $status === MonthlyIncentive::STATUS_DRAFT ? null : $existing?->review_note,
                 'meta' => [
                     'subordinate_ids' => $subordinateIds,
+                    'subordinate_steps' => $this->mapSubordinateSteps($levels),
                     'subordinate_count' => count($subordinateIds),
                     'max_levels' => $maxLevels,
+                    'step_counts' => $stepCounts,
+                    'step_sales' => $stepSales,
                 ],
             ];
 
@@ -82,7 +93,7 @@ class MonthlyIncentiveService
 
         $incentives = MonthlyIncentive::query()
             ->whereDate('period_start', $periodStart->toDateString())
-            ->where('status', MonthlyIncentive::STATUS_DRAFT)
+            ->where('status', MonthlyIncentive::STATUS_APPROVED)
             ->with('employee')
             ->get();
 
@@ -129,10 +140,14 @@ class MonthlyIncentiveService
         return $map;
     }
 
-    protected function collectSubordinateIds(int $employeeId, array $childMap, int $maxDepth): array
+    protected function collectSubordinateLevels(int $employeeId, array $childMap, int $maxDepth): array
     {
+        $levels = [];
         $currentLevel = $childMap[$employeeId] ?? [];
-        $collected = $currentLevel;
+
+        if (! empty($currentLevel)) {
+            $levels[1] = $currentLevel;
+        }
 
         for ($depth = 2; $depth <= $maxDepth; $depth++) {
             $nextLevel = [];
@@ -141,15 +156,26 @@ class MonthlyIncentiveService
                 $nextLevel = array_merge($nextLevel, $childMap[$childId] ?? []);
             }
 
-            $currentLevel = $nextLevel;
-            $collected = array_merge($collected, $currentLevel);
-
-            if (empty($currentLevel)) {
+            if (empty($nextLevel)) {
                 break;
             }
+
+            $levels[$depth] = $nextLevel;
+            $currentLevel = $nextLevel;
         }
 
-        return array_values(array_unique($collected));
+        return $levels;
+    }
+
+    protected function flattenLevelIds(array $levels): array
+    {
+        $all = [];
+
+        foreach ($levels as $ids) {
+            $all = array_merge($all, $ids);
+        }
+
+        return array_values(array_unique($all));
     }
 
     protected function collectPaymentTotals(Carbon $periodStart, Carbon $periodEnd): array
@@ -165,15 +191,45 @@ class MonthlyIncentiveService
             ->toArray();
     }
 
-    protected function sumTotalsFor(array $employeeIds, array $totals): float
+    protected function calculateStepCounts(array $levels, int $maxLevels): array
     {
-        $sum = 0.0;
+        $counts = [];
 
-        foreach ($employeeIds as $id) {
-            $sum += $totals[$id] ?? 0.0;
+        for ($level = 1; $level <= $maxLevels; $level++) {
+            $counts[$level] = isset($levels[$level]) ? count(array_unique($levels[$level])) : 0;
         }
 
-        return round($sum, 2);
+        return $counts;
+    }
+
+    protected function calculateStepSales(array $levels, array $paymentTotals, int $maxLevels): array
+    {
+        $stepSales = [];
+
+        for ($level = 1; $level <= $maxLevels; $level++) {
+            $stepSales[$level] = 0.0;
+
+            foreach (array_unique($levels[$level] ?? []) as $employeeId) {
+                $stepSales[$level] += $paymentTotals[$employeeId] ?? 0.0;
+            }
+
+            $stepSales[$level] = round($stepSales[$level], 2);
+        }
+
+        return $stepSales;
+    }
+
+    protected function mapSubordinateSteps(array $levels): array
+    {
+        $map = [];
+
+        foreach ($levels as $level => $ids) {
+            foreach (array_unique($ids) as $id) {
+                $map[$id] = $level;
+            }
+        }
+
+        return $map;
     }
 
     protected function calculateIncentiveAmount(float $total, float $rate): float

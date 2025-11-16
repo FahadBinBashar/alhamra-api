@@ -11,7 +11,16 @@ class MonthlyIncentive extends Model
     use HasFactory;
 
     public const STATUS_DRAFT = 'draft';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
     public const STATUS_PAID = 'paid';
+
+    public const STATUSES = [
+        self::STATUS_DRAFT,
+        self::STATUS_APPROVED,
+        self::STATUS_REJECTED,
+        self::STATUS_PAID,
+    ];
 
     protected $fillable = [
         'employee_id',
@@ -21,6 +30,9 @@ class MonthlyIncentive extends Model
         'incentive_rate',
         'amount',
         'status',
+        'reviewed_by',
+        'reviewed_at',
+        'review_note',
         'meta',
         'processed_at',
     ];
@@ -33,10 +45,16 @@ class MonthlyIncentive extends Model
         'amount' => 'decimal:2',
         'meta' => 'array',
         'processed_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 }
