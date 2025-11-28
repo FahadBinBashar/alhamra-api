@@ -23,6 +23,7 @@ class Employee extends Model
     public const RANK_DGM = 'DGM';
     public const RANK_GM = 'GM';
     public const RANK_PD = 'PD';
+    public const RANK_AMD = 'AMD';
     public const RANK_ED = 'ED';
     public const RANK_DMD = 'DMD';
     public const RANK_DIR = 'DIR';
@@ -34,6 +35,7 @@ class Employee extends Model
         self::RANK_DGM,
         self::RANK_GM,
         self::RANK_PD,
+        self::RANK_AMD,
         self::RANK_ED,
         self::RANK_DMD,
         self::RANK_DIR,

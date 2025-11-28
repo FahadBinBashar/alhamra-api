@@ -60,8 +60,10 @@ class RankPromotionService
 
         $eligibleRank = $employee->rank;
 
+        $directorSettings = $this->getDirectorRankSettings();
+
         foreach ($requirements as $requirement) {
-            if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery)) {
+            if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery, $directorSettings)) {
                 break;
             }
 
@@ -77,8 +79,17 @@ class RankPromotionService
         });
     }
 
-    protected function meetsRequirement(Employee $employee, RankRequirement $requirement, int $shareCount, float $shareValue, Builder $ordersQuery): bool
+    protected function meetsRequirement(Employee $employee, RankRequirement $requirement, int $shareCount, float $shareValue, Builder $ordersQuery, array $directorSettings): bool
     {
+        if (isset($directorSettings[$requirement->rank])) {
+            $config = $directorSettings[$requirement->rank];
+            $shareTarget = (int) ($config['share_target'] ?? 0);
+            $gmTarget = (int) ($config['gm_target'] ?? 0);
+
+            return $this->meetsDirectorRequirement($shareCount, $shareTarget)
+                && $this->meetsGmRequirement($employee, $gmTarget);
+        }
+
         $meta = $requirement->meta ?? [];
 
         $requiredShares = (int) ($meta['shares_required'] ?? 0);
@@ -121,5 +132,40 @@ class RankPromotionService
         }
 
         return true;
+    }
+
+    protected function meetsDirectorRequirement(int $shareCount, int $shareTarget): bool
+    {
+        return $shareCount >= $shareTarget;
+    }
+
+    protected function meetsGmRequirement(Employee $employee, int $gmTarget): bool
+    {
+        if ($gmTarget <= 0) {
+            return true;
+        }
+
+        return $this->countDirectGmSubordinates($employee) >= $gmTarget;
+    }
+
+    protected function getDirectorRankSettings(): array
+    {
+        $defaults = [
+            Employee::RANK_ED => ['share_target' => 10, 'gm_target' => 10],
+            Employee::RANK_AMD => ['share_target' => 20, 'gm_target' => 20],
+            Employee::RANK_DMD => ['share_target' => 25, 'gm_target' => 25],
+            Employee::RANK_DIR => ['share_target' => 30, 'gm_target' => 30],
+        ];
+
+        $settings = CommissionSetting::value('director_rank_settings', []);
+
+        return is_array($settings) ? array_merge($defaults, $settings) : $defaults;
+    }
+
+    protected function countDirectGmSubordinates(Employee $employee): int
+    {
+        return $employee->subordinates()
+            ->where('rank', Employee::RANK_GM)
+            ->count();
     }
 }

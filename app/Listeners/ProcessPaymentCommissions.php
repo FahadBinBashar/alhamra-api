@@ -55,7 +55,7 @@ class ProcessPaymentCommissions
             ->whereHas('salesOrder', function ($query) use ($sourceEmployee) {
                 $query->where('source_me_id', $sourceEmployee->id)
                     ->where('status', '!=', SalesOrder::STATUS_CANCELLED);
-            })->sum('amount');
+            })->sum('commission_base_amount');
 
         if ($totalPaidDownPayment < $promotionThreshold) {
             return;
