@@ -86,15 +86,8 @@ class RankPromotionService
             $shareTarget = (int) ($config['share_target'] ?? 0);
             $gmTarget = (int) ($config['gm_target'] ?? 0);
 
-            if ($shareTarget > 0 && $shareCount < $shareTarget) {
-                return false;
-            }
-
-            if ($gmTarget > 0 && $this->countDirectorLevelSubordinates($employee) < $gmTarget) {
-                return false;
-            }
-
-            return true;
+            return $this->meetsDirectorRequirement($shareCount, $shareTarget)
+                && $this->meetsGmRequirement($employee, $gmTarget);
         }
 
         $meta = $requirement->meta ?? [];
@@ -141,6 +134,20 @@ class RankPromotionService
         return true;
     }
 
+    protected function meetsDirectorRequirement(int $shareCount, int $shareTarget): bool
+    {
+        return $shareCount >= $shareTarget;
+    }
+
+    protected function meetsGmRequirement(Employee $employee, int $gmTarget): bool
+    {
+        if ($gmTarget <= 0) {
+            return true;
+        }
+
+        return $this->countDirectGmSubordinates($employee) >= $gmTarget;
+    }
+
     protected function getDirectorRankSettings(): array
     {
         $defaults = [
@@ -155,19 +162,10 @@ class RankPromotionService
         return is_array($settings) ? array_merge($defaults, $settings) : $defaults;
     }
 
-    protected function countDirectorLevelSubordinates(Employee $employee): int
+    protected function countDirectGmSubordinates(Employee $employee): int
     {
-        $rankOrder = array_values(Employee::RANKS);
-        $gmPosition = array_search(Employee::RANK_GM, $rankOrder, true);
-
-        if ($gmPosition === false) {
-            return 0;
-        }
-
-        $directorRanks = array_slice($rankOrder, $gmPosition);
-
         return $employee->subordinates()
-            ->whereIn('rank', $directorRanks)
+            ->where('rank', Employee::RANK_GM)
             ->count();
     }
 }
