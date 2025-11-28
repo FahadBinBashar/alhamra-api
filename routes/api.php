@@ -14,6 +14,7 @@ use App\Http\Controllers\MonthlyIncentiveController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeDashboardController;
+use App\Http\Controllers\EmployeeEarningController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\Customer\CustomerInstallmentController;
 use App\Http\Controllers\Customer\CustomerPaymentController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\CustomerSalesOrderController;
+use App\Http\Controllers\DirectorFundController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -85,7 +87,8 @@ Route::prefix('v1')->group(function () {
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
       Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
     });
-    Route::get('employee/incentives', [MonthlyIncentiveController::class, 'employeeIncentives']);
+    Route::get('employee/incentives', [EmployeeEarningController::class, 'incentives']);
+    Route::get('employee/director-funds', [EmployeeEarningController::class, 'directorFunds']);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('suppliers', SupplierController::class);
@@ -100,6 +103,9 @@ Route::prefix('v1')->group(function () {
     Route::get('commission-calculations', [CommissionCalculationController::class, 'index']);
     Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show']);
     Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
+    Route::get('director-funds', [DirectorFundController::class, 'index']);
+    Route::post('director-funds/calculate', [DirectorFundController::class, 'calculate']);
+    Route::post('director-funds/process', [DirectorFundController::class, 'process']);
     Route::post('monthly-incentives/generate', [MonthlyIncentiveController::class, 'generate']);
     Route::post('monthly-incentives/process', [MonthlyIncentiveController::class, 'process']);
     Route::get('monthly-incentives', [MonthlyIncentiveController::class, 'index']);
