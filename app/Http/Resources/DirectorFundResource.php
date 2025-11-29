@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\EmployeeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DirectorFundResource extends JsonResource
@@ -13,6 +12,9 @@ class DirectorFundResource extends JsonResource
     public function toArray($request): array
     {
         $meta = $this->meta ?? [];
+
+        $employee = $this->whenLoaded('employee');
+        $employeeUser = $employee && $employee->relationLoaded('user') ? $employee->user : null;
 
         return [
             'id' => $this->id,
@@ -28,7 +30,13 @@ class DirectorFundResource extends JsonResource
             'total_sales' => isset($meta['total_sales']) ? (float) $meta['total_sales'] : null,
             'recipient_count' => isset($meta['recipient_count']) ? (int) $meta['recipient_count'] : null,
             'processed_at' => $this->processed_at,
-            'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'employee' => $employee ? [
+                'id' => $employee->id,
+                'user_id' => $employee->user_id,
+                'employee_code' => $employee->employee_code,
+                'rank' => $employee->rank,
+                'name' => $employeeUser?->name ?? $employee->full_name_en,
+            ] : null,
             'meta' => $meta,
         ];
     }
