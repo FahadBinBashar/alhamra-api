@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Rank;
 use App\Models\Product;
 use App\Models\SalesOrder;
+use App\Models\Service;
 use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -142,6 +143,14 @@ class SalesOrderTest extends TestCase
             'rank' => Employee::RANK_ME,
         ]);
 
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 2000,
+            'commission_percentage' => 5,
+        ]);
+
         $customer = User::factory()->create();
 
         Sanctum::actingAs($rankUser);
@@ -150,8 +159,14 @@ class SalesOrderTest extends TestCase
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_SERVICE,
             'source_me_id' => $marketingExecutive->id,
-            'down_payment' => 1000,
             'total' => 2000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
         ]);
 
         $response->assertForbidden();
@@ -176,6 +191,14 @@ class SalesOrderTest extends TestCase
             'agent_code' => Str::uuid()->toString(),
         ]);
 
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 5000,
+            'commission_percentage' => 5,
+        ]);
+
         $customer = User::factory()->create();
 
         Sanctum::actingAs($agentUser);
@@ -183,8 +206,14 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_SERVICE,
-            'down_payment' => 1000,
             'total' => 5000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
         ]);
 
         $response->assertCreated();
