@@ -133,6 +133,46 @@ class EmployeeDashboardController extends Controller
         return CommissionResource::collection($commissions);
     }
 
+    public function serviceCommissions(Request $request): JsonResponse
+    {
+        $employeeId = $this->resolveEmployeeId($request);
+
+        if (! $employeeId) {
+            abort(422, 'An employee context is required to view service commissions.');
+        }
+
+        $query = Commission::query()
+            ->with(['payment', 'salesOrder.items.itemable'])
+            ->where('category', 'service')
+            ->where('recipient_type', Employee::class)
+            ->where('recipient_id', $employeeId);
+
+        if ($request->filled('status')) {
+            $query->whereIn('status', Arr::wrap($request->input('status')));
+        }
+
+        $commissions = $query
+            ->orderByDesc('paid_at')
+            ->orderByDesc('id')
+            ->get();
+
+        $payload = $commissions->map(function (Commission $commission) {
+            $service = $commission->salesOrder?->items?->first(function ($item) {
+                return $item->itemable instanceof \App\Models\Service;
+            });
+
+            return [
+                'payment_date' => optional($commission->payment?->paid_at)->toDateString(),
+                'amount' => (float) $commission->amount,
+                'commission_percentage' => $commission->meta['commission_percentage'] ?? null,
+                'status' => $commission->status,
+                'service_name' => $service?->itemable?->name,
+            ];
+        });
+
+        return response()->json($payload);
+    }
+
     public function wallet(Request $request): EmployeeWalletResource
     {
         $employeeId = $this->resolveEmployeeId($request);

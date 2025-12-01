@@ -17,6 +17,7 @@ class Service extends Model
         'category_id',
         'name',
         'price',
+        'commission_percentage',
         'attributes',
     ];
 
@@ -26,6 +27,7 @@ class Service extends Model
     protected $casts = [
         'attributes' => 'array',
         'price' => 'decimal:2',
+        'commission_percentage' => 'decimal:2',
     ];
 
     /**
