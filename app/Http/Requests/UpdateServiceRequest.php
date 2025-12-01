@@ -20,6 +20,7 @@ class UpdateServiceRequest extends FormRequest
             'category_id' => ['sometimes', 'required', 'integer', 'exists:categories,id'],
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'commission_percentage' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['sometimes', 'nullable', 'array'],
         ];
     }

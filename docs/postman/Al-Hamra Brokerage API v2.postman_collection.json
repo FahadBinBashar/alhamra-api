@@ -726,6 +726,7 @@
         {
           "name": "List Services",
           "request": {
+            "description": "List services with pricing and `commission_percentage` so you can configure service sales and commissions.",
             "method": "GET",
             "header": [
               {
@@ -812,6 +813,7 @@
         {
           "name": "Show Service",
           "request": {
+            "description": "Retrieve a single service with `price` and `commission_percentage` details.",
             "method": "GET",
             "header": [
               {

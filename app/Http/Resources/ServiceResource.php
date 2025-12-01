@@ -23,6 +23,7 @@ class ServiceResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'name' => $this->name,
             'price' => $this->price,
+            'commission_percentage' => $this->commission_percentage,
             'attributes' => $this->getAttribute('attributes') ?? [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
