@@ -71,4 +71,60 @@ class PaymentControllerTest extends TestCase
             'amount' => 25000,
         ]);
     }
+
+    public function test_service_payment_allows_partial_payment_type(): void
+    {
+        $branch = Branch::create(['name' => 'Dhaka', 'code' => 'DHK', 'address' => 'Dhaka']);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        $agentUser = User::factory()->create(['role' => User::ROLE_AGENT]);
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => 'AG-2',
+        ]);
+        $customer = User::factory()->create(['role' => User::ROLE_CUSTOMER]);
+        $category = Category::create(['name' => 'Services', 'type' => 'service']);
+        $service = Service::create([
+            'name' => 'Visa Service',
+            'category_id' => $category->id,
+            'price' => 20000,
+            'commission_percentage' => 5,
+        ]);
+
+        $order = SalesOrder::create([
+            'customer_id' => $customer->id,
+            'agent_id' => $agent->id,
+            'branch_id' => $branch->id,
+            'sales_type' => SalesOrder::TYPE_SERVICE,
+            'status' => SalesOrder::STATUS_ACTIVE,
+            'down_payment' => null,
+            'total' => $service->price,
+            'created_by' => SalesOrder::CREATED_BY_AGENT,
+        ]);
+
+        $order->items()->create([
+            'itemable_type' => Service::class,
+            'itemable_id' => $service->id,
+            'qty' => 1,
+            'unit_price' => $service->price,
+            'line_total' => $service->price,
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->postJson("/api/v1/sales-orders/{$order->id}/payments", [
+            'paid_at' => now()->toDateString(),
+            'amount' => 5000,
+            'type' => Payment::TYPE_PARTIAL_PAYMENT,
+        ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('payments', [
+            'sales_order_id' => $order->id,
+            'type' => Payment::TYPE_PARTIAL_PAYMENT,
+            'intent_type' => Payment::INTENT_DUE,
+            'amount' => 5000,
+        ]);
+    }
 }

@@ -48,6 +48,23 @@ After the order is created, post a payment against it. For example:
 }
 ```
 
+### Quick copy/paste JSON for service payments
+- `sales_order_id`: the ID returned from creating the service sales order
+- `amount`: how much the customer is paying now
+- `paid_at`: the payment date (YYYY-MM-DD)
+- `type` (optional):
+  - `full_payment` (default) for one-shot payments
+  - `partial_payment` when the customer is paying in smaller chunks without creating installments
+
+```json
+{
+  "sales_order_id": 55,
+  "amount": 50000,
+  "paid_at": "2025-02-20",
+  "type": "partial_payment"
+}
+```
+
 When this payment is processed for a service order:
 - Agent flow: commission = `payment.amount × commission_percentage` → `200000 × 0.05 = 10000`, status = `paid`, wallet is credited immediately.
 - Employee flow (using `source_me_id` on the order and no `agent_id`): commission is stored as `draft`; at month-end call `POST /service-commissions/process?month=2025-02` to mark it `paid` and credit the employee’s wallet.

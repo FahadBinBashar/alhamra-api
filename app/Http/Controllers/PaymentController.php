@@ -11,6 +11,7 @@ use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class PaymentController extends Controller
 {
@@ -140,6 +141,21 @@ class PaymentController extends Controller
         ]);
 
         $payment = DB::transaction(function () use ($order, $data) {
+            if ($order->sales_type === SalesOrder::TYPE_SERVICE) {
+                $requestedType = $data['type'] ?? null;
+
+                $allowedServiceTypes = [
+                    Payment::TYPE_FULL_PAYMENT,
+                    Payment::TYPE_PARTIAL_PAYMENT,
+                ];
+
+                if ($requestedType && ! in_array($requestedType, $allowedServiceTypes, true)) {
+                    throw ValidationException::withMessages([
+                        'type' => ['Only full_payment or partial_payment are allowed for service payments.'],
+                    ]);
+                }
+            }
+
             $type = $data['type']
                 ?? ($data['intent_type'] ?? null
                     ? Payment::resolveTypeFromIntent($data['intent_type'])
