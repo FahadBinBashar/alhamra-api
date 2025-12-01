@@ -21,11 +21,13 @@ class Payment extends Model
     public const TYPE_DOWN_PAYMENT = 'down_payment';
     public const TYPE_INSTALLMENT = 'installment';
     public const TYPE_FULL_PAYMENT = 'full_payment';
+    public const TYPE_PARTIAL_PAYMENT = 'partial_payment';
 
     public const BASE_TYPES = [
         self::TYPE_DOWN_PAYMENT,
         self::TYPE_INSTALLMENT,
         self::TYPE_FULL_PAYMENT,
+        self::TYPE_PARTIAL_PAYMENT,
     ];
 
     public const INTENT_DOWN_PAYMENT = 'down_payment';
@@ -80,7 +82,18 @@ class Payment extends Model
         return match ($intent) {
             self::INTENT_DOWN_PAYMENT => self::TYPE_DOWN_PAYMENT,
             self::INTENT_INSTALLMENT => self::TYPE_INSTALLMENT,
+            self::INTENT_DUE => self::TYPE_PARTIAL_PAYMENT,
             default => self::TYPE_FULL_PAYMENT,
+        };
+    }
+
+    public static function resolveIntentFromType(string $type): string
+    {
+        return match ($type) {
+            self::TYPE_DOWN_PAYMENT => self::INTENT_DOWN_PAYMENT,
+            self::TYPE_INSTALLMENT => self::INTENT_INSTALLMENT,
+            self::TYPE_PARTIAL_PAYMENT => self::INTENT_DUE,
+            default => self::INTENT_DUE,
         };
     }
 

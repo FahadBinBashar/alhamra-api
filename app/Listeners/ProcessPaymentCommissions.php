@@ -9,6 +9,7 @@ use App\Models\RankRequirement;
 use App\Models\Payment;
 use App\Services\CommissionService;
 use App\Services\RankPromotionService;
+use App\Services\ServiceCommissionService;
 use App\Services\SupplierPayableService;
 
 class ProcessPaymentCommissions
@@ -16,6 +17,7 @@ class ProcessPaymentCommissions
     public function __construct(
         private CommissionService $commissionService,
         private RankPromotionService $rankPromotionService,
+        private ServiceCommissionService $serviceCommissionService,
         private SupplierPayableService $supplierPayableService,
     )
     {
@@ -24,6 +26,14 @@ class ProcessPaymentCommissions
     public function handle(PaymentRecorded $event): void
     {
         $payment = $event->payment;
+
+        $payment->loadMissing('salesOrder');
+
+        if ($payment->salesOrder?->sales_type === SalesOrder::TYPE_SERVICE) {
+            $this->serviceCommissionService->handlePayment($payment);
+
+            return;
+        }
 
         $this->promoteMarketingExecutiveIfEligible($payment);
         $this->evaluateRankProgress($payment);
