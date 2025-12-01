@@ -150,6 +150,12 @@ class InstallmentController extends Controller
             'grace_days' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:365'],
         ]);
 
+        if ($order->sales_type === SalesOrder::TYPE_SERVICE) {
+            return response()->json([
+                'message' => 'Installments are not available for service sales.',
+            ], 422);
+        }
+
         $existingWithPayments = $order->installments()
             ->where(function ($query) {
                 $query->where('paid', '>', 0)

@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Rank;
 use App\Models\Product;
 use App\Models\SalesOrder;
+use App\Models\Service;
 use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -142,6 +143,14 @@ class SalesOrderTest extends TestCase
             'rank' => Employee::RANK_ME,
         ]);
 
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 2000,
+            'commission_percentage' => 5,
+        ]);
+
         $customer = User::factory()->create();
 
         Sanctum::actingAs($rankUser);
@@ -150,8 +159,14 @@ class SalesOrderTest extends TestCase
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_SERVICE,
             'source_me_id' => $marketingExecutive->id,
-            'down_payment' => 1000,
             'total' => 2000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
         ]);
 
         $response->assertForbidden();
@@ -176,6 +191,14 @@ class SalesOrderTest extends TestCase
             'agent_code' => Str::uuid()->toString(),
         ]);
 
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 5000,
+            'commission_percentage' => 5,
+        ]);
+
         $customer = User::factory()->create();
 
         Sanctum::actingAs($agentUser);
@@ -183,8 +206,14 @@ class SalesOrderTest extends TestCase
         $response = $this->postJson('/api/v1/sales-orders', [
             'customer_id' => $customer->id,
             'sales_type' => SalesOrder::TYPE_SERVICE,
-            'down_payment' => 1000,
             'total' => 5000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
         ]);
 
         $response->assertCreated();
@@ -202,6 +231,62 @@ class SalesOrderTest extends TestCase
             'source_me_id' => null,
             'employee_id' => null,
             'created_by' => SalesOrder::CREATED_BY_AGENT,
+        ]);
+    }
+
+    public function test_service_sales_order_allows_optional_down_payment_field(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Sylhet Branch',
+            'code' => 'SYL',
+            'address' => 'Sylhet',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 5000,
+            'commission_percentage' => 5,
+        ]);
+
+        $customer = User::factory()->create();
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_SERVICE,
+            'down_payment' => 0,
+            'total' => 5000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonPath('data.down_payment', null);
+
+        $this->assertDatabaseHas('sales_orders', [
+            'customer_id' => $customer->id,
+            'agent_id' => $agent->id,
+            'branch_id' => $branch->id,
+            'down_payment' => null,
+            'total' => 5000,
         ]);
     }
 
