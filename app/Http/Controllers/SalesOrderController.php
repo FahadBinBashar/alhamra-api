@@ -55,9 +55,15 @@ class SalesOrderController extends Controller
             'source_me_id' => ['prohibited'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
-            'down_payment' => ['required', 'numeric', 'min:0'],
+            'down_payment' => [
+                Rule::requiredIf(fn () => $request->input('sales_type') !== SalesOrder::TYPE_SERVICE),
+                Rule::prohibitedIf(fn () => $request->input('sales_type') === SalesOrder::TYPE_SERVICE),
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
             'total' => ['required', 'numeric', 'min:0'],
-            'items' => ['sometimes', 'array'],
+            'items' => ['sometimes', 'array', Rule::requiredIf(fn () => $request->input('sales_type') === SalesOrder::TYPE_SERVICE)],
             'items.*.item_type' => ['required_with:items', 'string', 'in:product,service'],
             'items.*.item_id' => ['required_with:items', 'integer'],
             'items.*.qty' => ['required_with:items', 'integer', 'min:1'],
@@ -76,9 +82,23 @@ class SalesOrderController extends Controller
             if ($preparedItems['total'] > 0) {
                 $data['total'] = $preparedItems['total'];
             }
+
+            if ($data['sales_type'] === SalesOrder::TYPE_SERVICE) {
+                foreach ($preparedItems['items'] as $index => $item) {
+                    if ($item['itemable_type'] !== Service::class) {
+                        throw ValidationException::withMessages([
+                            "items.$index.item_type" => 'Service sales orders may only contain services.',
+                        ]);
+                    }
+                }
+            }
         }
 
-        if ($data['down_payment'] > $data['total']) {
+        if ($data['sales_type'] === SalesOrder::TYPE_SERVICE) {
+            $data['down_payment'] = null;
+        }
+
+        if (isset($data['down_payment']) && $data['down_payment'] > $data['total']) {
             throw ValidationException::withMessages([
                 'down_payment' => 'The down payment may not be greater than the total amount.',
             ]);
@@ -159,7 +179,16 @@ class SalesOrderController extends Controller
             'source_me_id' => ['prohibited'],
             'rank' => ['sometimes', 'string', Rule::exists('ranks', 'code')],
             'introducer_id' => ['sometimes', 'nullable', 'integer', 'different:customer_id', 'exists:users,id'],
-            'down_payment' => ['sometimes', 'numeric', 'min:0'],
+            'down_payment' => [
+                'sometimes',
+                Rule::prohibitedIf(function () use ($request, $salesOrder) {
+                    $type = $request->input('sales_type', $salesOrder->sales_type);
+
+                    return $type === SalesOrder::TYPE_SERVICE;
+                }),
+                'numeric',
+                'min:0',
+            ],
             'total' => ['sometimes', 'numeric', 'min:0'],
             'status' => ['sometimes', 'string', Rule::in(SalesOrder::STATUSES)],
             'items' => ['sometimes', 'array'],
@@ -190,6 +219,22 @@ class SalesOrderController extends Controller
             unset($data['items']);
         }
 
+        $currentSalesType = $data['sales_type'] ?? $salesOrder->sales_type;
+
+        if ($itemsProvided && $currentSalesType === SalesOrder::TYPE_SERVICE) {
+            foreach ($preparedItems['items'] as $index => $item) {
+                if ($item['itemable_type'] !== Service::class) {
+                    throw ValidationException::withMessages([
+                        "items.$index.item_type" => 'Service sales orders may only contain services.',
+                    ]);
+                }
+            }
+        }
+
+        if ($currentSalesType === SalesOrder::TYPE_SERVICE) {
+            $data['down_payment'] = null;
+        }
+
         $branchId = $data['branch_id'] ?? $salesOrder->branch_id;
         $agentId = $data['agent_id'] ?? $salesOrder->agent_id;
         $this->ensureAgentBelongsToBranch($agentId, $branchId);
@@ -197,7 +242,7 @@ class SalesOrderController extends Controller
         $total = $data['total'] ?? $salesOrder->total;
         $downPayment = $data['down_payment'] ?? $salesOrder->down_payment;
 
-        if ($downPayment > $total) {
+        if ($downPayment !== null && $downPayment > $total) {
             throw ValidationException::withMessages([
                 'down_payment' => 'The down payment may not be greater than the total amount.',
             ]);

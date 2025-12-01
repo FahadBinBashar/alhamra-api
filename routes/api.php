@@ -15,6 +15,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\EmployeeEarningController;
+use App\Http\Controllers\ServiceCommissionController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -81,6 +82,7 @@ Route::prefix('v1')->group(function () {
       Route::get('customers', [EmployeeDashboardController::class, 'customers']);
       Route::get('sales', [EmployeeDashboardController::class, 'sales']);
       Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
+      Route::get('service-commissions', [EmployeeDashboardController::class, 'serviceCommissions']);
       Route::get('wallet', [EmployeeDashboardController::class, 'wallet']);
       Route::get('activities', [EmployeeDashboardController::class, 'activities']);
       Route::post('activities', [EmployeeDashboardController::class, 'storeActivity']);
@@ -111,6 +113,7 @@ Route::prefix('v1')->group(function () {
     Route::get('monthly-incentives', [MonthlyIncentiveController::class, 'index']);
     Route::post('monthly-incentives/{monthlyIncentive}/approve', [MonthlyIncentiveController::class, 'approve']);
     Route::post('monthly-incentives/{monthlyIncentive}/reject', [MonthlyIncentiveController::class, 'reject']);
+    Route::post('service-commissions/process', [ServiceCommissionController::class, 'process']);
     Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);

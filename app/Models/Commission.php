@@ -17,6 +17,7 @@ class Commission extends Model
         'commission_rule_id',
         'payment_id',
         'sales_order_id',
+        'category',
         'recipient_type',
         'recipient_id',
         'amount',
