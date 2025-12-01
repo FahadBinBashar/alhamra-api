@@ -57,7 +57,6 @@ class SalesOrderController extends Controller
             'introducer_id' => ['nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => [
                 Rule::requiredIf(fn () => $request->input('sales_type') !== SalesOrder::TYPE_SERVICE),
-                Rule::prohibitedIf(fn () => $request->input('sales_type') === SalesOrder::TYPE_SERVICE),
                 'nullable',
                 'numeric',
                 'min:0',
@@ -181,11 +180,7 @@ class SalesOrderController extends Controller
             'introducer_id' => ['sometimes', 'nullable', 'integer', 'different:customer_id', 'exists:users,id'],
             'down_payment' => [
                 'sometimes',
-                Rule::prohibitedIf(function () use ($request, $salesOrder) {
-                    $type = $request->input('sales_type', $salesOrder->sales_type);
-
-                    return $type === SalesOrder::TYPE_SERVICE;
-                }),
+                'nullable',
                 'numeric',
                 'min:0',
             ],

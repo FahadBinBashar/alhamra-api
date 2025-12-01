@@ -234,6 +234,62 @@ class SalesOrderTest extends TestCase
         ]);
     }
 
+    public function test_service_sales_order_allows_optional_down_payment_field(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Sylhet Branch',
+            'code' => 'SYL',
+            'address' => 'Sylhet',
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $category = Category::create(['name' => 'Service']);
+        $service = Service::create([
+            'name' => 'Consulting',
+            'category_id' => $category->id,
+            'price' => 5000,
+            'commission_percentage' => 5,
+        ]);
+
+        $customer = User::factory()->create();
+
+        Sanctum::actingAs($agentUser);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_SERVICE,
+            'down_payment' => 0,
+            'total' => 5000,
+            'items' => [
+                [
+                    'item_type' => 'service',
+                    'item_id' => $service->id,
+                    'qty' => 1,
+                ],
+            ],
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonPath('data.down_payment', null);
+
+        $this->assertDatabaseHas('sales_orders', [
+            'customer_id' => $customer->id,
+            'agent_id' => $agent->id,
+            'branch_id' => $branch->id,
+            'down_payment' => null,
+            'total' => 5000,
+        ]);
+    }
+
     public function test_agent_sales_order_inherits_customer_marketing_executive(): void
     {
         $branch = Branch::create([
