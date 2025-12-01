@@ -113,6 +113,7 @@ Route::prefix('v1')->group(function () {
     Route::get('monthly-incentives', [MonthlyIncentiveController::class, 'index']);
     Route::post('monthly-incentives/{monthlyIncentive}/approve', [MonthlyIncentiveController::class, 'approve']);
     Route::post('monthly-incentives/{monthlyIncentive}/reject', [MonthlyIncentiveController::class, 'reject']);
+    Route::get('service-commissions/pending', [ServiceCommissionController::class, 'pending']);
     Route::post('service-commissions/process', [ServiceCommissionController::class, 'process']);
     Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
