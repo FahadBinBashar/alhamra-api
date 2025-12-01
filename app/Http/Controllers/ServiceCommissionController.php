@@ -17,7 +17,7 @@ class ServiceCommissionController extends Controller
         $monthParam = $request->query('month');
         $month = $monthParam ? Carbon::createFromFormat('Y-m', $monthParam) : now();
 
-        $summary = $this->serviceCommissionService->processDraftForMonth($month);
+        $summary = $this->serviceCommissionService->processUnpaidForMonth($month);
 
         return response()->json($summary);
     }

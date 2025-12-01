@@ -47,7 +47,7 @@ class ServiceCommissionService
             return null;
         }
 
-        $status = $recipient['type'] === Agent::class ? 'paid' : 'draft';
+        $status = $recipient['type'] === Agent::class ? 'paid' : 'unpaid';
         $paidAt = $status === 'paid' ? now() : null;
 
         $meta = array_filter([
@@ -79,14 +79,14 @@ class ServiceCommissionService
         });
     }
 
-    public function processDraftForMonth(Carbon $month): array
+    public function processUnpaidForMonth(Carbon $month): array
     {
         $start = $month->copy()->startOfMonth();
         $end = $month->copy()->endOfMonth();
 
         $commissions = Commission::query()
             ->where('category', 'service')
-            ->where('status', 'draft')
+            ->where('status', 'unpaid')
             ->whereHas('payment', function ($query) use ($start, $end) {
                 $query->whereBetween('paid_at', [$start, $end]);
             })

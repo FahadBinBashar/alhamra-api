@@ -32,7 +32,7 @@ Use this example to create a service-only sales order where pricing is taken dir
 - The controller uses the service’s catalog price (here `300000`) as the unit price and computes `total` for you; you can leave `total` as `null` in the request.
 - `down_payment` is forced to `null` and installments are not generated for service orders.
 - The `items[0].item_id` references the service; no separate top-level `service_id` field is needed.
-- If `agent_id` is provided, the commission is marked **paid** instantly and credited to the agent’s wallet. If instead you set `source_me_id` (and no `agent_id`), the commission is stored as **draft** for month-end processing.
+- If `agent_id` is provided, the commission is marked **paid** instantly and credited to the agent’s wallet. If instead you set `source_me_id` (and no `agent_id`), the commission is stored as **unpaid** for month-end processing.
 
 ## Record a Payment for the Service Order
 After the order is created, post a payment against it. For example:
@@ -67,4 +67,4 @@ After the order is created, post a payment against it. For example:
 
 When this payment is processed for a service order:
 - Agent flow: commission = `payment.amount × commission_percentage` → `200000 × 0.05 = 10000`, status = `paid`, wallet is credited immediately.
-- Employee flow (using `source_me_id` on the order and no `agent_id`): commission is stored as `draft`; at month-end call `POST /service-commissions/process?month=2025-02` to mark it `paid` and credit the employee’s wallet.
+- Employee flow (using `source_me_id` on the order and no `agent_id`): commission is stored as `unpaid`; at month-end call `POST /service-commissions/process?month=2025-02` to mark it `paid` and credit the employee’s wallet.

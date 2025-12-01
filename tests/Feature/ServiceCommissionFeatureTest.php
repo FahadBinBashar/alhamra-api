@@ -128,13 +128,13 @@ class ServiceCommissionFeatureTest extends TestCase
             'category' => 'service',
             'recipient_type' => Employee::class,
             'recipient_id' => $employee->id,
-            'status' => 'draft',
+            'status' => 'unpaid',
             'amount' => 10000.00,
         ]);
 
         $this->assertNull(EmployeeWallet::firstWhere('employee_id', $employee->id));
 
-        $summary = app(ServiceCommissionService::class)->processDraftForMonth(now()->setDate(2025, 2, 1));
+        $summary = app(ServiceCommissionService::class)->processUnpaidForMonth(now()->setDate(2025, 2, 1));
 
         $this->assertSame(1, $summary['processed']);
         $this->assertSame(10000.0, $summary['total_amount']);
