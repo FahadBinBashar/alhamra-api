@@ -130,7 +130,7 @@ class PaymentController extends Controller
         $data = $request->validate([
             'paid_at' => ['required', 'date'],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            'type' => ['required', Rule::in(Payment::BASE_TYPES)],
+            'type' => ['sometimes', Rule::in(Payment::BASE_TYPES)],
             'intent_type' => ['sometimes', 'string', Rule::in(Payment::INTENT_TYPES)],
             'method' => ['nullable', 'string'],
             'meta' => ['nullable', 'array'],
@@ -140,12 +140,19 @@ class PaymentController extends Controller
         ]);
 
         $payment = DB::transaction(function () use ($order, $data) {
+            $type = $data['type']
+                ?? ($data['intent_type'] ?? null
+                    ? Payment::resolveTypeFromIntent($data['intent_type'])
+                    : Payment::TYPE_FULL_PAYMENT);
+
+            $intentType = $data['intent_type'] ?? Payment::resolveIntentFromType($type);
+
             $payment = Payment::create([
                 'sales_order_id' => $order->id,
                 'paid_at' => $data['paid_at'],
                 'amount' => $data['amount'],
-                'type' => $data['type'],
-                'intent_type' => $data['intent_type'] ?? $data['type'],
+                'type' => $type,
+                'intent_type' => $intentType,
                 'method' => $data['method'] ?? null,
                 'meta' => $data['meta'] ?? null,
             ]);

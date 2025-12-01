@@ -84,6 +84,15 @@ class Payment extends Model
         };
     }
 
+    public static function resolveIntentFromType(string $type): string
+    {
+        return match ($type) {
+            self::TYPE_DOWN_PAYMENT => self::INTENT_DOWN_PAYMENT,
+            self::TYPE_INSTALLMENT => self::INTENT_INSTALLMENT,
+            default => self::INTENT_DUE,
+        };
+    }
+
     public function salesOrder(): BelongsTo
     {
         return $this->belongsTo(SalesOrder::class);
