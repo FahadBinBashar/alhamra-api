@@ -6096,12 +6096,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/service-commissions/process?month=2025-02",
+              "raw": "{{base_url}}/api/v1/service-commissions/process?month=2025-02",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "service-commissions",
                 "process"
               ],
@@ -6113,6 +6114,32 @@
               ]
             },
             "description": "Run month-end processing for draft service commissions to mark them paid and credit wallets."
+          }
+        },
+        {
+          "name": "Preview Pending Service Commissions (Monthly)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/service-commissions/pending?month=2025-12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "service-commissions",
+                "pending"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-12"
+                }
+              ]
+            },
+            "description": "List unpaid service commissions for a month so admins can review who will be paid before processing."
           }
         }
       ]

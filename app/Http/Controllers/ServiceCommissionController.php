@@ -21,4 +21,14 @@ class ServiceCommissionController extends Controller
 
         return response()->json($summary);
     }
+
+    public function pending(Request $request)
+    {
+        $monthParam = $request->query('month');
+        $month = $monthParam ? Carbon::createFromFormat('Y-m', $monthParam) : now();
+
+        $details = $this->serviceCommissionService->previewUnpaidForMonth($month);
+
+        return response()->json($details);
+    }
 }

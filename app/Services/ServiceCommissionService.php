@@ -119,6 +119,60 @@ class ServiceCommissionService
         ];
     }
 
+    public function previewUnpaidForMonth(Carbon $month): array
+    {
+        $start = $month->copy()->startOfMonth();
+        $end = $month->copy()->endOfMonth();
+
+        $commissions = Commission::query()
+            ->where('category', 'service')
+            ->where('status', 'unpaid')
+            ->whereHas('payment', function ($query) use ($start, $end) {
+                $query->whereBetween('paid_at', [$start, $end]);
+            })
+            ->with([
+                'payment',
+                'recipient.user',
+                'salesOrder.customer',
+                'salesOrder.agent.user',
+                'salesOrder.employee.user',
+                'salesOrder.items.itemable',
+            ])
+            ->orderByDesc('id')
+            ->get();
+
+        $payload = $commissions->map(function (Commission $commission) {
+            $service = $this->resolveServiceFromOrder($commission->salesOrder);
+
+            $recipient = $commission->recipient;
+            $recipientName = $recipient?->user?->name ?? $recipient?->full_name_en ?? null;
+
+            $paymentAmount = $commission->meta['payment_amount'] ?? $commission->payment?->amount;
+
+            return [
+                'commission_id' => $commission->id,
+                'sales_order_id' => $commission->sales_order_id,
+                'payment_id' => $commission->payment_id,
+                'payment_date' => optional($commission->payment?->paid_at)->toDateString(),
+                'recipient_type' => $commission->recipient_type === Agent::class ? 'agent' : 'employee',
+                'recipient_id' => $commission->recipient_id,
+                'recipient_name' => $recipientName,
+                'service_name' => $service?->name,
+                'commission_percentage' => $commission->meta['commission_percentage'] ?? null,
+                'payment_amount' => $paymentAmount !== null ? (float) $paymentAmount : null,
+                'commission_amount' => (float) $commission->amount,
+                'status' => $commission->status,
+            ];
+        });
+
+        return [
+            'month' => $month->format('Y-m'),
+            'count' => $payload->count(),
+            'total_amount' => round((float) $payload->sum('commission_amount'), 2),
+            'commissions' => $payload,
+        ];
+    }
+
     protected function resolveRecipient(SalesOrder $order): ?array
     {
         if ($order->agent_id) {
@@ -132,8 +186,12 @@ class ServiceCommissionService
         return null;
     }
 
-    protected function resolveServiceFromOrder(SalesOrder $order): ?Service
+    protected function resolveServiceFromOrder(?SalesOrder $order): ?Service
     {
+        if (! $order) {
+            return null;
+        }
+
         $order->loadMissing('items.itemable');
 
         $serviceItem = $order->items->first(function ($item) {
