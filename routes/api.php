@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminReportController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ChartOfAccountsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommissionCalculationController;
 use App\Http\Controllers\CommissionController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\EmployeeEarningController;
 use App\Http\Controllers\ServiceCommissionController;
 use App\Http\Controllers\InstallmentController;
+use App\Http\Controllers\JournalController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RankController;
@@ -94,6 +97,8 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('suppliers', SupplierController::class);
+    Route::apiResource('accounting/accounts', ChartOfAccountsController::class)->except(['show']);
+    Route::apiResource('accounting/journals', JournalController::class)->only(['index', 'store']);
     Route::get('supplier-payables', [SupplierPayableController::class, 'index']);
     Route::post('supplier-payables/process', [SupplierPayableController::class, 'process']);
     Route::apiResource('services', ServiceController::class);
@@ -140,6 +145,12 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/ledger/customer', [AdminReportController::class,'customerLedger']);
     Route::get('reports/ledger/supplier', [AdminReportController::class,'supplierLedger']);
     Route::get('reports/ledger/account', [AdminReportController::class,'accountStatement']);
+    Route::prefix('accounting')->group(function () {
+      Route::get('trial-balance', [AccountingReportController::class, 'trialBalance']);
+      Route::get('profit-loss', [AccountingReportController::class, 'profitAndLoss']);
+      Route::get('balance-sheet', [AccountingReportController::class, 'balanceSheet']);
+      Route::get('ledger', [AccountingReportController::class, 'ledger']);
+    });
     Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });

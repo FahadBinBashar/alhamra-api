@@ -6143,6 +6143,425 @@
           }
         }
       ]
+    },
+    {
+      "name": "Accounting",
+      "item": [
+        {
+          "name": "Chart of Accounts",
+          "item": [
+            {
+              "name": "List Accounts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/accounts",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "accounts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"code\": \"101\",\n  \"name\": \"Cash\",\n  \"type\": \"asset\",\n  \"meta\": {\n    \"note\": \"Primary cash account\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/accounts",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "accounts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Account",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Cash on Hand\",\n  \"type\": \"asset\",\n  \"meta\": {\n    \"note\": \"Updated label\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/accounts/:account",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "accounts",
+                    ":account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Account",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/accounts/:account",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "accounts",
+                    ":account"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Journals",
+          "item": [
+            {
+              "name": "List Journals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/journals",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "journals"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2025-01-01",
+                      "disabled": true
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-31",
+                      "disabled": true
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Journal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tx_id\": \"JRNL-EXT-001\",\n  \"description\": \"Manual adjustment\",\n  \"occurred_at\": \"2025-01-15 12:00:00\",\n  \"meta\": {\n    \"source\": \"manual\"\n  },\n  \"lines\": [\n    {\n      \"account_code\": \"101\",\n      \"account_name\": \"Cash\",\n      \"account_type\": \"asset\",\n      \"debit\": 1000,\n      \"credit\": 0\n    },\n    {\n      \"account_code\": \"210\",\n      \"account_name\": \"Commission Payable\",\n      \"account_type\": \"liability\",\n      \"debit\": 0,\n      \"credit\": 1000\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/journals",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "journals"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Accounting Reports",
+          "item": [
+            {
+              "name": "Trial Balance",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/trial-balance",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "trial-balance"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2025-01-01",
+                      "disabled": true
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-31",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Profit & Loss",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/profit-loss",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "profit-loss"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2025-01-01",
+                      "disabled": true
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-31",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Balance Sheet",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/balance-sheet",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "balance-sheet"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2025-01-01",
+                      "disabled": true
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-31",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Ledger",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/accounting/ledger",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "accounting",
+                    "ledger"
+                  ],
+                  "query": [
+                    {
+                      "key": "account_id",
+                      "value": "1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "account_code",
+                      "value": "101",
+                      "disabled": true
+                    },
+                    {
+                      "key": "from",
+                      "value": "2025-01-01",
+                      "disabled": true
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-31",
+                      "disabled": true
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "25",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
