@@ -4,6 +4,7 @@ namespace App\Services\Accounting;
 
 use App\Models\LedgerAccount;
 use App\Models\LedgerEntry;
+use App\Models\Journal;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -12,10 +13,6 @@ class LedgerService
 {
     public function record(string $txId, $occurredAt, array $lines, array $meta = []): void
     {
-        if (LedgerEntry::where('tx_id', $txId)->exists()) {
-            return;
-        }
-
         $occurredAt = Carbon::parse($occurredAt);
 
         $debitTotal = collect($lines)->sum(fn ($line) => (float) ($line['debit'] ?? 0));
@@ -26,10 +23,23 @@ class LedgerService
         }
 
         DB::transaction(function () use ($txId, $occurredAt, $lines, $meta) {
+            $journal = Journal::firstOrCreate(
+                ['tx_id' => $txId],
+                [
+                    'occurred_at' => $occurredAt,
+                    'meta' => $meta,
+                ]
+            );
+
+            if ($journal->wasRecentlyCreated === false) {
+                return;
+            }
+
             foreach ($lines as $index => $line) {
                 $accountId = $this->resolveAccountId($line);
 
                 LedgerEntry::create([
+                    'journal_id' => $journal->id,
                     'tx_id' => $txId,
                     'account_id' => $accountId,
                     'debit' => $line['debit'] ?? 0,

@@ -13,6 +13,7 @@ class LedgerEntry extends Model
     use LogsActivityChanges;
 
     protected $fillable = [
+        'journal_id',
         'tx_id',
         'account_id',
         'debit',
@@ -27,6 +28,11 @@ class LedgerEntry extends Model
         'occurred_at' => 'datetime',
         'meta' => 'array',
     ];
+
+    public function journal(): BelongsTo
+    {
+        return $this->belongsTo(Journal::class);
+    }
 
     public function account(): BelongsTo
     {
