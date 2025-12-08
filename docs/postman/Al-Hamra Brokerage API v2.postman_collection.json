@@ -6029,6 +6029,41 @@
           "response": []
         },
         {
+          "name": "PD Special Bonuses by Month",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pd-special-bonus?month=2025-02",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "pd-special-bonus"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-02"
+                }
+              ]
+            },
+            "description": "List PD special bonuses for a given month for all selected employees (admin view)."
+          },
+          "response": []
+        },
+        {
           "name": "Employee PD Special Bonus",
           "request": {
             "method": "GET",

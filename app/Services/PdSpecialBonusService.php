@@ -156,6 +156,14 @@ class PdSpecialBonusService
             ->first();
     }
 
+    public function monthBonuses(string $month): Collection
+    {
+        return PdSpecialBonus::query()
+            ->where('month', $month)
+            ->orderBy('employee_id')
+            ->get();
+    }
+
     protected function resolvePeriod(string $month): array
     {
         $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();

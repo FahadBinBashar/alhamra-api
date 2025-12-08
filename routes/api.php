@@ -122,6 +122,7 @@ Route::prefix('v1')->group(function () {
     Route::post('pd-special/select', [PdSpecialBonusController::class, 'select']);
     Route::post('pd-special/calculate', [PdSpecialBonusController::class, 'calculate']);
     Route::post('pd-special/process', [PdSpecialBonusController::class, 'process']);
+    Route::get('pd-special-bonus', [PdSpecialBonusController::class, 'monthBonuses']);
     Route::get('employee/pd-special-bonus', [PdSpecialBonusController::class, 'employeeBonus']);
     Route::get('service-commissions/pending', [ServiceCommissionController::class, 'pending']);
     Route::post('service-commissions/process', [ServiceCommissionController::class, 'process']);

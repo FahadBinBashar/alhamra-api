@@ -75,6 +75,26 @@ class PdSpecialBonusController extends Controller
         return response()->json(['data' => $bonuses]);
     }
 
+    public function monthBonuses(Request $request): JsonResponse
+    {
+        $month = $this->validatedMonth($request);
+
+        $bonuses = $this->service->monthBonuses($month);
+
+        return response()->json([
+            'data' => $bonuses->map(fn (PdSpecialBonus $bonus) => [
+                'employee_id' => $bonus->employee_id,
+                'period' => $bonus->month,
+                'total_dp' => (float) $bonus->total_dp,
+                'percentage' => (float) $bonus->percentage,
+                'amount' => (float) $bonus->amount,
+                'status' => $bonus->status,
+                'processed_at' => $bonus->processed_at,
+                'meta' => $bonus->meta,
+            ])->values(),
+        ]);
+    }
+
     public function employeeBonus(Request $request): JsonResponse
     {
         $validated = $request->validate([
