@@ -15,6 +15,28 @@ class PdSpecialBonusController extends Controller
 
     public function select(Request $request): JsonResponse
     {
+        if ($request->has('selections')) {
+            $validated = $request->validate([
+                'selections' => ['required', 'array', 'min:1'],
+                'selections.*.employee_id' => ['required', 'integer', 'exists:employees,id'],
+                'selections.*.percentage' => ['sometimes', 'numeric', 'min:0'],
+                'selections.*.month' => ['required', 'date_format:Y-m'],
+                'selections.*.meta' => ['sometimes', 'array'],
+            ]);
+
+            $selectedBy = (int) $request->user()->id;
+
+            $selections = collect($validated['selections'])->map(fn (array $selection) => $this->service->select(
+                (int) $selection['employee_id'],
+                $selection['month'],
+                isset($selection['percentage']) ? (float) $selection['percentage'] : 4.0,
+                $selectedBy,
+                $selection['meta'] ?? []
+            ));
+
+            return response()->json(['data' => $selections]);
+        }
+
         $validated = $request->validate([
             'employee_id' => ['required', 'integer', 'exists:employees,id'],
             'percentage' => ['sometimes', 'numeric', 'min:0'],

@@ -5938,7 +5938,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"employee_id\": 25,\n    \"percentage\": 4,\n    \"month\": \"2025-02\"\n}"
+              "raw": "{\n    \"selections\": [\n        {\n            \"employee_id\": 25,\n            \"percentage\": 4,\n            \"month\": \"2025-02\"\n        },\n        {\n            \"employee_id\": 40,\n            \"percentage\": 6,\n            \"month\": \"2025-02\"\n        }\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/pd-special/select",
@@ -5952,7 +5952,7 @@
                 "select"
               ]
             },
-            "description": "Mark an employee as a PD special beneficiary for the given month with a dynamic percentage."
+            "description": "Select one or more PD special beneficiaries for the given month with dynamic percentages."
           },
           "response": []
         },
