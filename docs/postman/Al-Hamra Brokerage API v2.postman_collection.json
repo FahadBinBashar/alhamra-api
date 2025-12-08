@@ -6059,7 +6059,7 @@
                 }
               ]
             },
-            "description": "List PD special bonuses for a given month for all selected employees (admin view)."
+            "description": "List PD special bonuses for a given month for all selected employees (admin view). Each entry includes employee name and rank for clarity."
           },
           "response": []
         },
@@ -6099,7 +6099,7 @@
                 }
               ]
             },
-            "description": "Retrieve PD special bonus details for an employee dashboard view."
+            "description": "Retrieve PD special bonus details for an employee dashboard view, including employee name and rank."
           },
           "response": []
         }
