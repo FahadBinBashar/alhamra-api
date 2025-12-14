@@ -54,6 +54,8 @@ class WalletWithdrawRequestController extends Controller
             ]);
         });
 
+        $withdrawRequest->load(['agent.user', 'employee.user', 'reviewer']);
+
         return new WalletWithdrawRequestResource($withdrawRequest);
     }
 
