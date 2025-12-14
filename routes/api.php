@@ -32,6 +32,8 @@ use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\WalletWithdrawRequestController;
+use App\Http\Controllers\AdminWalletWithdrawRequestController;
 use App\Http\Controllers\Customer\CustomerAuthController;
 use App\Http\Controllers\Customer\CustomerInstallmentController;
 use App\Http\Controllers\Customer\CustomerPaymentController;
@@ -79,6 +81,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('agents/dashboard')->group(function () {
       Route::get('commissions', [AgentDashboardController::class, 'commissions']);
       Route::get('wallet', [AgentDashboardController::class, 'wallet']);
+      Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
     });
     Route::get('employees/superiors', [EmployeeController::class,'superiors']);
     Route::apiResource('employees', EmployeeController::class);
@@ -88,6 +91,7 @@ Route::prefix('v1')->group(function () {
       Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
       Route::get('service-commissions', [EmployeeDashboardController::class, 'serviceCommissions']);
       Route::get('wallet', [EmployeeDashboardController::class, 'wallet']);
+      Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
       Route::get('activities', [EmployeeDashboardController::class, 'activities']);
       Route::post('activities', [EmployeeDashboardController::class, 'storeActivity']);
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
@@ -157,6 +161,11 @@ Route::prefix('v1')->group(function () {
       Route::get('balance-sheet', [AccountingReportController::class, 'balanceSheet']);
       Route::get('ledger', [AccountingReportController::class, 'ledger']);
     });
+    Route::post('wallet/withdraw-request', [WalletWithdrawRequestController::class, 'store']);
+    Route::get('wallet/withdraw-requests', [WalletWithdrawRequestController::class, 'history']);
+    Route::get('admin/withdraw-requests', [AdminWalletWithdrawRequestController::class, 'index']);
+    Route::post('admin/withdraw-requests/{withdrawRequest}/approve', [AdminWalletWithdrawRequestController::class, 'approve']);
+    Route::post('admin/withdraw-requests/{withdrawRequest}/reject', [AdminWalletWithdrawRequestController::class, 'reject']);
     Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });
