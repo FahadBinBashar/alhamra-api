@@ -1312,6 +1312,44 @@
           "response": []
         },
         {
+          "name": "Agent Withdrawal History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/wallet/withdrawals?per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "wallet",
+                "withdrawals"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "View the authenticated agent's wallet withdrawal history from the dashboard scope."
+          },
+          "response": []
+        },
+        {
           "name": "Agent Commissions",
           "request": {
             "method": "GET",
@@ -4593,6 +4631,44 @@
           "response": []
         },
         {
+          "name": "Employee Withdrawal History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/dashboard/wallet/withdrawals?per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "dashboard",
+                "wallet",
+                "withdrawals"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "View the authenticated employee's wallet withdrawal history from the dashboard scope."
+          },
+          "response": []
+        },
+        {
           "name": "View Monthly Incentive (Employee)",
           "request": {
             "method": "GET",
@@ -6750,6 +6826,203 @@
               "response": []
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Wallet Withdrawals",
+      "item": [
+        {
+          "name": "Submit Wallet Withdrawal Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"wallet_type\": \"commission\",\n  \"amount\": 5000,\n  \"method\": \"bkash\",\n  \"method_details\": {\n    \"account\": \"017XXXXXXXX\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/wallet/withdraw-request",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "wallet",
+                "withdraw-request"
+              ]
+            },
+            "description": "Submit a withdrawal request from the authenticated agent or employee wallet. The amount must not exceed the available balance."
+          },
+          "response": []
+        },
+        {
+          "name": "List My Withdrawal Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/wallet/withdraw-requests?per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "wallet",
+                "withdraw-requests"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "View the withdrawal request history for the authenticated agent or employee."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin List Withdrawal Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/withdraw-requests?status=pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "withdraw-requests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            },
+            "description": "List withdrawal requests for review. Filter by status (pending, approved, rejected)."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Approve Withdrawal Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/withdraw-requests/{{withdraw_request_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "withdraw-requests",
+                "{{withdraw_request_id}}",
+                "approve"
+              ]
+            },
+            "description": "Approve a pending withdrawal request. Locks the wallet balance and records a ledger entry."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Reject Withdrawal Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Insufficient documentation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/withdraw-requests/{{withdraw_request_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "withdraw-requests",
+                "{{withdraw_request_id}}",
+                "reject"
+              ]
+            },
+            "description": "Reject a pending withdrawal request with a reason."
+          },
+          "response": []
         }
       ]
     }
