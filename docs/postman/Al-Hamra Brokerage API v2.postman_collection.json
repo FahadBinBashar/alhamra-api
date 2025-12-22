@@ -5218,7 +5218,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
+              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"জন ডো\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -5334,6 +5334,165 @@
                 "v1",
                 "employees",
                 "{{employee_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Recruit Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branch_id\": 2,\n  \"agent_id\": 5,\n  \"superior_id\": 12,\n  \"full_name_en\": \"New Recruit\",\n  \"full_name_bn\": \"নতুন রিক্রুট\",\n  \"father_name\": \"Mr. Recruit\",\n  \"mother_name\": \"Mrs. Recruit\",\n  \"email\": \"recruit@example.com\",\n  \"mobile\": \"01700000006\",\n  \"national_id\": \"1234567890123\",\n  \"date_of_birth\": \"1992-02-02\",\n  \"marital_status\": \"Single\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Mirpur\",\n  \"present_address\": \"House 10, Road 1\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee-recruit-requests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee-recruit-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Recruit Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee-recruit-requests/{{recruit_request_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee-recruit-requests",
+                "{{recruit_request_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Recruit Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee-recruit-requests?status=pending&branch_id={{branch_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee-recruit-requests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "disabled": true
+                },
+                {
+                  "key": "branch_id",
+                  "value": "{{branch_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Recruit Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejection_reason\": \"Incomplete documents\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee-recruit-requests/{{recruit_request_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee-recruit-requests",
+                "{{recruit_request_id}}",
+                "reject"
               ]
             }
           },
@@ -7105,6 +7264,11 @@
     },
     {
       "key": "supplier_payable_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "recruit_request_id",
       "value": "1",
       "type": "string"
     }
