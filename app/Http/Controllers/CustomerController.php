@@ -51,14 +51,13 @@ class CustomerController extends Controller
         $data = $request->validated();
         $password = $data['password'];
         $sourceEmployee = $this->resolveSourceEmployee($data['source_me_id'] ?? null);
+        $agent = $this->resolveAgent($user);
 
         $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
             'added_by_role' => $this->resolveAddedByRole($user),
             'added_by_branch_id' => $this->resolveBranchId($user) ?? $sourceEmployee?->branch_id,
-            'added_by_agent_id' => $sourceEmployee
-                ? null // if source_me_id is given, keep agent_id null
-                : ($this->resolveAgent($user)?->id ?? null),
+            'added_by_agent_id' => $agent?->id,
             'source_me_id' => $sourceEmployee?->id,
         ]));
 

@@ -38,22 +38,56 @@ class CommissionService
         $commissions = collect();
 
         if ($this->isServiceOrder($payment->salesOrder)) {
-            $serviceCommission = $this->createServiceCommissionPayload($payment);
-
-            if ($serviceCommission) {
-                $commissions->push($serviceCommission);
-            }
-        } else {
-            $agentCommission = $this->createAgentCommissionPayload($payment);
-            if ($agentCommission) {
-                $commissions->push($agentCommission);
-            }
-            $commissions = $commissions->merge($this->createDevelopmentGapCommissions($payment, (bool) $agentCommission));
+            return collect();
         }
+
+        $agentCommission = $this->createAgentCommissionPayload($payment);
+        if ($agentCommission) {
+            $commissions->push($agentCommission);
+        }
+
+        $gapCommissions = $this->createDevelopmentGapCommissions($payment, (bool) $agentCommission);
+        $commissions = $commissions->merge($gapCommissions);
 
         $commissions = $commissions->filter()->values();
 
         if (! $persist) {
+            return $commissions;
+        }
+
+        if ($agentCommission) {
+            $agentCommission['status'] = 'paid';
+            $agentCommission['paid_at'] = now();
+            $this->storeCommissionFromPayload($payment, $agentCommission);
+        }
+
+        if ($gapCommissions->isNotEmpty()) {
+            $this->storeCalculationUnitFromPayloads($payment, $gapCommissions);
+        }
+
+        return $gapCommissions;
+    }
+
+    public function handleDevelopmentGapCommissions(
+        Payment $payment,
+        bool $persist = false,
+        bool $agentCommissionExists = false
+    ): Collection {
+        $payment->loadMissing(
+            'salesOrder.agent.user',
+            'salesOrder.branch',
+            'salesOrder.sourceMe.user', 'salesOrder.sourceMe.superior'
+        );
+
+        if (! $payment->salesOrder) {
+            return collect();
+        }
+
+        $commissions = $this->createDevelopmentGapCommissions($payment, $agentCommissionExists)
+            ->filter()
+            ->values();
+
+        if (! $persist || $commissions->isEmpty()) {
             return $commissions;
         }
 
