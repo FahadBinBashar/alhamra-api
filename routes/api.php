@@ -15,6 +15,7 @@ use App\Http\Controllers\CommissionSettingController;
 use App\Http\Controllers\MonthlyIncentiveController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeRecruitRequestController;
 use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\EmployeeEarningController;
 use App\Http\Controllers\ServiceCommissionController;
@@ -166,6 +167,8 @@ Route::prefix('v1')->group(function () {
     Route::get('admin/withdraw-requests', [AdminWalletWithdrawRequestController::class, 'index']);
     Route::post('admin/withdraw-requests/{withdrawRequest}/approve', [AdminWalletWithdrawRequestController::class, 'approve']);
     Route::post('admin/withdraw-requests/{withdrawRequest}/reject', [AdminWalletWithdrawRequestController::class, 'reject']);
+    Route::post('employee-recruit-requests', [EmployeeRecruitRequestController::class, 'store']);
+    Route::post('employee-recruit-requests/{recruitRequest}/approve', [EmployeeRecruitRequestController::class, 'approve']);
     Route::get('dashboard', [ReportController::class,'dashboard']);
   });
 });
