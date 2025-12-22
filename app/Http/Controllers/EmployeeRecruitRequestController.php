@@ -67,8 +67,8 @@ class EmployeeRecruitRequestController extends Controller
     {
         $user = $request->user();
 
-        if (! $user || ! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true)) {
-            abort(403, 'Only administrators can view recruitment requests.');
+        if (! $user) {
+            abort(403, 'Authentication required.');
         }
 
         $data = $request->validate([
@@ -84,12 +84,18 @@ class EmployeeRecruitRequestController extends Controller
             ->with(['requester.user', 'createdEmployee.user', 'reviewer'])
             ->orderByDesc('created_at');
 
-        if (! empty($data['status'])) {
-            $query->where('status', $data['status']);
+        if (in_array($user->role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true)) {
+            if (! empty($data['branch_id'])) {
+                $query->where('data->branch_id', (int) $data['branch_id']);
+            }
+        } elseif ($user->role === User::ROLE_EMPLOYEE && $user->employee) {
+            $query->where('requested_by_employee_id', $user->employee->id);
+        } else {
+            abort(403, 'Only administrators or employees can view recruitment requests.');
         }
 
-        if (! empty($data['branch_id'])) {
-            $query->where('data->branch_id', (int) $data['branch_id']);
+        if (! empty($data['status'])) {
+            $query->where('status', $data['status']);
         }
 
         $requests = $query

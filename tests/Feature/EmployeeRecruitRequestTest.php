@@ -145,4 +145,55 @@ class EmployeeRecruitRequestTest extends TestCase
         $this->assertSame('Incomplete documents', $recruitRequest->rejection_reason);
         $this->assertSame($adminUser->id, $recruitRequest->reviewed_by_user_id);
     }
+
+    public function test_employee_can_view_their_own_requests(): void
+    {
+        $mmUser = User::factory()->create(['role' => User::ROLE_EMPLOYEE]);
+        $mmEmployee = Employee::create([
+            'user_id' => $mmUser->id,
+            'employee_code' => 'MM-004',
+            'rank' => Employee::RANK_MM,
+            'full_name_en' => 'Manager Four',
+            'mobile' => '01700000008',
+        ]);
+
+        $otherUser = User::factory()->create(['role' => User::ROLE_EMPLOYEE]);
+        $otherEmployee = Employee::create([
+            'user_id' => $otherUser->id,
+            'employee_code' => 'MM-005',
+            'rank' => Employee::RANK_MM,
+            'full_name_en' => 'Manager Five',
+            'mobile' => '01700000009',
+        ]);
+
+        EmployeeRecruitRequest::create([
+            'requested_by_employee_id' => $mmEmployee->id,
+            'data' => [
+                'full_name_en' => 'Candidate Own',
+                'email' => 'own@example.com',
+                'mobile' => '01700000010',
+                'rank' => Employee::RANK_ME,
+            ],
+            'status' => EmployeeRecruitRequest::STATUS_PENDING,
+        ]);
+
+        EmployeeRecruitRequest::create([
+            'requested_by_employee_id' => $otherEmployee->id,
+            'data' => [
+                'full_name_en' => 'Candidate Other',
+                'email' => 'other@example.com',
+                'mobile' => '01700000011',
+                'rank' => Employee::RANK_ME,
+            ],
+            'status' => EmployeeRecruitRequest::STATUS_PENDING,
+        ]);
+
+        Sanctum::actingAs($mmUser);
+
+        $response = $this->getJson('/api/v1/employee-recruit-requests');
+
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertSame($mmEmployee->id, $response->json('data.0.requested_by_employee_id'));
+    }
 }
