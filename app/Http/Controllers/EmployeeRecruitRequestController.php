@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\EmployeeCreationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class EmployeeRecruitRequestController extends Controller
@@ -62,6 +63,42 @@ class EmployeeRecruitRequestController extends Controller
         ], 201);
     }
 
+    public function index(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (! $user || ! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true)) {
+            abort(403, 'Only administrators can view recruitment requests.');
+        }
+
+        $data = $request->validate([
+            'status' => ['nullable', 'string', Rule::in([
+                EmployeeRecruitRequest::STATUS_PENDING,
+                EmployeeRecruitRequest::STATUS_APPROVED,
+                EmployeeRecruitRequest::STATUS_REJECTED,
+            ])],
+            'branch_id' => ['nullable', 'integer'],
+        ]);
+
+        $query = EmployeeRecruitRequest::query()
+            ->with(['requester.user', 'createdEmployee.user', 'reviewer'])
+            ->orderByDesc('created_at');
+
+        if (! empty($data['status'])) {
+            $query->where('status', $data['status']);
+        }
+
+        if (! empty($data['branch_id'])) {
+            $query->where('data->branch_id', (int) $data['branch_id']);
+        }
+
+        $requests = $query
+            ->paginate($request->integer('per_page', 15))
+            ->appends($request->query());
+
+        return response()->json($requests);
+    }
+
     public function approve(Request $request, EmployeeRecruitRequest $recruitRequest): JsonResponse
     {
         $user = $request->user();
@@ -101,6 +138,35 @@ class EmployeeRecruitRequestController extends Controller
 
         return response()->json([
             'data' => $recruitRequest->load(['createdEmployee.user', 'requester.user', 'reviewer']),
+        ]);
+    }
+
+    public function reject(Request $request, EmployeeRecruitRequest $recruitRequest): JsonResponse
+    {
+        $user = $request->user();
+
+        if (! $user || ! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_BRANCH_ADMIN], true)) {
+            abort(403, 'Only administrators can reject recruitment requests.');
+        }
+
+        $data = $request->validate([
+            'rejection_reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        if ($recruitRequest->status !== EmployeeRecruitRequest::STATUS_PENDING) {
+            throw ValidationException::withMessages([
+                'status' => 'This request has already been processed.',
+            ]);
+        }
+
+        $recruitRequest->forceFill([
+            'status' => EmployeeRecruitRequest::STATUS_REJECTED,
+            'reviewed_by_user_id' => $user->id,
+            'rejection_reason' => $data['rejection_reason'] ?? null,
+        ])->save();
+
+        return response()->json([
+            'data' => $recruitRequest->load(['requester.user', 'reviewer']),
         ]);
     }
 

@@ -20,6 +20,7 @@ class EmployeeRecruitRequest extends Model
         'status',
         'reviewed_by_user_id',
         'created_employee_id',
+        'rejection_reason',
     ];
 
     protected $casts = [

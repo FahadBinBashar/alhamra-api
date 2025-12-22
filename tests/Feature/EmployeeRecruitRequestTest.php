@@ -108,4 +108,41 @@ class EmployeeRecruitRequestTest extends TestCase
         $this->assertSame(Employee::RANK_ME, $createdEmployee->rank);
         $this->assertSame('approve@example.com', $createdEmployee->user->email);
     }
+
+    public function test_admin_can_reject_request(): void
+    {
+        $mmUser = User::factory()->create(['role' => User::ROLE_EMPLOYEE]);
+        $mmEmployee = Employee::create([
+            'user_id' => $mmUser->id,
+            'employee_code' => 'MM-003',
+            'rank' => Employee::RANK_MM,
+            'full_name_en' => 'Manager Three',
+            'mobile' => '01700000006',
+        ]);
+
+        Sanctum::actingAs($mmUser);
+
+        $this->postJson('/api/v1/employee-recruit-requests', [
+            'full_name_en' => 'Candidate Reject',
+            'email' => 'reject@example.com',
+            'mobile' => '01700000007',
+        ])->assertCreated();
+
+        $recruitRequest = EmployeeRecruitRequest::first();
+
+        $adminUser = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        Sanctum::actingAs($adminUser);
+
+        $response = $this->postJson('/api/v1/employee-recruit-requests/' . $recruitRequest->id . '/reject', [
+            'rejection_reason' => 'Incomplete documents',
+        ]);
+
+        $response->assertOk();
+
+        $recruitRequest->refresh();
+
+        $this->assertSame(EmployeeRecruitRequest::STATUS_REJECTED, $recruitRequest->status);
+        $this->assertSame('Incomplete documents', $recruitRequest->rejection_reason);
+        $this->assertSame($adminUser->id, $recruitRequest->reviewed_by_user_id);
+    }
 }
