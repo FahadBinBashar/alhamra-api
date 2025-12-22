@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\PaymentRecorded;
 use App\Models\Employee;
-use App\Models\Agent;
 use App\Models\SalesOrder;
 use App\Models\RankRequirement;
 use App\Models\Payment;
@@ -31,9 +30,7 @@ class ProcessPaymentCommissions
         $payment->loadMissing('salesOrder');
 
         if ($payment->salesOrder?->sales_type === SalesOrder::TYPE_SERVICE) {
-            $serviceCommission = $this->serviceCommissionService->handlePayment($payment);
-            $agentCommissionExists = $serviceCommission?->recipient_type === Agent::class;
-            $this->commissionService->handleDevelopmentGapCommissions($payment, true, $agentCommissionExists);
+            $this->serviceCommissionService->handlePayment($payment);
 
             return;
         }

@@ -84,9 +84,6 @@ class PdSpecialBonusController extends Controller
         return response()->json([
             'data' => $bonuses->map(fn (PdSpecialBonus $bonus) => [
                 'employee_id' => $bonus->employee_id,
-                'employee_name' => $bonus->employee?->full_name_en,
-                'rank' => $bonus->employee?->rank,
-                'rank_name' => $bonus->employee?->rankDefinition?->name,
                 'period' => $bonus->month,
                 'total_dp' => (float) $bonus->total_dp,
                 'percentage' => (float) $bonus->percentage,
@@ -116,10 +113,6 @@ class PdSpecialBonusController extends Controller
 
         return response()->json([
             'data' => [
-                'employee_id' => $bonus->employee_id,
-                'employee_name' => $bonus->employee?->full_name_en,
-                'rank' => $bonus->employee?->rank,
-                'rank_name' => $bonus->employee?->rankDefinition?->name,
                 'period' => $bonus->month,
                 'total_dp' => (float) $bonus->total_dp,
                 'percentage' => (float) $bonus->percentage,

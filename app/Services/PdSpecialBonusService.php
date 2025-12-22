@@ -151,7 +151,6 @@ class PdSpecialBonusService
     public function employeeBonus(int $employeeId, string $month): ?PdSpecialBonus
     {
         return PdSpecialBonus::query()
-            ->with(['employee', 'employee.rankDefinition'])
             ->where('employee_id', $employeeId)
             ->where('month', $month)
             ->first();
@@ -160,7 +159,6 @@ class PdSpecialBonusService
     public function monthBonuses(string $month): Collection
     {
         return PdSpecialBonus::query()
-            ->with(['employee', 'employee.rankDefinition'])
             ->where('month', $month)
             ->orderBy('employee_id')
             ->get();
