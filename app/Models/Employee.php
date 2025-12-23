@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\LogsActivityChanges;
 use App\Models\SalesOrder;
+use App\Models\WorkSummary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -136,5 +137,10 @@ class Employee extends Model
     public function signature(): MorphOne
     {
         return $this->morphOne(Document::class, 'documentable')->where('category', 'signature');
+    }
+
+    public function workSummaries(): HasMany
+    {
+        return $this->hasMany(WorkSummary::class);
     }
 }

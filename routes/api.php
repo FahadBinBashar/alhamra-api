@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminReportController;
+use App\Http\Controllers\AdminWorkSummaryController;
 use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
@@ -41,6 +42,7 @@ use App\Http\Controllers\Customer\CustomerPaymentController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\CustomerSalesOrderController;
 use App\Http\Controllers\DirectorFundController;
+use App\Http\Controllers\WorkSummaryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -98,6 +100,9 @@ Route::prefix('v1')->group(function () {
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
       Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
     });
+    Route::get('work-summaries', [WorkSummaryController::class, 'index']);
+    Route::post('work-summaries', [WorkSummaryController::class, 'store']);
+    Route::get('admin/work-summaries', [AdminWorkSummaryController::class, 'index']);
     Route::get('employee/incentives', [EmployeeEarningController::class, 'incentives']);
     Route::get('employee/director-funds', [EmployeeEarningController::class, 'directorFunds']);
     Route::apiResource('categories', CategoryController::class);
