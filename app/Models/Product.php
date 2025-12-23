@@ -21,6 +21,7 @@ class Product extends Model
         'supplier_percentage',
         'product_type',
         'price',
+        'down_payment',
         'ccu_percentage',
         'attributes',
         'stock_qty',
@@ -34,6 +35,7 @@ class Product extends Model
     protected $casts = [
         'attributes' => 'array',
         'price' => 'decimal:2',
+        'down_payment' => 'decimal:2',
         'ccu_percentage' => 'integer',
         'supplier_percentage' => 'integer',
         'stock_qty' => 'decimal:2',
