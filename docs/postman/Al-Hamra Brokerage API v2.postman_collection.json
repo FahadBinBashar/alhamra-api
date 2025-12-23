@@ -5074,6 +5074,194 @@
       ]
     },
     {
+      "name": "Work Summaries",
+      "item": [
+        {
+          "name": "Create Work Summary (Daily)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"daily\",\n  \"report_date\": \"2025-12-23\",\n  \"today_sales_amount\": 50000,\n  \"remarks\": \"Good day\",\n  \"sections\": {\n    \"products_discussion\": [\n      { \"name\": \"Rahim\", \"mobile\": \"01XXXXXXXXX\", \"products\": \"Flat A\", \"project\": \"Alhamra Garden\", \"place\": \"Dhaka\" }\n    ],\n    \"office_visit\": [\n      { \"name\": \"Karim\", \"mobile\": \"01XXXXXXXXX\", \"products\": \"Plot\", \"project\": \"Alhamra City\", \"place\": \"Cumilla\" }\n    ],\n    \"project_visit\": [\n      { \"name\": \"Sakib\", \"mobile\": \"01XXXXXXXXX\", \"products\": \"Share\", \"project\": \"Alhamra Homes\", \"place\": \"Gazipur\" }\n    ],\n    \"business_meeting\": [\n      { \"place\": \"Head Office\", \"meeting_type\": \"Partner Meeting\", \"attendance\": \"CEO, Sales Team\" }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/work-summaries",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "work-summaries"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Work Summary (Weekly)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"weekly\",\n  \"week_start\": \"2025-12-16\",\n  \"week_end\": \"2025-12-23\",\n  \"today_sales_amount\": 0,\n  \"remarks\": \"Weekly summary\",\n  \"sections\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/work-summaries",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "work-summaries"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Work Summaries (Employee)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/work-summaries?type=daily&from=2025-12-01&to=2025-12-31&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "work-summaries"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "daily"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-12-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2025-12-31"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Work Summaries (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/work-summaries?employee_id=&type=&from=&to=&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "work-summaries"
+              ],
+              "query": [
+                {
+                  "key": "employee_id",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Employees",
       "item": [
         {
