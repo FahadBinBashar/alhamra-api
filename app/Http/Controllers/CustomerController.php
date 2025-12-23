@@ -43,6 +43,33 @@ class CustomerController extends Controller
         return UserResource::collection($customers);
     }
 
+    // public function store(StoreCustomerRequest $request): JsonResponse
+    // {
+    //     $user = $request->user();
+    //     $this->ensureCustomerAccess($user);
+
+    //     $data = $request->validated();
+    //     $password = $data['password'];
+    //     $sourceEmployee = $this->resolveSourceEmployee($data['source_me_id'] ?? null);
+
+    //     $customer = User::create(array_merge($data, [
+    //         'role' => User::ROLE_CUSTOMER,
+    //         'added_by_role' => $this->resolveAddedByRole($user),
+    //         'added_by_branch_id' => $this->resolveBranchId($user) ?? $sourceEmployee?->branch_id,
+    //         'added_by_agent_id' => $sourceEmployee
+    //             ? null // if source_me_id is given, keep agent_id null
+    //             : ($this->resolveAgent($user)?->id ?? null),
+    //         'source_me_id' => $sourceEmployee?->id,
+    //     ]));
+
+        
+
+    //     $customer->notify(new CustomerCredentialNotification($customer->email, $password));
+
+    //     return (new UserResource($customer))
+    //         ->response()
+    //         ->setStatusCode(201);
+    // }
     public function store(StoreCustomerRequest $request): JsonResponse
     {
         $user = $request->user();
@@ -51,14 +78,16 @@ class CustomerController extends Controller
         $data = $request->validated();
         $password = $data['password'];
         $sourceEmployee = $this->resolveSourceEmployee($data['source_me_id'] ?? null);
+        $agent = $this->resolveAgent($user);
 
         $customer = User::create(array_merge($data, [
             'role' => User::ROLE_CUSTOMER,
             'added_by_role' => $this->resolveAddedByRole($user),
             'added_by_branch_id' => $this->resolveBranchId($user) ?? $sourceEmployee?->branch_id,
-            'added_by_agent_id' => $sourceEmployee
-                ? null // if source_me_id is given, keep agent_id null
-                : ($this->resolveAgent($user)?->id ?? null),
+            // 'added_by_agent_id' => $sourceEmployee
+            //     ? null // if source_me_id is given, keep agent_id null
+            //     : ($this->resolveAgent($user)?->id ?? null),
+            'added_by_agent_id' => $agent?->id,
             'source_me_id' => $sourceEmployee?->id,
         ]));
 

@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Requests;
-
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCustomerRequest extends FormRequest
 {
@@ -16,11 +17,18 @@ class StoreCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $role = $this->user()?->role;
+        $requiresSourceEmployee = in_array($role, [User::ROLE_AGENT, User::ROLE_AGENT_ADMIN], true);
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'source_me_id' => ['nullable', 'integer', 'exists:employees,id'],
+            'source_me_id' => [
+                Rule::requiredIf($requiresSourceEmployee),
+                'nullable',
+                'integer',
+                'exists:employees,id',
+            ],
             'father_name' => ['nullable', 'string', 'max:255'],
             'mother_name' => ['nullable', 'string', 'max:255'],
             'marital_status' => ['nullable', 'string', 'max:255'],
