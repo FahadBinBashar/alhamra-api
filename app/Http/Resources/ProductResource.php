@@ -30,6 +30,8 @@ class ProductResource extends JsonResource
             'down_payment' => $this->down_payment,
             'ccu_percentage' => $this->ccu_percentage,
             'attributes' => $this->getAttribute('attributes') ?? [],
+            'image_path' => $this->image_path,
+            'image_disk' => $this->image_disk,
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,
             'is_stock_managed' => $this->is_stock_managed,
