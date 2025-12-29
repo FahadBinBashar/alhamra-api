@@ -476,6 +476,10 @@
                 {
                   "key": "image",
                   "type": "file"
+                },
+                {
+                  "key": "images[]",
+                  "type": "file"
                 }
               ]
             },
@@ -583,6 +587,10 @@
                 },
                 {
                   "key": "image",
+                  "type": "file"
+                },
+                {
+                  "key": "images[]",
                   "type": "file"
                 }
               ]
