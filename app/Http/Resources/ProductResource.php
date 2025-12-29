@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @mixin \App\Models\Product
@@ -33,6 +34,9 @@ class ProductResource extends JsonResource
             'attributes' => $this->getAttribute('attributes') ?? [],
             'image_path' => $this->image_path,
             'image_disk' => $this->image_disk,
+            'image_url' => $this->image_path && $this->image_disk
+                ? Storage::disk($this->image_disk)->url($this->image_path)
+                : null,
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,
             'is_stock_managed' => $this->is_stock_managed,
