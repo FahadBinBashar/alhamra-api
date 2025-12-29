@@ -27,7 +27,7 @@ class ProductController extends Controller
             $includes = ['category'];
         }
 
-        $query = Product::query()->with($includes);
+        $query = Product::query()->with(array_merge($includes, ['productImages']));
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->integer('category_id'));
@@ -51,23 +51,14 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        // Always store product images on PUBLIC disk so it becomes accessible via /storage after storage:link
-        if ($request->hasFile('image')) {
-            $disk = 'public';
-            $path = $request->file('image')->store('products/images', $disk);
-
-            $product->forceFill([
-                'image_path' => $path,
-                'image_disk' => $disk,
-            ])->save();
-        }
+        $this->storeProductImages($request, $product);
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier']);
         if (empty($includes)) {
             $includes = ['category'];
         }
 
-        $product->load($includes);
+        $product->load(array_merge($includes, ['productImages']));
 
         return new ProductResource($product);
     }
@@ -82,7 +73,7 @@ class ProductController extends Controller
             $includes = ['category'];
         }
 
-        $product->load($includes);
+        $product->load(array_merge($includes, ['productImages']));
 
         return new ProductResource($product);
     }
@@ -94,20 +85,9 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image_path && $product->image_disk) {
-                Storage::disk($product->image_disk)->delete($product->image_path);
-            }
-
-            // Always store new image on PUBLIC disk
-            $disk = 'public';
-            $path = $request->file('image')->store('products/images', $disk);
-
-            $product->forceFill([
-                'image_path' => $path,
-                'image_disk' => $disk,
-            ])->save();
+        if ($request->hasFile('image') || $request->hasFile('images')) {
+            $this->deleteProductImages($product);
+            $this->storeProductImages($request, $product);
         }
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier']);
@@ -115,7 +95,7 @@ class ProductController extends Controller
             $includes = ['category'];
         }
 
-        $product->load($includes);
+        $product->load(array_merge($includes, ['productImages']));
 
         return new ProductResource($product);
     }
@@ -125,12 +105,73 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        if ($product->image_path && $product->image_disk) {
-            Storage::disk($product->image_disk)->delete($product->image_path);
-        }
+        $this->deleteProductImages($product);
 
         $product->delete();
 
         return response()->json(null, 204);
+    }
+
+    private function storeProductImages(Request $request, Product $product): void
+    {
+        $files = [];
+
+        if ($request->hasFile('images')) {
+            $files = $request->file('images');
+        }
+
+        if ($request->hasFile('image')) {
+            $files[] = $request->file('image');
+        }
+
+        if (empty($files)) {
+            return;
+        }
+
+        $disk = 'public';
+        $stored = [];
+
+        foreach ($files as $file) {
+            if (!$file) {
+                continue;
+            }
+
+            $path = $file->store('products/images', $disk);
+            $stored[] = [
+                'image_path' => $path,
+                'image_disk' => $disk,
+            ];
+        }
+
+        if (empty($stored)) {
+            return;
+        }
+
+        $product->productImages()->createMany($stored);
+
+        $product->forceFill([
+            'image_path' => $stored[0]['image_path'],
+            'image_disk' => $stored[0]['image_disk'],
+        ])->save();
+    }
+
+    private function deleteProductImages(Product $product): void
+    {
+        $product->loadMissing('productImages');
+
+        foreach ($product->productImages as $image) {
+            Storage::disk($image->image_disk)->delete($image->image_path);
+        }
+
+        $product->productImages()->delete();
+
+        if ($product->image_path && $product->image_disk) {
+            Storage::disk($product->image_disk)->delete($product->image_path);
+        }
+
+        $product->forceFill([
+            'image_path' => null,
+            'image_disk' => null,
+        ])->save();
     }
 }

@@ -19,17 +19,16 @@ class ProductResource extends JsonResource
         // https://alhamarahomesbd.com/alhamra-backend/public/storage/...
         $base = rtrim(config('app.url'), '/') . '/public';
 
-        $imageUrl = null;
+        $imageUrl = $this->resolveImageUrl($base, $this->image_disk, $this->image_path);
 
-        if ($this->image_path && $this->image_disk) {
-            $diskUrl = Storage::disk($this->image_disk)->url($this->image_path); // e.g. /storage/products/images/xxx.jpg
+        $imageUrls = $this->productImages
+            ->map(fn ($image) => $this->resolveImageUrl($base, $image->image_disk, $image->image_path))
+            ->filter()
+            ->values()
+            ->all();
 
-            // If disk url is already absolute (S3 etc.), keep it
-            if (str_starts_with($diskUrl, 'http://') || str_starts_with($diskUrl, 'https://')) {
-                $imageUrl = $diskUrl;
-            } else {
-                $imageUrl = $base . $diskUrl; // base + /storage/...
-            }
+        if (empty($imageUrls) && $imageUrl) {
+            $imageUrls = [$imageUrl];
         }
 
         return [
@@ -49,11 +48,27 @@ class ProductResource extends JsonResource
             'image_path' => $this->image_path,
             'image_disk' => $this->image_disk,
             'image_url' => $imageUrl,
+            'image_urls' => $imageUrls,
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,
             'is_stock_managed' => $this->is_stock_managed,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+    }
+
+    private function resolveImageUrl(string $base, ?string $disk, ?string $path): ?string
+    {
+        if (!$disk || !$path) {
+            return null;
+        }
+
+        $diskUrl = Storage::disk($disk)->url($path); // e.g. /storage/products/images/xxx.jpg
+
+        if (str_starts_with($diskUrl, 'http://') || str_starts_with($diskUrl, 'https://')) {
+            return $diskUrl;
+        }
+
+        return $base . $diskUrl; // base + /storage/...
     }
 }
