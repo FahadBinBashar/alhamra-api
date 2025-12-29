@@ -50,7 +50,7 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
 
         if ($request->file('image')) {
-            $disk = 'public';
+            $disk = config('filesystems.default');
             $path = $request->file('image')->store('products/images', $disk);
             $product->forceFill([
                 'image_path' => $path,
@@ -97,7 +97,7 @@ class ProductController extends Controller
                 Storage::disk($product->image_disk)->delete($product->image_path);
             }
 
-            $disk = 'public';
+            $disk = config('filesystems.default');
             $path = $request->file('image')->store('products/images', $disk);
             $product->forceFill([
                 'image_path' => $path,

@@ -23,6 +23,7 @@ class UpdateProductRequest extends FormRequest
             'supplier_percentage' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
             'product_type' => ['sometimes', 'required', 'in:consumer,flat,land,share,other'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'description' => ['sometimes', 'nullable', 'string'],
             'down_payment' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['sometimes', 'nullable', 'array'],
