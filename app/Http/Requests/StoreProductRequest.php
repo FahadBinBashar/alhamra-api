@@ -23,6 +23,7 @@ class StoreProductRequest extends FormRequest
             'supplier_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'product_type' => ['required', 'in:consumer,flat,land,share,other'],
             'price' => ['nullable', 'numeric', 'min:0'],
+            'description' => ['nullable', 'string'],
             'down_payment' => ['nullable', 'numeric', 'min:0'],
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['nullable', 'array'],
