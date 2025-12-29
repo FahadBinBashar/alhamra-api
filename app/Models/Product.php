@@ -24,6 +24,8 @@ class Product extends Model
         'down_payment',
         'ccu_percentage',
         'attributes',
+        'image_path',
+        'image_disk',
         'stock_qty',
         'min_stock_alert',
         'is_stock_managed',

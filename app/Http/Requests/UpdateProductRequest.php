@@ -26,6 +26,7 @@ class UpdateProductRequest extends FormRequest
             'down_payment' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['sometimes', 'nullable', 'array'],
+            'image' => ['sometimes', 'nullable', 'image', 'max:10240'],
             'stock_qty' => ['sometimes', 'numeric', 'min:0'],
             'min_stock_alert' => ['sometimes', 'numeric', 'min:0'],
             'is_stock_managed' => ['sometimes', 'boolean'],
