@@ -37,7 +37,9 @@ class ProductController extends Controller
             $query->where('product_type', $request->string('product_type'));
         }
 
-        $products = $query->paginate($request->integer('per_page', 15))->appends($request->query());
+        $products = $query
+            ->paginate($request->integer('per_page', 15))
+            ->appends($request->query());
 
         return ProductResource::collection($products);
     }
@@ -49,9 +51,11 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        if ($request->file('image')) {
-            $disk = config('filesystems.default');
+        // Always store product images on PUBLIC disk so it becomes accessible via /storage after storage:link
+        if ($request->hasFile('image')) {
+            $disk = 'public';
             $path = $request->file('image')->store('products/images', $disk);
+
             $product->forceFill([
                 'image_path' => $path,
                 'image_disk' => $disk,
@@ -59,7 +63,6 @@ class ProductController extends Controller
         }
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier']);
-
         if (empty($includes)) {
             $includes = ['category'];
         }
@@ -75,7 +78,6 @@ class ProductController extends Controller
     public function show(Request $request, Product $product): ProductResource
     {
         $includes = $this->resolveIncludes($request, ['category', 'supplier']);
-
         if (empty($includes)) {
             $includes = ['category'];
         }
@@ -92,13 +94,16 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        if ($request->file('image')) {
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
             if ($product->image_path && $product->image_disk) {
                 Storage::disk($product->image_disk)->delete($product->image_path);
             }
 
-            $disk = config('filesystems.default');
+            // Always store new image on PUBLIC disk
+            $disk = 'public';
             $path = $request->file('image')->store('products/images', $disk);
+
             $product->forceFill([
                 'image_path' => $path,
                 'image_disk' => $disk,
@@ -106,7 +111,6 @@ class ProductController extends Controller
         }
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier']);
-
         if (empty($includes)) {
             $includes = ['category'];
         }
