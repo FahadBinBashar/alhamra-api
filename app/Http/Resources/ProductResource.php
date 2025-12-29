@@ -19,16 +19,26 @@ class ProductResource extends JsonResource
         // https://alhamarahomesbd.com/alhamra-backend/public/storage/...
         $base = rtrim(config('app.url'), '/') . '/public';
 
-        $imageUrl = null;
+        $imageUrls = [];
 
-        if ($this->image_path && $this->image_disk) {
-            $diskUrl = Storage::disk($this->image_disk)->url($this->image_path); // e.g. /storage/products/images/xxx.jpg
+        $imagePaths = $this->image_paths ?? [];
+
+        if (empty($imagePaths) && $this->image_path) {
+            $imagePaths = [$this->image_path];
+        }
+
+        foreach ($imagePaths as $imagePath) {
+            if (! $imagePath || ! $this->image_disk) {
+                continue;
+            }
+
+            $diskUrl = Storage::disk($this->image_disk)->url($imagePath); // e.g. /storage/products/images/xxx.jpg
 
             // If disk url is already absolute (S3 etc.), keep it
             if (str_starts_with($diskUrl, 'http://') || str_starts_with($diskUrl, 'https://')) {
-                $imageUrl = $diskUrl;
+                $imageUrls[] = $diskUrl;
             } else {
-                $imageUrl = $base . $diskUrl; // base + /storage/...
+                $imageUrls[] = $base . $diskUrl; // base + /storage/...
             }
         }
 
@@ -47,8 +57,9 @@ class ProductResource extends JsonResource
             'ccu_percentage' => $this->ccu_percentage,
             'attributes' => $this->getAttribute('attributes') ?? [],
             'image_path' => $this->image_path,
+            'image_paths' => $imagePaths,
             'image_disk' => $this->image_disk,
-            'image_url' => $imageUrl,
+            'image_url' => $imageUrls,
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,
             'is_stock_managed' => $this->is_stock_managed,
