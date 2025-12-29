@@ -444,6 +444,11 @@
                   "type": "text"
                 },
                 {
+                  "key": "description",
+                  "value": "Premium land parcel in a prime location.",
+                  "type": "text"
+                },
+                {
                   "key": "ccu_percentage",
                   "value": "30",
                   "type": "text"
@@ -559,6 +564,11 @@
                 {
                   "key": "price",
                   "value": "5200000",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description for the premium land parcel.",
                   "type": "text"
                 },
                 {

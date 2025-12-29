@@ -21,6 +21,7 @@ class Product extends Model
         'supplier_percentage',
         'product_type',
         'price',
+        'description',
         'down_payment',
         'ccu_percentage',
         'attributes',

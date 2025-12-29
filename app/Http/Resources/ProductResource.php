@@ -27,6 +27,7 @@ class ProductResource extends JsonResource
             'supplier' => new SupplierResource($this->whenLoaded('supplier')),
             'product_type' => $this->product_type,
             'price' => $this->price,
+            'description' => $this->description,
             'down_payment' => $this->down_payment,
             'ccu_percentage' => $this->ccu_percentage,
             'attributes' => $this->getAttribute('attributes') ?? [],
