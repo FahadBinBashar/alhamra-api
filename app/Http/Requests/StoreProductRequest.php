@@ -28,6 +28,8 @@ class StoreProductRequest extends FormRequest
             'ccu_percentage' => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'attributes' => ['nullable', 'array'],
             'image' => ['nullable', 'image', 'max:10240'],
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'max:10240'],
             'stock_qty' => ['sometimes', 'numeric', 'min:0'],
             'min_stock_alert' => ['sometimes', 'numeric', 'min:0'],
             'is_stock_managed' => ['sometimes', 'boolean'],

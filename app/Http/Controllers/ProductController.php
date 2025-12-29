@@ -52,12 +52,27 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
 
         // Always store product images on PUBLIC disk so it becomes accessible via /storage after storage:link
+        $uploadedImages = [];
+
         if ($request->hasFile('image')) {
+            $uploadedImages[] = $request->file('image');
+        }
+
+        if ($request->hasFile('images')) {
+            $uploadedImages = array_merge($uploadedImages, $request->file('images', []));
+        }
+
+        if ($uploadedImages !== []) {
             $disk = 'public';
-            $path = $request->file('image')->store('products/images', $disk);
+            $paths = [];
+
+            foreach ($uploadedImages as $uploadedImage) {
+                $paths[] = $uploadedImage->store('products/images', $disk);
+            }
 
             $product->forceFill([
-                'image_path' => $path,
+                'image_path' => $paths[0] ?? null,
+                'image_paths' => $paths,
                 'image_disk' => $disk,
             ])->save();
         }
@@ -94,18 +109,42 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
+        $uploadedImages = [];
+
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image_path && $product->image_disk) {
-                Storage::disk($product->image_disk)->delete($product->image_path);
+            $uploadedImages[] = $request->file('image');
+        }
+
+        if ($request->hasFile('images')) {
+            $uploadedImages = array_merge($uploadedImages, $request->file('images', []));
+        }
+
+        if ($uploadedImages !== []) {
+            $pathsToDelete = $product->image_paths ?? [];
+
+            if (empty($pathsToDelete) && $product->image_path) {
+                $pathsToDelete = [$product->image_path];
             }
 
-            // Always store new image on PUBLIC disk
+            if ($product->image_disk) {
+                foreach ($pathsToDelete as $pathToDelete) {
+                    if ($pathToDelete) {
+                        Storage::disk($product->image_disk)->delete($pathToDelete);
+                    }
+                }
+            }
+
+            // Always store new images on PUBLIC disk
             $disk = 'public';
-            $path = $request->file('image')->store('products/images', $disk);
+            $paths = [];
+
+            foreach ($uploadedImages as $uploadedImage) {
+                $paths[] = $uploadedImage->store('products/images', $disk);
+            }
 
             $product->forceFill([
-                'image_path' => $path,
+                'image_path' => $paths[0] ?? null,
+                'image_paths' => $paths,
                 'image_disk' => $disk,
             ])->save();
         }
@@ -125,8 +164,18 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        if ($product->image_path && $product->image_disk) {
-            Storage::disk($product->image_disk)->delete($product->image_path);
+        $pathsToDelete = $product->image_paths ?? [];
+
+        if (empty($pathsToDelete) && $product->image_path) {
+            $pathsToDelete = [$product->image_path];
+        }
+
+        if ($product->image_disk) {
+            foreach ($pathsToDelete as $pathToDelete) {
+                if ($pathToDelete) {
+                    Storage::disk($product->image_disk)->delete($pathToDelete);
+                }
+            }
         }
 
         $product->delete();
