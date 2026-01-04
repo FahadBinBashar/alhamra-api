@@ -76,6 +76,8 @@ Route::prefix('v1')->group(function () {
       Route::post('sales-orders/{order}/payments/initiate', [CustomerPaymentController::class,'initiate']);
     });
   });
+  Route::apiResource('categories', CategoryController::class);
+  Route::apiResource('products', ProductController::class);
   Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
@@ -105,8 +107,6 @@ Route::prefix('v1')->group(function () {
     Route::get('admin/work-summaries', [AdminWorkSummaryController::class, 'index']);
     Route::get('employee/incentives', [EmployeeEarningController::class, 'incentives']);
     Route::get('employee/director-funds', [EmployeeEarningController::class, 'directorFunds']);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('products', ProductController::class);
     Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('accounting/accounts', ChartOfAccountsController::class)->except(['show']);
     Route::apiResource('accounting/journals', JournalController::class)->only(['index', 'store']);
