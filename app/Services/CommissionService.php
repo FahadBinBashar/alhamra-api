@@ -275,19 +275,9 @@ class CommissionService
         return is_array($value) ? $value : [];
     }
 
-    public function processPendingCommissions(?Carbon $upTo = null): Collection
+    public function processPendingCommissions(?Carbon $from = null, ?Carbon $to = null, ?int $batchId = null): Collection
     {
-        $query = CommissionCalculationUnit::query()
-            ->where('status', 'draft')
-            ->with(['payment.salesOrder.agent', 'payment.salesOrder.branch', 'payment.salesOrder.sourceMe.superior', 'items']);
-
-        if ($upTo) {
-            $query->whereHas('payment', function ($paymentQuery) use ($upTo) {
-                $paymentQuery->whereDate('paid_at', '<=', $upTo->toDateString());
-            });
-        }
-
-        $units = $query->get();
+        $units = $this->pendingUnitsQuery($from, $to, true)->get();
         $created = collect();
 
         foreach ($units as $unit) {
@@ -302,16 +292,22 @@ class CommissionService
                 $processedAt = now();
 
                 foreach ($unit->items as $item) {
+                    $meta = array_merge($item->meta ?? [], [
+                        'calculation_unit_id' => $unit->id,
+                        'calculation_item_id' => $item->id,
+                    ]);
+
+                    if ($batchId) {
+                        $meta['batch_id'] = $batchId;
+                    }
+
                     $payload = [
                         'recipient_type' => $item->recipient_type,
                         'recipient_id' => $item->recipient_id,
                         'amount' => (float) $item->amount,
                         'status' => 'paid',
                         'paid_at' => $processedAt,
-                        'meta' => array_merge($item->meta ?? [], [
-                            'calculation_unit_id' => $unit->id,
-                            'calculation_item_id' => $item->id,
-                        ]),
+                        'meta' => $meta,
                     ];
 
                     if ($item->percentage !== null) {
@@ -322,9 +318,16 @@ class CommissionService
                     $created->push($commission);
                 }
 
+                $unitMeta = $unit->meta ?? [];
+
+                if ($batchId) {
+                    $unitMeta['batch_id'] = $batchId;
+                }
+
                 $unit->forceFill([
                     'status' => 'paid',
                     'processed_at' => $processedAt,
+                    'meta' => $unitMeta,
                 ])->save();
 
                 $payment->forceFill([
@@ -334,6 +337,30 @@ class CommissionService
         }
 
         return $created;
+    }
+
+    public function pendingUnitsQuery(?Carbon $from = null, ?Carbon $to = null, bool $withRelations = false)
+    {
+        $query = CommissionCalculationUnit::query()
+            ->where('status', 'draft');
+
+        if ($withRelations) {
+            $query->with(['payment.salesOrder.agent', 'payment.salesOrder.branch', 'payment.salesOrder.sourceMe.superior', 'items']);
+        }
+
+        if ($from || $to) {
+            $query->whereHas('payment', function ($paymentQuery) use ($from, $to) {
+                if ($from) {
+                    $paymentQuery->whereDate('paid_at', '>=', $from->toDateString());
+                }
+
+                if ($to) {
+                    $paymentQuery->whereDate('paid_at', '<=', $to->toDateString());
+                }
+            });
+        }
+
+        return $query;
     }
 
     protected function storeCommissionFromPayload(Payment $payment, array $payload): Commission
