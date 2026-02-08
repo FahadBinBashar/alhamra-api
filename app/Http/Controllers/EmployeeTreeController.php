@@ -30,29 +30,12 @@ class EmployeeTreeController extends Controller
 
         $childMap = $this->buildChildMap($employees->values());
         $children = $childMap[$rootId] ?? [];
+        $maxDepth = $this->resolveMaxDepth($request);
 
         $paymentTotals = $this->collectPaymentTotals($start, $end);
         $commissionTotals = $this->collectCommissionTotals($start, $end);
 
-        $nodes = collect($children)->map(function (int $employeeId) use ($employees, $childMap, $paymentTotals, $commissionTotals) {
-            $employee = $employees->get($employeeId);
-            $subtreeIds = $this->collectSubtree($employeeId, $childMap);
-
-            return [
-                'node_type' => 'employee',
-                'id' => $employee?->id,
-                'name' => $employee?->user?->name ?? $employee?->full_name_en,
-                'rank' => $employee?->rank,
-                'step' => 1,
-                'has_children' => ! empty($childMap[$employeeId]),
-                'stats' => [
-                    'own_sales' => (float) ($paymentTotals[$employeeId] ?? 0),
-                    'own_commission' => (float) ($commissionTotals[$employeeId] ?? 0),
-                    'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
-                    'team_commission' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
-                ],
-            ];
-        })->values();
+        $nodes = $this->buildEmployeeNodes($children, $employees, $childMap, $paymentTotals, $commissionTotals, $maxDepth, $rootId);
 
         return response()->json([
             'root_employee_id' => $rootId,
@@ -148,26 +131,16 @@ class EmployeeTreeController extends Controller
                 ->keyBy('id');
 
             $childMap = $this->buildChildMap(Employee::query()->select('id', 'superior_id')->get());
+            $maxDepth = $this->resolveMaxDepth($request);
 
-            $nodes = $employees->keys()->map(function (int $employeeId) use ($employees, $childMap, $paymentTotals, $commissionTotals) {
-                $employee = $employees->get($employeeId);
-                $subtreeIds = $this->collectSubtree($employeeId, $childMap);
-
-                return [
-                    'node_type' => 'employee',
-                    'id' => $employee?->id,
-                    'name' => $employee?->user?->name ?? $employee?->full_name_en,
-                    'rank' => $employee?->rank,
-                    'step' => 1,
-                    'has_children' => ! empty($childMap[$employeeId]),
-                    'stats' => [
-                        'own_sales' => (float) ($paymentTotals[$employeeId] ?? 0),
-                        'own_commission' => (float) ($commissionTotals[$employeeId] ?? 0),
-                        'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
-                        'team_commission' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
-                    ],
-                ];
-            })->values();
+            $nodes = $this->buildEmployeeNodes(
+                $employees->keys()->all(),
+                $employees,
+                $childMap,
+                $paymentTotals,
+                $commissionTotals,
+                $maxDepth
+            );
 
             return response()->json([
                 'rank' => $rankCode,
@@ -248,6 +221,73 @@ class EmployeeTreeController extends Controller
                 \App\Models\User::ROLE_DIRECTOR,
                 \App\Models\User::ROLE_BRANCH_ADMIN,
             ], true);
+    }
+
+    protected function resolveMaxDepth(Request $request): ?int
+    {
+        if (! $request->filled('max_depth')) {
+            return 1;
+        }
+
+        $raw = $request->input('max_depth');
+
+        if (is_string($raw) && strtolower($raw) === 'all') {
+            return null;
+        }
+
+        $depth = (int) $raw;
+
+        return $depth > 0 ? $depth : 1;
+    }
+
+    protected function buildEmployeeNodes(
+        array $rootIds,
+        Collection $employees,
+        array $childMap,
+        array $paymentTotals,
+        array $commissionTotals,
+        ?int $maxDepth,
+        ?int $parentId = null
+    ): array {
+        $nodes = [];
+        $queue = collect($rootIds)
+            ->map(fn (int $id) => ['id' => $id, 'depth' => 1, 'parent_id' => $parentId])
+            ->values()
+            ->all();
+
+        while (! empty($queue)) {
+            $current = array_shift($queue);
+            $employeeId = $current['id'];
+            $depth = $current['depth'];
+            $parent = $current['parent_id'];
+
+            $employee = $employees->get($employeeId);
+            $subtreeIds = $this->collectSubtree($employeeId, $childMap);
+
+            $nodes[] = [
+                'node_type' => 'employee',
+                'id' => $employee?->id,
+                'name' => $employee?->user?->name ?? $employee?->full_name_en,
+                'rank' => $employee?->rank,
+                'step' => $depth,
+                'parent_id' => $parent,
+                'has_children' => ! empty($childMap[$employeeId]),
+                'stats' => [
+                    'own_sales' => (float) ($paymentTotals[$employeeId] ?? 0),
+                    'own_commission' => (float) ($commissionTotals[$employeeId] ?? 0),
+                    'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
+                    'team_commission' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
+                ],
+            ];
+
+            if ($maxDepth === null || $depth < $maxDepth) {
+                foreach ($childMap[$employeeId] ?? [] as $childId) {
+                    $queue[] = ['id' => $childId, 'depth' => $depth + 1, 'parent_id' => $employeeId];
+                }
+            }
+        }
+
+        return $nodes;
     }
 
     protected function resolveMonthPeriod(Request $request): array
