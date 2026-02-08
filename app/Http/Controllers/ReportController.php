@@ -10,6 +10,7 @@ use App\Models\Commission;
 use App\Models\CommissionCalculationItem;
 use App\Models\CustomerInstallment;
 use App\Models\LedgerEntry;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
@@ -17,6 +18,8 @@ use App\Models\Supplier;
 use App\Models\SupplierPayable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 
 class ReportController extends Controller
 {
@@ -320,5 +323,421 @@ class ReportController extends Controller
             'pending' => $pendingTotal,
             'unpaid' => 0.0,
         ];
+    }
+
+    public function salesCommissionSummary(Request $request)
+    {
+        [$start, $end] = $this->resolveReportPeriod($request);
+        $groupBy = $request->string('group_by', 'month')->toString();
+        $groupColumn = $this->resolveSalesGroupColumn($groupBy);
+
+        $paymentQuery = Payment::query()
+            ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+            ->selectRaw(
+                "{$groupColumn} as period,\n"
+                . 'SUM(payments.amount) as sales_total, '
+                . "SUM(CASE WHEN payments.type = ? THEN payments.amount ELSE 0 END) as down_payment_total, "
+                . "SUM(CASE WHEN payments.type = ? THEN payments.amount ELSE 0 END) as installment_total, "
+                . "SUM(CASE WHEN payments.type IN (?, ?) THEN payments.amount ELSE 0 END) as emi_extra_total",
+                [
+                    Payment::TYPE_DOWN_PAYMENT,
+                    Payment::TYPE_INSTALLMENT,
+                    Payment::TYPE_FULL_PAYMENT,
+                    Payment::TYPE_PARTIAL_PAYMENT,
+                ]
+            )
+            ->whereNotNull('payments.paid_at')
+            ->groupBy('period');
+
+        $this->applySalesFilters($paymentQuery, $request, $start, $end);
+
+        $paymentTotals = $paymentQuery->get()->keyBy('period');
+
+        $paidTotals = $this->commissionTotalsByStatus($request, $start, $end, $groupBy, 'paid');
+        $unpaidTotals = $this->commissionTotalsByStatus($request, $start, $end, $groupBy, 'unpaid');
+        $draftTotals = $this->commissionTotalsByStatus($request, $start, $end, $groupBy, 'draft');
+
+        $periods = collect()
+            ->merge($paymentTotals->keys())
+            ->merge($paidTotals->keys())
+            ->merge($unpaidTotals->keys())
+            ->merge($draftTotals->keys())
+            ->unique()
+            ->values();
+
+        $commissionStatus = $request->string('commission_status', 'all')->toString();
+
+        $data = $periods->map(function ($period) use ($paymentTotals, $paidTotals, $unpaidTotals, $draftTotals, $commissionStatus) {
+            $payments = $paymentTotals->get($period);
+            $paid = (float) ($paidTotals[$period] ?? 0);
+            $unpaid = (float) ($unpaidTotals[$period] ?? 0);
+            $draft = (float) ($draftTotals[$period] ?? 0);
+
+            [$commissionTotal, $commissionPaid, $commissionUnpaid] = $this->resolveCommissionTotalsByStatus(
+                $commissionStatus,
+                $paid,
+                $unpaid,
+                $draft
+            );
+
+            return [
+                'period' => $period,
+                'sales_total' => (float) ($payments->sales_total ?? 0),
+                'down_payment_total' => (float) ($payments->down_payment_total ?? 0),
+                'installment_total' => (float) ($payments->installment_total ?? 0),
+                'emi_extra_total' => (float) ($payments->emi_extra_total ?? 0),
+                'commission_total' => $commissionTotal,
+                'commission_paid' => $commissionPaid,
+                'commission_unpaid' => $commissionUnpaid,
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function salesCommissionDetail(Request $request)
+    {
+        [$start, $end] = $this->resolveReportPeriod($request);
+        $commissionStatus = $request->string('commission_status', 'all')->toString();
+
+        $rows = collect();
+
+        if (in_array($commissionStatus, ['paid', 'unpaid', 'all'], true)) {
+            $statuses = $commissionStatus === 'all' ? ['paid', 'unpaid'] : [$commissionStatus];
+
+            $commissions = Commission::query()
+                ->with(['payment.salesOrder.customer', 'payment.salesOrder.agent.user', 'payment.salesOrder.branch', 'recipient'])
+                ->whereIn('status', $statuses);
+
+            $this->applyCommissionFilters($commissions, $request, $start, $end);
+
+            $rows = $rows->merge($commissions->get()->map(fn (Commission $commission) => $this->formatCommissionRow($commission)));
+        }
+
+        if (in_array($commissionStatus, ['draft', 'all'], true)) {
+            $drafts = CommissionCalculationItem::query()
+                ->with(['unit.payment.salesOrder.customer', 'unit.payment.salesOrder.agent.user', 'unit.payment.salesOrder.branch', 'recipient'])
+                ->whereHas('unit', fn ($query) => $query->where('status', 'draft'));
+
+            $this->applyCommissionItemFilters($drafts, $request, $start, $end);
+
+            $rows = $rows->merge($drafts->get()->map(fn (CommissionCalculationItem $item) => $this->formatDraftCommissionRow($item)));
+        }
+
+        $rows = $rows->sortByDesc('date')->values();
+
+        $perPage = max(1, (int) $request->integer('per_page', 50));
+        $page = max(1, (int) $request->integer('page', 1));
+        $paginated = new LengthAwarePaginator(
+            $rows->slice(($page - 1) * $perPage, $perPage)->values(),
+            $rows->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $summary = $this->buildSalesCommissionSummary($request, $start, $end, $commissionStatus);
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'summary' => $summary,
+            'pagination' => [
+                'total' => $paginated->total(),
+                'per_page' => $paginated->perPage(),
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+            ],
+        ]);
+    }
+
+    protected function resolveReportPeriod(Request $request): array
+    {
+        $start = null;
+        $end = null;
+
+        if ($request->filled('month')) {
+            $month = $request->string('month')->toString();
+            $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+            $end = $start->copy()->endOfMonth();
+        } else {
+            if ($request->filled('from')) {
+                $start = Carbon::parse($request->input('from'))->startOfDay();
+            }
+
+            if ($request->filled('to')) {
+                $end = Carbon::parse($request->input('to'))->endOfDay();
+            }
+        }
+
+        return [$start, $end];
+    }
+
+    protected function resolveSalesGroupColumn(string $groupBy): string
+    {
+        return match ($groupBy) {
+            'day' => "DATE(payments.paid_at)",
+            'employee' => 'sales_orders.employee_id',
+            'agent' => 'sales_orders.agent_id',
+            'branch' => 'sales_orders.branch_id',
+            default => "DATE_FORMAT(payments.paid_at, '%Y-%m')",
+        };
+    }
+
+    protected function applySalesFilters($query, Request $request, ?Carbon $start, ?Carbon $end): void
+    {
+        if ($start) {
+            $query->whereDate('payments.paid_at', '>=', $start->toDateString());
+        }
+
+        if ($end) {
+            $query->whereDate('payments.paid_at', '<=', $end->toDateString());
+        }
+
+        if ($request->filled('employee_id')) {
+            $employeeIds = $this->parseIds($request, 'employee_id');
+            $query->where(function ($builder) use ($employeeIds) {
+                $builder->whereIn('sales_orders.employee_id', $employeeIds)
+                    ->orWhereIn('sales_orders.source_me_id', $employeeIds);
+            });
+        }
+
+        if ($request->filled('agent_id')) {
+            $query->whereIn('sales_orders.agent_id', $this->parseIds($request, 'agent_id'));
+        }
+
+        if ($request->filled('customer_id')) {
+            $query->whereIn('sales_orders.customer_id', $this->parseIds($request, 'customer_id'));
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->whereIn('sales_orders.branch_id', $this->parseIds($request, 'branch_id'));
+        }
+
+        if ($request->filled('sales_type')) {
+            $query->whereIn('sales_orders.sales_type', $this->parseStrings($request, 'sales_type'));
+        }
+    }
+
+    protected function applyCommissionFilters($query, Request $request, ?Carbon $start, ?Carbon $end): void
+    {
+        $query->whereHas('payment', function ($paymentQuery) use ($request, $start, $end) {
+            if ($start) {
+                $paymentQuery->whereDate('paid_at', '>=', $start->toDateString());
+            }
+
+            if ($end) {
+                $paymentQuery->whereDate('paid_at', '<=', $end->toDateString());
+            }
+
+            $paymentQuery->whereHas('salesOrder', function ($salesOrderQuery) use ($request) {
+                $this->applySalesOrderFilters($salesOrderQuery, $request);
+            });
+        });
+    }
+
+    protected function applyCommissionItemFilters($query, Request $request, ?Carbon $start, ?Carbon $end): void
+    {
+        $query->whereHas('unit.payment', function ($paymentQuery) use ($request, $start, $end) {
+            if ($start) {
+                $paymentQuery->whereDate('paid_at', '>=', $start->toDateString());
+            }
+
+            if ($end) {
+                $paymentQuery->whereDate('paid_at', '<=', $end->toDateString());
+            }
+
+            $paymentQuery->whereHas('salesOrder', function ($salesOrderQuery) use ($request) {
+                $this->applySalesOrderFilters($salesOrderQuery, $request);
+            });
+        });
+    }
+
+    protected function applySalesOrderFilters($query, Request $request): void
+    {
+        if ($request->filled('employee_id')) {
+            $employeeIds = $this->parseIds($request, 'employee_id');
+            $query->where(function ($builder) use ($employeeIds) {
+                $builder->whereIn('employee_id', $employeeIds)
+                    ->orWhereIn('source_me_id', $employeeIds);
+            });
+        }
+
+        if ($request->filled('agent_id')) {
+            $query->whereIn('agent_id', $this->parseIds($request, 'agent_id'));
+        }
+
+        if ($request->filled('customer_id')) {
+            $query->whereIn('customer_id', $this->parseIds($request, 'customer_id'));
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->whereIn('branch_id', $this->parseIds($request, 'branch_id'));
+        }
+
+        if ($request->filled('sales_type')) {
+            $query->whereIn('sales_type', $this->parseStrings($request, 'sales_type'));
+        }
+    }
+
+    protected function commissionTotalsByStatus(Request $request, ?Carbon $start, ?Carbon $end, string $groupBy, string $status)
+    {
+        $groupColumn = $this->resolveSalesGroupColumn($groupBy);
+
+        if ($status === 'draft') {
+            $query = CommissionCalculationItem::query()
+                ->join('commission_calculation_units', 'commission_calculation_units.id', '=', 'commission_calculation_items.commission_calculation_unit_id')
+                ->join('payments', 'payments.id', '=', 'commission_calculation_units.payment_id')
+                ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+                ->where('commission_calculation_units.status', 'draft')
+                ->selectRaw("{$groupColumn} as period, SUM(commission_calculation_items.amount) as total")
+                ->groupBy('period');
+        } else {
+            $query = Commission::query()
+                ->join('payments', 'payments.id', '=', 'commissions.payment_id')
+                ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+                ->where('commissions.status', $status)
+                ->selectRaw("{$groupColumn} as period, SUM(commissions.amount) as total")
+                ->groupBy('period');
+        }
+
+        $this->applySalesFilters($query, $request, $start, $end);
+
+        return $query->pluck('total', 'period');
+    }
+
+    protected function resolveCommissionTotalsByStatus(string $status, float $paid, float $unpaid, float $draft): array
+    {
+        return match ($status) {
+            'paid' => [$paid, $paid, 0.0],
+            'unpaid' => [$unpaid, 0.0, $unpaid],
+            'draft' => [$draft, 0.0, $draft],
+            default => [$paid + $unpaid + $draft, $paid, $unpaid + $draft],
+        };
+    }
+
+    protected function formatCommissionRow(Commission $commission): array
+    {
+        $payment = $commission->payment;
+        $salesOrder = $payment?->salesOrder;
+
+        return [
+            'date' => $payment?->paid_at?->toDateString(),
+            'order_no' => $salesOrder ? 'SO-' . $salesOrder->id : null,
+            'customer' => $salesOrder?->customer ? [
+                'id' => $salesOrder->customer->id,
+                'name' => $salesOrder->customer->name,
+            ] : null,
+            'sales_type' => $salesOrder?->sales_type,
+            'payment_type' => $payment?->type,
+            'payment_amount' => (float) ($payment?->amount ?? 0),
+            'commission_base_amount' => (float) ($payment?->commissionable_amount ?? 0),
+            'commission_amount' => (float) $commission->amount,
+            'commission_status' => $commission->status,
+            'recipient' => $this->formatRecipient($commission->recipient_type, $commission->recipient),
+            'agent' => $salesOrder?->agent ? [
+                'id' => $salesOrder->agent->id,
+                'name' => $salesOrder->agent->user?->name,
+            ] : null,
+            'branch' => $salesOrder?->branch?->name,
+        ];
+    }
+
+    protected function formatDraftCommissionRow(CommissionCalculationItem $item): array
+    {
+        $payment = $item->unit?->payment;
+        $salesOrder = $payment?->salesOrder;
+
+        return [
+            'date' => $payment?->paid_at?->toDateString(),
+            'order_no' => $salesOrder ? 'SO-' . $salesOrder->id : null,
+            'customer' => $salesOrder?->customer ? [
+                'id' => $salesOrder->customer->id,
+                'name' => $salesOrder->customer->name,
+            ] : null,
+            'sales_type' => $salesOrder?->sales_type,
+            'payment_type' => $payment?->type,
+            'payment_amount' => (float) ($payment?->amount ?? 0),
+            'commission_base_amount' => (float) ($payment?->commissionable_amount ?? 0),
+            'commission_amount' => (float) $item->amount,
+            'commission_status' => 'draft',
+            'recipient' => $this->formatRecipient($item->recipient_type, $item->recipient),
+            'agent' => $salesOrder?->agent ? [
+                'id' => $salesOrder->agent->id,
+                'name' => $salesOrder->agent->user?->name,
+            ] : null,
+            'branch' => $salesOrder?->branch?->name,
+        ];
+    }
+
+    protected function formatRecipient(string $type, $recipient): ?array
+    {
+        if (! $recipient) {
+            return null;
+        }
+
+        $name = null;
+
+        if (method_exists($recipient, 'user')) {
+            $recipient->loadMissing('user');
+            $name = $recipient->user?->name;
+        }
+
+        if (! $name && ! empty($recipient->name)) {
+            $name = $recipient->name;
+        }
+
+        if (! $name && ! empty($recipient->full_name_en)) {
+            $name = $recipient->full_name_en;
+        }
+
+        return [
+            'type' => class_basename($type),
+            'id' => $recipient->id,
+            'name' => $name,
+        ];
+    }
+
+    protected function buildSalesCommissionSummary(Request $request, ?Carbon $start, ?Carbon $end, string $commissionStatus): array
+    {
+        $paymentQuery = Payment::query()
+            ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+            ->whereNotNull('payments.paid_at');
+
+        $this->applySalesFilters($paymentQuery, $request, $start, $end);
+
+        $salesTotal = (float) $paymentQuery->sum('payments.amount');
+
+        $paidTotal = (float) $this->commissionTotalsByStatus($request, $start, $end, 'month', 'paid')->sum();
+        $unpaidTotal = (float) $this->commissionTotalsByStatus($request, $start, $end, 'month', 'unpaid')->sum();
+        $draftTotal = (float) $this->commissionTotalsByStatus($request, $start, $end, 'month', 'draft')->sum();
+
+        [$commissionTotal] = $this->resolveCommissionTotalsByStatus($commissionStatus, $paidTotal, $unpaidTotal, $draftTotal);
+
+        return [
+            'sales_total' => $salesTotal,
+            'commission_total' => $commissionTotal,
+        ];
+    }
+
+    protected function parseIds(Request $request, string $key): array
+    {
+        $value = $request->input($key);
+
+        if (is_array($value)) {
+            return array_values(array_filter(array_map('intval', $value)));
+        }
+
+        return array_values(array_filter(array_map('intval', array_map('trim', explode(',', (string) $value)))));
+    }
+
+    protected function parseStrings(Request $request, string $key): array
+    {
+        $value = $request->input($key);
+
+        if (is_array($value)) {
+            return array_values(array_filter(array_map('strval', $value)));
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', (string) $value))));
     }
 }
