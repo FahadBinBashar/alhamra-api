@@ -288,7 +288,7 @@ class CommissionService
                 continue;
             }
 
-            DB::transaction(function () use (&$created, $payment, $unit) {
+            DB::transaction(function () use (&$created, $payment, $unit, $batchId) {
                 $processedAt = now();
 
                 foreach ($unit->items as $item) {

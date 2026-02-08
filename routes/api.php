@@ -126,9 +126,10 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('commission-settings', CommissionSettingController::class);
     Route::apiResource('commissions', CommissionController::class);
     Route::get('commission-calculations', [CommissionCalculationController::class, 'index']);
-    Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show']);
-    Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
     Route::get('commission-calculations/process-history', [CommissionCalculationController::class, 'processHistory']);
+    Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
+    Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show'])
+      ->whereNumber('commissionCalculation');
     Route::get('director-funds', [DirectorFundController::class, 'index']);
     Route::post('director-funds/calculate', [DirectorFundController::class, 'calculate']);
     Route::post('director-funds/process', [DirectorFundController::class, 'process']);
