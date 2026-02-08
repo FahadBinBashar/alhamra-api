@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\Rank;
 use App\Models\User;
 use App\Notifications\EmployeeCredentialNotification;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -249,7 +250,8 @@ class EmployeeController extends Controller
         $nominees = Arr::pull($data, 'nominees', []);
         $email = Arr::pull($data, 'email');
 
-        $password = Str::random(12);
+        // $password = Str::random(12);
+        $password = Hash::make('abcd@321');
 
         $user = User::create([
             'name' => $data['full_name_en'],
