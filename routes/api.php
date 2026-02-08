@@ -92,6 +92,8 @@ Route::prefix('v1')->group(function () {
       Route::get('sales/detail', [AgentDashboardController::class, 'salesDetail']);
     });
     Route::get('employees/superiors', [EmployeeController::class,'superiors']);
+    Route::get('employees/tree', [EmployeeTreeController::class, 'tree']);
+    Route::get('employees/tree/node/{employee}', [EmployeeTreeController::class, 'nodeDetails']);
     Route::apiResource('employees', EmployeeController::class);
     Route::prefix('employees/dashboard')->group(function () {
       Route::get('customers', [EmployeeDashboardController::class, 'customers']);
