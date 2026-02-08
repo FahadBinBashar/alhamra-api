@@ -126,7 +126,7 @@ class EmployeeTreeController extends Controller
         ]);
     }
 
-    protected function resolveRootEmployeeId(Request $request): int
+    protected function resolveRootEmployeeId(Request $request): ?int
     {
         if ($request->filled('root_employee_id')) {
             return $request->integer('root_employee_id');
@@ -136,6 +136,15 @@ class EmployeeTreeController extends Controller
 
         if ($user && $user->role === \App\Models\User::ROLE_EMPLOYEE && $user->employee) {
             return $user->employee->id;
+        }
+
+        if ($user && in_array($user->role, [
+            \App\Models\User::ROLE_ADMIN,
+            \App\Models\User::ROLE_OWNER,
+            \App\Models\User::ROLE_DIRECTOR,
+            \App\Models\User::ROLE_BRANCH_ADMIN,
+        ], true)) {
+            return null;
         }
 
         abort(422, 'A root_employee_id is required.');
