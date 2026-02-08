@@ -19,6 +19,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRecruitRequestController;
 use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\EmployeeEarningController;
+use App\Http\Controllers\EmployeeTreeController;
 use App\Http\Controllers\ServiceCommissionController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\JournalController;
@@ -87,6 +88,8 @@ Route::prefix('v1')->group(function () {
       Route::get('commissions', [AgentDashboardController::class, 'commissions']);
       Route::get('wallet', [AgentDashboardController::class, 'wallet']);
       Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
+      Route::get('sales', [AgentDashboardController::class, 'salesSummary']);
+      Route::get('sales/detail', [AgentDashboardController::class, 'salesDetail']);
     });
     Route::get('employees/superiors', [EmployeeController::class,'superiors']);
     Route::apiResource('employees', EmployeeController::class);
@@ -102,6 +105,8 @@ Route::prefix('v1')->group(function () {
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
       Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
     });
+    Route::get('employees/tree', [EmployeeTreeController::class, 'tree']);
+    Route::get('employees/tree/node/{employee}', [EmployeeTreeController::class, 'nodeDetails']);
     Route::get('work-summaries', [WorkSummaryController::class, 'index']);
     Route::post('work-summaries', [WorkSummaryController::class, 'store']);
     Route::get('admin/work-summaries', [AdminWorkSummaryController::class, 'index']);
@@ -121,6 +126,7 @@ Route::prefix('v1')->group(function () {
     Route::get('commission-calculations', [CommissionCalculationController::class, 'index']);
     Route::get('commission-calculations/{commissionCalculation}', [CommissionCalculationController::class, 'show']);
     Route::post('commission-calculations/process', [CommissionCalculationController::class, 'process']);
+    Route::get('commission-calculations/process-history', [CommissionCalculationController::class, 'processHistory']);
     Route::get('director-funds', [DirectorFundController::class, 'index']);
     Route::post('director-funds/calculate', [DirectorFundController::class, 'calculate']);
     Route::post('director-funds/process', [DirectorFundController::class, 'process']);
@@ -153,6 +159,8 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/stock/current', [ReportController::class,'currentStock']);
     Route::get('reports/stock/low', [ReportController::class,'lowStock']);
     Route::get('reports/stock/movements', [ReportController::class,'stockMovements']);
+    Route::get('reports/sales-commissions/summary', [ReportController::class,'salesCommissionSummary']);
+    Route::get('reports/sales-commissions/detail', [ReportController::class,'salesCommissionDetail']);
     Route::get('reports/commissions/detail', [AdminReportController::class,'commissionReport']);
     Route::get('reports/sales/detail', [AdminReportController::class,'salesReport']);
     Route::get('reports/stock/detail', [AdminReportController::class,'stockReport']);
