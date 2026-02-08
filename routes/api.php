@@ -107,6 +107,8 @@ Route::prefix('v1')->group(function () {
       Route::match(['put', 'patch'], 'activities/{activity}', [EmployeeDashboardController::class, 'updateActivity']);
       Route::delete('activities/{activity}', [EmployeeDashboardController::class, 'destroyActivity']);
     });
+    Route::get('employees/tree', [EmployeeTreeController::class, 'tree']);
+    Route::get('employees/tree/node/{employee}', [EmployeeTreeController::class, 'nodeDetails']);
     Route::get('work-summaries', [WorkSummaryController::class, 'index']);
     Route::post('work-summaries', [WorkSummaryController::class, 'store']);
     Route::get('admin/work-summaries', [AdminWorkSummaryController::class, 'index']);
