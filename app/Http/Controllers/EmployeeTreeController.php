@@ -6,6 +6,7 @@ use App\Models\Commission;
 use App\Models\CommissionCalculationItem;
 use App\Models\Employee;
 use App\Models\Payment;
+use App\Models\Rank;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -15,6 +16,10 @@ class EmployeeTreeController extends Controller
 {
     public function tree(Request $request): JsonResponse
     {
+        if ($this->shouldShowRankRoots($request)) {
+            return $this->rankRoots($request);
+        }
+
         $rootId = $this->resolveRootEmployeeId($request);
         [$month, $start, $end] = $this->resolveMonthPeriod($request);
 
@@ -34,6 +39,7 @@ class EmployeeTreeController extends Controller
             $subtreeIds = $this->collectSubtree($employeeId, $childMap);
 
             return [
+                'node_type' => 'employee',
                 'id' => $employee?->id,
                 'name' => $employee?->user?->name ?? $employee?->full_name_en,
                 'rank' => $employee?->rank,
@@ -126,6 +132,82 @@ class EmployeeTreeController extends Controller
         ]);
     }
 
+    protected function rankRoots(Request $request): JsonResponse
+    {
+        [$month, $start, $end] = $this->resolveMonthPeriod($request);
+        $rankCode = $request->input('rank');
+
+        $paymentTotals = $this->collectPaymentTotals($start, $end);
+        $commissionTotals = $this->collectCommissionTotals($start, $end);
+
+        if ($rankCode) {
+            $employees = Employee::query()
+                ->with('user')
+                ->where('rank', $rankCode)
+                ->get()
+                ->keyBy('id');
+
+            $childMap = $this->buildChildMap(Employee::query()->select('id', 'superior_id')->get());
+
+            $nodes = $employees->keys()->map(function (int $employeeId) use ($employees, $childMap, $paymentTotals, $commissionTotals) {
+                $employee = $employees->get($employeeId);
+                $subtreeIds = $this->collectSubtree($employeeId, $childMap);
+
+                return [
+                    'node_type' => 'employee',
+                    'id' => $employee?->id,
+                    'name' => $employee?->user?->name ?? $employee?->full_name_en,
+                    'rank' => $employee?->rank,
+                    'step' => 1,
+                    'has_children' => ! empty($childMap[$employeeId]),
+                    'stats' => [
+                        'own_sales' => (float) ($paymentTotals[$employeeId] ?? 0),
+                        'own_commission' => (float) ($commissionTotals[$employeeId] ?? 0),
+                        'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
+                        'team_commission' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
+                    ],
+                ];
+            })->values();
+
+            return response()->json([
+                'rank' => $rankCode,
+                'month' => $month,
+                'nodes' => $nodes,
+            ]);
+        }
+
+        $ranks = Rank::query()
+            ->orderByDesc('sort_order')
+            ->get();
+
+        $rankEmployeeIds = Employee::query()
+            ->select('id', 'rank')
+            ->get()
+            ->groupBy('rank');
+
+        $nodes = $ranks->map(function (Rank $rank) use ($rankEmployeeIds, $paymentTotals, $commissionTotals) {
+            $employeeIds = $rankEmployeeIds->get($rank->code)?->pluck('id')->all() ?? [];
+
+            return [
+                'node_type' => 'rank',
+                'rank' => $rank->code,
+                'name' => $rank->name,
+                'has_children' => ! empty($employeeIds),
+                'stats' => [
+                    'own_sales' => $this->sumTotalsFor($employeeIds, $paymentTotals),
+                    'own_commission' => $this->sumTotalsFor($employeeIds, $commissionTotals),
+                    'team_sales' => $this->sumTotalsFor($employeeIds, $paymentTotals),
+                    'team_commission' => $this->sumTotalsFor($employeeIds, $commissionTotals),
+                ],
+            ];
+        })->values();
+
+        return response()->json([
+            'month' => $month,
+            'nodes' => $nodes,
+        ]);
+    }
+
     protected function resolveRootEmployeeId(Request $request): ?int
     {
         if ($request->filled('root_employee_id')) {
@@ -148,6 +230,24 @@ class EmployeeTreeController extends Controller
         }
 
         abort(422, 'A root_employee_id is required.');
+    }
+
+    protected function shouldShowRankRoots(Request $request): bool
+    {
+        if ($request->filled('rank')) {
+            return true;
+        }
+
+        $user = $request->user();
+
+        return ! $request->filled('root_employee_id')
+            && $user
+            && in_array($user->role, [
+                \App\Models\User::ROLE_ADMIN,
+                \App\Models\User::ROLE_OWNER,
+                \App\Models\User::ROLE_DIRECTOR,
+                \App\Models\User::ROLE_BRANCH_ADMIN,
+            ], true);
     }
 
     protected function resolveMonthPeriod(Request $request): array
