@@ -26,7 +26,7 @@ class ProductController extends Controller
         $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules']);
 
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules'];
         }
 
         $query = Product::query()->with($includes);
@@ -93,7 +93,7 @@ class ProductController extends Controller
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules'];
         }
 
         $product->load($includes);
@@ -108,7 +108,7 @@ class ProductController extends Controller
     {
         $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules'];
         }
 
         $product->load($includes);
@@ -175,7 +175,7 @@ class ProductController extends Controller
 
         $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules'];
         }
 
         $product->load($includes);

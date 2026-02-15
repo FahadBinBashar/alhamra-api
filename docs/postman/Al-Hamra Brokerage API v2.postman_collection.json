@@ -480,8 +480,7 @@
                 },
                 {
                   "key": "images[]",
-                  "type": "file",
-                  "src": "sUBERr5Vi/screencapture-oursandbox-online-2026-02-09-12_44_56.png"
+                  "type": "file"
                 },
                 {
                   "key": "emi_rules[0][tenure_months]",
@@ -585,8 +584,87 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Premium Land Parcel - North\",\r\n  \"supplier_id\": 1,\r\n  \"supplier_percentage\": 22.5,\r\n  \"price\": 5200000,\r\n  \"description\": \"Updated description for the premium land parcel.\",\r\n  \"ccu_percentage\": 25,\r\n  \"attributes\": {\r\n    \"plot_size\": \"5.5 katha\"\r\n  },\r\n  \"emi_rules\": [\r\n    {\r\n      \"tenure_months\": 12,\r\n      \"rules\": [\r\n        {\r\n          \"month\": 1,\r\n          \"type\": \"percent\",\r\n          \"percent\": 2\r\n        },\r\n        {\r\n          \"month\": 2,\r\n          \"type\": \"flat\",\r\n          \"flat_amount\": 500\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"image\": \"binary_data_or_url\",\r\n  \"images\": [\r\n    \"binary_data_or_url\"\r\n  ]\r\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Premium Land Parcel - North",
+                  "type": "text"
+                },
+                {
+                  "key": "supplier_id",
+                  "value": "{{supplier_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "supplier_percentage",
+                  "value": "22.5",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "5200000",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description for the premium land parcel.",
+                  "type": "text"
+                },
+                {
+                  "key": "ccu_percentage",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "attributes[plot_size]",
+                  "value": "5.5 katha",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file"
+                },
+                {
+                  "key": "images[]",
+                  "type": "file"
+                },
+                {
+                  "key": "emi_rules[0][tenure_months]",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][month]",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][type]",
+                  "value": "percent",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][percent]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][month]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][type]",
+                  "value": "flat",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][flat_amount]",
+                  "value": "500",
+                  "type": "text"
+                }
+              ]
             },
             "url": {
               "raw": "{{base_url}}/api/v1/products/{{product_id}}",
