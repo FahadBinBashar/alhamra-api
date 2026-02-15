@@ -7,6 +7,7 @@ use App\Http\Resources\CommissionResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\SalesOrderResource;
 use App\Models\Agent;
+use App\Models\Branch;
 use App\Models\Commission;
 use App\Models\Employee;
 use App\Models\LedgerAccount;
@@ -467,6 +468,79 @@ class AdminReportController extends Controller
                 'per_page' => $paginated->perPage(),
                 'total' => $paginated->total(),
             ],
+        ]);
+    }
+
+    public function emiExtraIncome(Request $request)
+    {
+        $query = Payment::query()
+            ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+            ->leftJoin('order_items', function ($join) {
+                $join->on('order_items.sales_order_id', '=', 'sales_orders.id')
+                    ->where('order_items.itemable_type', Product::class);
+            })
+            ->where('payments.emi_extra_amount', '>', 0);
+
+        if ($request->filled('from')) {
+            $query->whereDate('payments.paid_at', '>=', $request->date('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('payments.paid_at', '<=', $request->date('to'));
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->whereIn('sales_orders.branch_id', array_map('intval', $this->parseCsv($request, 'branch_id')));
+        }
+
+        if ($request->filled('product_id')) {
+            $query->whereIn('order_items.itemable_id', array_map('intval', $this->parseCsv($request, 'product_id')));
+        }
+
+        $rows = $query
+            ->selectRaw("DATE_FORMAT(payments.paid_at, '%Y-%m') as month")
+            ->selectRaw('sales_orders.branch_id as branch_id')
+            ->selectRaw('order_items.itemable_id as product_id')
+            ->selectRaw('SUM(payments.emi_extra_amount) as emi_extra_total')
+            ->groupBy('month', 'sales_orders.branch_id', 'order_items.itemable_id')
+            ->orderBy('month')
+            ->get();
+
+        $branchIds = $rows->pluck('branch_id')->filter()->unique()->all();
+        $productIds = $rows->pluck('product_id')->filter()->unique()->all();
+
+        $branches = Branch::whereIn('id', $branchIds)->get()->keyBy('id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+        $data = $rows->map(function ($row) use ($branches, $products) {
+            $branch = $branches->get($row->branch_id);
+            $product = $products->get($row->product_id);
+
+            return [
+                'month' => $row->month,
+                'branch_id' => $row->branch_id,
+                'branch' => $branch ? [
+                    'id' => $branch->id,
+                    'name' => $branch->name,
+                    'code' => $branch->code,
+                ] : null,
+                'product_id' => $row->product_id,
+                'product' => $product ? [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                ] : null,
+                'emi_extra_total' => round((float) $row->emi_extra_total, 2),
+            ];
+        });
+
+        $summary = [
+            'total_emi_extra' => round($data->sum('emi_extra_total'), 2),
+            'count' => $data->count(),
+        ];
+
+        return response()->json([
+            'data' => $data,
+            'summary' => $summary,
         ]);
     }
 

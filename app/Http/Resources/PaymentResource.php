@@ -53,6 +53,8 @@ class PaymentResource extends JsonResource
                 'code' => $branch->code,
             ]),
             'amount' => $this->amount,
+            'base_amount' => $this->base_amount,
+            'emi_extra_amount' => $this->emi_extra_amount,
             'type' => $this->type,
             'intent_type' => $this->intent_type,
             'method' => $this->method,
