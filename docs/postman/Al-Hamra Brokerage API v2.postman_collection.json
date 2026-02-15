@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "1e12646b-a15f-4e0f-b016-20ed527c926a",
     "name": "Al-Hamra Brokerage API v2",
-    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights new installment CRUD endpoints for managing payment schedules.",
+    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights new installment CRUD endpoints, dynamic EMI rules per product/tenure, EMI extra-aware payment collection, and EMI extra income reporting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27980978",
     "_collection_link": "https://blue-sunset-638226.postman.co/workspace/Team-Workspace~99a2ec44-cf11-4803-8795-179b7759dfeb/collection/27980978-1e12646b-a15f-4e0f-b016-20ed527c926a?action=share&source=collection_link&creator=27980978"
@@ -383,7 +383,7 @@
                 },
                 {
                   "key": "include",
-                  "value": "category",
+                  "value": "category,supplier,emiRules",
                   "disabled": true
                 },
                 {
@@ -480,6 +480,41 @@
                 {
                   "key": "images[]",
                   "type": "file"
+                },
+                {
+                  "key": "emi_rules[0][tenure_months]",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][month]",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][type]",
+                  "value": "percent",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][percent]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][month]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][type]",
+                  "value": "flat",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][flat_amount]",
+                  "value": "500",
+                  "type": "text"
                 }
               ]
             },
@@ -525,7 +560,7 @@
               "query": [
                 {
                   "key": "include",
-                  "value": "category",
+                  "value": "category,supplier,emiRules",
                   "disabled": true
                 }
               ]
@@ -592,6 +627,41 @@
                 {
                   "key": "images[]",
                   "type": "file"
+                },
+                {
+                  "key": "emi_rules[0][tenure_months]",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][month]",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][type]",
+                  "value": "percent",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][0][percent]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][month]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][type]",
+                  "value": "flat",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_rules[0][rules][1][flat_amount]",
+                  "value": "500",
+                  "type": "text"
                 }
               ]
             },
@@ -1726,7 +1796,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"down_payment\": 50000,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
+              "raw": "{\n  \"customer_id\": 10,\n  \"sales_type\": \"order\",\n  \"down_payment\": 50000,\n  \"installment_tenure_months\": 12,\n  \"total\": 255000,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": 1,\n      \"qty\": 1,\n      \"unit_price\": 250000\n    }\n  ]\n}\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1838,7 +1908,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"active\",\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
+              "raw": "{\n  \"status\": \"active\",\n  \"installment_tenure_months\": 12,\n  \"items\": [\n    {\n      \"item_type\": \"product\",\n      \"item_id\": {{product_id}},\n      \"qty\": 2,\n      \"unit_price\": 240000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1929,7 +1999,8 @@
                 "installments",
                 "generate"
               ]
-            }
+            },
+            "description": "Generates base installment schedule. Ensure sales order has installment_tenure_months and matching active EMI rules for the product tenure."
           },
           "response": []
         },
@@ -1953,7 +2024,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 1500,\n  \"type\": \"down_payment\",\n  \"method\": \"bank_transfer\",\n  \"meta\": {\n    \"reference\": \"BANK-REF-20250115\"\n  },\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 1500\n    }\n  ]\n}",
+              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 10200,\n  \"type\": \"installment\",\n  \"method\": \"bank\",\n  \"meta\": {\n    \"reference\": \"BANK-REF-20250115\"\n  },\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 10000\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1973,7 +2044,7 @@
                 "payments"
               ]
             },
-            "description": "Record a payment against a sales order. Development commissions now remain in a pending state until the month-end processing job runs (php artisan commissions:process), so no commission records are created at payment time."
+            "description": "Record installment payment where amount should be full payable (base installment + EMI extra). Allocation amount remains base installment due."
           },
           "response": []
         }
@@ -4180,7 +4251,7 @@
           "response": []
         },
         {
-          "name": "Sales & Commission Summary",
+          "name": "EMI Extra Income Report",
           "request": {
             "method": "GET",
             "header": [
@@ -4194,7 +4265,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/sales-commissions/summary",
+              "raw": "{{base_url}}/api/v1/reports/emi-extra-income",
               "host": [
                 "{{base_url}}"
               ],
@@ -4202,144 +4273,34 @@
                 "api",
                 "v1",
                 "reports",
-                "sales-commissions",
-                "summary"
+                "emi-extra-income"
               ],
               "query": [
                 {
-                  "key": "month",
-                  "value": "2025-11",
-                  "disabled": true
-                },
-                {
                   "key": "from",
-                  "value": "2025-11-01",
+                  "value": "2025-01-01",
                   "disabled": true
                 },
                 {
                   "key": "to",
-                  "value": "2025-11-30",
-                  "disabled": true
-                },
-                {
-                  "key": "employee_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "agent_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "customer_id",
-                  "value": "1",
+                  "value": "2025-12-31",
                   "disabled": true
                 },
                 {
                   "key": "branch_id",
-                  "value": "1",
+                  "value": "{{branch_id}}",
                   "disabled": true
                 },
                 {
-                  "key": "sales_type",
-                  "value": "land",
-                  "disabled": true
-                },
-                {
-                  "key": "commission_status",
-                  "value": "all",
-                  "disabled": true
-                },
-                {
-                  "key": "group_by",
-                  "value": "month",
+                  "key": "product_id",
+                  "value": "{{product_id}}",
                   "disabled": true
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Sales & Commission Detail",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/reports/sales-commissions/detail",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "reports",
-                "sales-commissions",
-                "detail"
-              ],
-              "query": [
-                {
-                  "key": "month",
-                  "value": "2025-11",
-                  "disabled": true
-                },
-                {
-                  "key": "from",
-                  "value": "2025-11-01",
-                  "disabled": true
-                },
-                {
-                  "key": "to",
-                  "value": "2025-11-30",
-                  "disabled": true
-                },
-                {
-                  "key": "employee_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "agent_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "customer_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "branch_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "sales_type",
-                  "value": "land",
-                  "disabled": true
-                },
-                {
-                  "key": "commission_status",
-                  "value": "all",
-                  "disabled": true
-                },
-                {
-                  "key": "per_page",
-                  "value": "50",
-                  "disabled": true
-                }
-              ]
-            }
-          }
+            },
+            "description": "Monthly EMI extra income summary grouped by month, product and branch."
+          },
+          "response": []
         }
       ]
     },
@@ -5740,7 +5701,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
+              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"জন ডো\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
