@@ -14,19 +14,41 @@ class AuthController extends Controller
     /**
      * Register a new user and return an access token.
      */
+    // public function register(Request $request)
+    // {
+    //     $data = $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+    //         'password' => ['required', 'string', 'min:8'],
+    //         'role' => ['required', 'string', Rule::in(User::ROLES)],
+    //     ]);
+
+    //     $user = User::create([
+    //         'name' => $data['name'],
+    //         'email' => $data['email'],
+    //         'password' => Hash::make($data['password']),
+    //         'role' => $data['role'],
+    //     ]);
+
+    //     $token = $user->createToken('api_token')->plainTextToken;
+
+    //     return response()->json([
+    //         'user' => $user,
+    //         'token' => $token,
+    //     ], 201);
+    // }
     public function register(Request $request)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'string', Rule::in(User::ROLES)],
         ]);
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Hash::make('abcd@321'), // Hardcoded password
             'role' => $data['role'],
         ]);
 
@@ -37,6 +59,7 @@ class AuthController extends Controller
             'token' => $token,
         ], 201);
     }
+
 
     /**
      * Authenticate an existing user and return an access token.
