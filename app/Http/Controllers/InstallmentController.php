@@ -7,6 +7,8 @@ use App\Http\Requests\StoreInstallmentRequest;
 use App\Http\Requests\UpdateInstallmentRequest;
 use App\Http\Resources\InstallmentResource;
 use App\Models\CustomerInstallment;
+use App\Models\Product;
+use App\Models\ProductEmiRule;
 use App\Models\SalesOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -148,12 +150,43 @@ class InstallmentController extends Controller
             'count' => ['required', 'integer', 'min:1', 'max:360'],
             'start_date' => ['required', 'date'],
             'grace_days' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:365'],
+            'installment_tenure_months' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:360'],
         ]);
 
         if ($order->sales_type === SalesOrder::TYPE_SERVICE) {
             return response()->json([
                 'message' => 'Installments are not available for service sales.',
             ], 422);
+        }
+
+        $count = (int) $data['count'];
+        $tenureMonths = (int) ($data['installment_tenure_months'] ?? $order->installment_tenure_months ?? $count);
+
+        if ($tenureMonths <= 0) {
+            return response()->json([
+                'message' => 'Installment tenure months are required to generate installments.',
+            ], 422);
+        }
+
+        $order->loadMissing('items.itemable');
+        $productIds = $order->items
+            ->filter(fn ($item) => $item->itemable instanceof Product)
+            ->map(fn ($item) => $item->itemable->id)
+            ->unique()
+            ->values();
+
+        if ($productIds->isNotEmpty()) {
+            $missingRules = $productIds->reject(fn ($productId) => ProductEmiRule::query()
+                ->where('product_id', $productId)
+                ->where('tenure_months', $tenureMonths)
+                ->where('is_active', true)
+                ->exists());
+
+            if ($missingRules->isNotEmpty()) {
+                return response()->json([
+                    'message' => 'The selected tenure does not have EMI rules configured for this product.',
+                ], 422);
+            }
         }
 
         $existingWithPayments = $order->installments()
@@ -179,7 +212,6 @@ class InstallmentController extends Controller
 
         $includes = $this->resolveIncludes($request, ['salesOrder', 'allocations']);
         $frequency = $data['frequency'];
-        $count = (int) $data['count'];
         $startDate = Carbon::parse($data['start_date']);
         $graceDays = (int) ($data['grace_days'] ?? 0);
         $totalCents = (int) round($principal * 100);
@@ -188,7 +220,12 @@ class InstallmentController extends Controller
             $totalCents = 1;
         }
 
-        $installments = DB::transaction(function () use ($order, $includes, $frequency, $count, $startDate, $graceDays, $totalCents) {
+        $installments = DB::transaction(function () use ($order, $includes, $frequency, $count, $startDate, $graceDays, $totalCents, $tenureMonths) {
+            if ((int) $order->installment_tenure_months !== $tenureMonths) {
+                $order->installment_tenure_months = $tenureMonths;
+                $order->save();
+            }
+
             $order->installments()->delete();
 
             $baseAmountCents = $count > 0 ? intdiv($totalCents, $count) : 0;

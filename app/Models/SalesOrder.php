@@ -61,6 +61,7 @@ class SalesOrder extends Model
         'rank',
         'introducer_id',
         'down_payment',
+        'installment_tenure_months',
         'total',
         'status',
         'created_by',
@@ -69,6 +70,7 @@ class SalesOrder extends Model
     protected $casts = [
         'down_payment' => 'decimal:2',
         'total' => 'decimal:2',
+        'installment_tenure_months' => 'integer',
     ];
 
     public function items(): HasMany
