@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "1e12646b-a15f-4e0f-b016-20ed527c926a",
+    "_postman_id": "b37c9f28-1977-4cf3-b6be-8acbde34ac3a",
     "name": "Al-Hamra Brokerage API v2",
     "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights new installment CRUD endpoints, dynamic EMI rules per product/tenure, EMI extra-aware payment collection, and EMI extra income reporting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27980978",
-    "_collection_link": "https://blue-sunset-638226.postman.co/workspace/Team-Workspace~99a2ec44-cf11-4803-8795-179b7759dfeb/collection/27980978-1e12646b-a15f-4e0f-b016-20ed527c926a?action=share&source=collection_link&creator=27980978"
+    "_collection_link": "https://go.postman.co/collection/27980978-b37c9f28-1977-4cf3-b6be-8acbde34ac3a?source=collection_link"
   },
   "item": [
     {
@@ -470,16 +470,18 @@
                 },
                 {
                   "key": "is_stock_managed",
-                  "value": "true",
+                  "value": "1",
                   "type": "text"
                 },
                 {
                   "key": "image",
-                  "type": "file"
+                  "type": "file",
+                  "src": "5QTkQX7r5/screencapture-oursandbox-online-2026-02-09-12_45_13.png"
                 },
                 {
                   "key": "images[]",
-                  "type": "file"
+                  "type": "file",
+                  "src": "sUBERr5Vi/screencapture-oursandbox-online-2026-02-09-12_44_56.png"
                 },
                 {
                   "key": "emi_rules[0][tenure_months]",
@@ -583,87 +585,8 @@
               }
             ],
             "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "name",
-                  "value": "Premium Land Parcel - North",
-                  "type": "text"
-                },
-                {
-                  "key": "supplier_id",
-                  "value": "{{supplier_id}}",
-                  "type": "text"
-                },
-                {
-                  "key": "supplier_percentage",
-                  "value": "22.5",
-                  "type": "text"
-                },
-                {
-                  "key": "price",
-                  "value": "5200000",
-                  "type": "text"
-                },
-                {
-                  "key": "description",
-                  "value": "Updated description for the premium land parcel.",
-                  "type": "text"
-                },
-                {
-                  "key": "ccu_percentage",
-                  "value": "25",
-                  "type": "text"
-                },
-                {
-                  "key": "attributes[plot_size]",
-                  "value": "5.5 katha",
-                  "type": "text"
-                },
-                {
-                  "key": "image",
-                  "type": "file"
-                },
-                {
-                  "key": "images[]",
-                  "type": "file"
-                },
-                {
-                  "key": "emi_rules[0][tenure_months]",
-                  "value": "12",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][0][month]",
-                  "value": "1",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][0][type]",
-                  "value": "percent",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][0][percent]",
-                  "value": "2",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][1][month]",
-                  "value": "2",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][1][type]",
-                  "value": "flat",
-                  "type": "text"
-                },
-                {
-                  "key": "emi_rules[0][rules][1][flat_amount]",
-                  "value": "500",
-                  "type": "text"
-                }
-              ]
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Premium Land Parcel - North\",\r\n  \"supplier_id\": 1,\r\n  \"supplier_percentage\": 22.5,\r\n  \"price\": 5200000,\r\n  \"description\": \"Updated description for the premium land parcel.\",\r\n  \"ccu_percentage\": 25,\r\n  \"attributes\": {\r\n    \"plot_size\": \"5.5 katha\"\r\n  },\r\n  \"emi_rules\": [\r\n    {\r\n      \"tenure_months\": 12,\r\n      \"rules\": [\r\n        {\r\n          \"month\": 1,\r\n          \"type\": \"percent\",\r\n          \"percent\": 2\r\n        },\r\n        {\r\n          \"month\": 2,\r\n          \"type\": \"flat\",\r\n          \"flat_amount\": 500\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"image\": \"binary_data_or_url\",\r\n  \"images\": [\r\n    \"binary_data_or_url\"\r\n  ]\r\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/products/{{product_id}}",
@@ -891,7 +814,6 @@
         {
           "name": "List Services",
           "request": {
-            "description": "List services with pricing and `commission_percentage` so you can configure service sales and commissions.",
             "method": "GET",
             "header": [
               {
@@ -930,7 +852,8 @@
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "List services with pricing and `commission_percentage` so you can configure service sales and commissions."
           },
           "response": []
         },
@@ -978,7 +901,6 @@
         {
           "name": "Show Service",
           "request": {
-            "description": "Retrieve a single service with `price` and `commission_percentage` details.",
             "method": "GET",
             "header": [
               {
@@ -1008,7 +930,8 @@
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Retrieve a single service with `price` and `commission_percentage` details."
           },
           "response": []
         },
@@ -1557,7 +1480,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Agent Sales Detail",
@@ -1609,7 +1533,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -1778,7 +1703,6 @@
         {
           "name": "Create Sales Order",
           "request": {
-            "description": "Branch, agent and marketing executive context is now derived automatically from the customer's stored sourcing information.",
             "method": "POST",
             "header": [
               {
@@ -1813,14 +1737,14 @@
                 "v1",
                 "sales-orders"
               ]
-            }
+            },
+            "description": "Branch, agent and marketing executive context is now derived automatically from the customer's stored sourcing information."
           },
           "response": []
         },
         {
           "name": "Create Service Sales Order",
           "request": {
-            "description": "Create a service sales order; pricing is taken from the service and down_payment/installments are not required.",
             "method": "POST",
             "header": [
               {
@@ -1855,7 +1779,8 @@
                 "v1",
                 "sales-orders"
               ]
-            }
+            },
+            "description": "Create a service sales order; pricing is taken from the service and down_payment/installments are not required."
           },
           "response": []
         },
@@ -2247,7 +2172,6 @@
     },
     {
       "name": "Installments",
-      "description": "CRUD endpoints for managing customer installments.",
       "item": [
         {
           "name": "List Installments",
@@ -2435,7 +2359,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "description": "CRUD endpoints for managing customer installments."
     },
     {
       "name": "Commission Rules",
@@ -3147,7 +3072,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/commission-calculations/{{commission_calculation_id}}",
+              "raw": "{{base_url}}/api/v1/commission-calculations/{{commission_calculation_id}}?include=items,payment.salesOrder.agent.user",
               "host": [
                 "{{base_url}}"
               ],
@@ -3160,8 +3085,7 @@
               "query": [
                 {
                   "key": "include",
-                  "value": "items,payment.salesOrder.agent.user",
-                  "disabled": false
+                  "value": "items,payment.salesOrder.agent.user"
                 }
               ]
             }
@@ -3263,7 +3187,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -4104,7 +4029,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/customer",
+              "raw": "{{base_url}}/api/v1/reports/ledger/customer?customer_id={{customer_id}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4156,7 +4081,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/supplier",
+              "raw": "{{base_url}}/api/v1/reports/ledger/supplier?supplier_id={{supplier_id}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4208,7 +4133,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/account",
+              "raw": "{{base_url}}/api/v1/reports/ledger/account?account_code={{ledger_account_code}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4978,7 +4903,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/employee/incentives?month=2025-01",
+              "raw": "{{base_url}}/api/v1/employee/incentives",
               "host": [
                 "{{base_url}}"
               ],
@@ -5076,12 +5001,12 @@
             ],
             "body": {
               "mode": "raw",
+              "raw": "{\n  \"employee_id\": 5,\n  \"activity_date\": \"2025-01-15\",\n  \"title\": \"Site Visit\",\n  \"location\": \"Dhaka Head Office\",\n  \"customer_id\": 12,\n  \"sales_order_id\": 45,\n  \"notes\": \"Discussed project timeline and gathered follow-up requirements.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 60\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
-              },
-              "raw": "{\n  \"employee_id\": 5,\n  \"activity_date\": \"2025-01-15\",\n  \"title\": \"Site Visit\",\n  \"location\": \"Dhaka Head Office\",\n  \"customer_id\": 12,\n  \"sales_order_id\": 45,\n  \"notes\": \"Discussed project timeline and gathered follow-up requirements.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 60\n  }\n}"
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/employees/dashboard/activities",
@@ -5119,12 +5044,12 @@
             ],
             "body": {
               "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Site Visit\",\n  \"notes\": \"Captured updated requirements after follow-up call.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 75\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
-              },
-              "raw": "{\n  \"title\": \"Updated Site Visit\",\n  \"notes\": \"Captured updated requirements after follow-up call.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 75\n  }\n}"
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/employees/dashboard/activities/{{activity_id}}",
@@ -5590,7 +5515,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/admin/work-summaries?employee_id=&type=&from=&to=&per_page=15",
+              "raw": "{{base_url}}/api/v1/admin/work-summaries?per_page=15",
               "host": [
                 "{{base_url}}"
               ],
@@ -5870,7 +5795,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Employee Tree Node Details",
@@ -5907,7 +5833,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -6924,7 +6851,8 @@
               ]
             },
             "description": "Fetch service commissions for an employee with status and calculated amounts."
-          }
+          },
+          "response": []
         },
         {
           "name": "Process Service Commissions (Monthly)",
@@ -6950,7 +6878,8 @@
               ]
             },
             "description": "Run month-end processing for draft service commissions to mark them paid and credit wallets."
-          }
+          },
+          "response": []
         },
         {
           "name": "Preview Pending Service Commissions (Monthly)",
@@ -6976,7 +6905,8 @@
               ]
             },
             "description": "List unpaid service commissions for a month so admins can review who will be paid before processing."
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -7087,6 +7017,11 @@
                     "accounting",
                     "accounts",
                     ":account"
+                  ],
+                  "variable": [
+                    {
+                      "key": "account"
+                    }
                   ]
                 }
               },
@@ -7117,6 +7052,11 @@
                     "accounting",
                     "accounts",
                     ":account"
+                  ],
+                  "variable": [
+                    {
+                      "key": "account"
+                    }
                   ]
                 }
               },
