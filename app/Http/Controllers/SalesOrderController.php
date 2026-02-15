@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agent;
 use App\Models\Employee;
 use App\Models\Product;
+use App\Models\ProductEmiRule;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
 use App\Models\Service;
@@ -61,6 +62,7 @@ class SalesOrderController extends Controller
                 'numeric',
                 'min:0',
             ],
+            'installment_tenure_months' => ['nullable', 'integer', 'min:1'],
             'total' => ['required', 'numeric', 'min:0'],
             'items' => ['sometimes', 'array', Rule::requiredIf(fn () => $request->input('sales_type') === SalesOrder::TYPE_SERVICE)],
             'items.*.item_type' => ['required_with:items', 'string', 'in:product,service'],
@@ -97,6 +99,8 @@ class SalesOrderController extends Controller
             $data['down_payment'] = null;
         }
 
+        $this->ensureEmiRulesForTenure($data['installment_tenure_months'] ?? null, $preparedItems['items'] ?? []);
+
         if (isset($data['down_payment']) && $data['down_payment'] > $data['total']) {
             throw ValidationException::withMessages([
                 'down_payment' => 'The down payment may not be greater than the total amount.',
@@ -116,6 +120,7 @@ class SalesOrderController extends Controller
                 'rank',
                 'introducer_id',
                 'down_payment',
+                'installment_tenure_months',
                 'total',
                 'created_by',
             ]);
@@ -184,6 +189,7 @@ class SalesOrderController extends Controller
                 'numeric',
                 'min:0',
             ],
+            'installment_tenure_months' => ['sometimes', 'nullable', 'integer', 'min:1'],
             'total' => ['sometimes', 'numeric', 'min:0'],
             'status' => ['sometimes', 'string', Rule::in(SalesOrder::STATUSES)],
             'items' => ['sometimes', 'array'],
@@ -229,6 +235,10 @@ class SalesOrderController extends Controller
         if ($currentSalesType === SalesOrder::TYPE_SERVICE) {
             $data['down_payment'] = null;
         }
+
+        $itemsForTenureCheck = $itemsProvided ? ($preparedItems['items'] ?? []) : $this->resolveExistingOrderItems($salesOrder);
+        $tenureForCheck = $data['installment_tenure_months'] ?? $salesOrder->installment_tenure_months;
+        $this->ensureEmiRulesForTenure($tenureForCheck, $itemsForTenureCheck);
 
         $branchId = $data['branch_id'] ?? $salesOrder->branch_id;
         $agentId = $data['agent_id'] ?? $salesOrder->agent_id;
@@ -440,6 +450,47 @@ class SalesOrderController extends Controller
         $data['source_me_id'] = $data['source_me_id'] ?? $customer->source_me_id;
 
         return $data;
+    }
+
+    private function resolveExistingOrderItems(SalesOrder $order): array
+    {
+        $order->loadMissing('items');
+
+        return $order->items
+            ->map(fn ($item) => [
+                'itemable_type' => $item->itemable_type,
+                'itemable_id' => $item->itemable_id,
+            ])
+            ->all();
+    }
+
+    private function ensureEmiRulesForTenure(?int $tenureMonths, array $items): void
+    {
+        if (! $tenureMonths) {
+            return;
+        }
+
+        $productIds = collect($items)
+            ->filter(fn ($item) => ($item['itemable_type'] ?? null) === Product::class)
+            ->map(fn ($item) => (int) $item['itemable_id'])
+            ->unique()
+            ->values();
+
+        if ($productIds->isEmpty()) {
+            return;
+        }
+
+        $missing = $productIds->reject(fn ($productId) => ProductEmiRule::query()
+            ->where('product_id', $productId)
+            ->where('tenure_months', $tenureMonths)
+            ->where('is_active', true)
+            ->exists());
+
+        if ($missing->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'installment_tenure_months' => 'The selected tenure does not have EMI rules configured for this product.',
+            ]);
+        }
     }
 
     private function resolveSourceContext(array $data, Employee $employee): array
