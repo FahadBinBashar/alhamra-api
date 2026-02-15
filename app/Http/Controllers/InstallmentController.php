@@ -7,6 +7,8 @@ use App\Http\Requests\StoreInstallmentRequest;
 use App\Http\Requests\UpdateInstallmentRequest;
 use App\Http\Resources\InstallmentResource;
 use App\Models\CustomerInstallment;
+use App\Models\Product;
+use App\Models\ProductEmiRule;
 use App\Models\SalesOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -154,6 +156,33 @@ class InstallmentController extends Controller
             return response()->json([
                 'message' => 'Installments are not available for service sales.',
             ], 422);
+        }
+
+        if (! $order->installment_tenure_months) {
+            return response()->json([
+                'message' => 'Installment tenure months are required to generate installments.',
+            ], 422);
+        }
+
+        $order->loadMissing('items.itemable');
+        $productIds = $order->items
+            ->filter(fn ($item) => $item->itemable instanceof Product)
+            ->map(fn ($item) => $item->itemable->id)
+            ->unique()
+            ->values();
+
+        if ($productIds->isNotEmpty()) {
+            $missingRules = $productIds->reject(fn ($productId) => ProductEmiRule::query()
+                ->where('product_id', $productId)
+                ->where('tenure_months', $order->installment_tenure_months)
+                ->where('is_active', true)
+                ->exists());
+
+            if ($missingRules->isNotEmpty()) {
+                return response()->json([
+                    'message' => 'The selected tenure does not have EMI rules configured for this product.',
+                ], 422);
+            }
         }
 
         $existingWithPayments = $order->installments()
