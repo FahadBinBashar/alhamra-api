@@ -1512,6 +1512,104 @@
             "description": "List commissions for the authenticated agent. Supports optional filters: `status[]`, `from_date`, `to_date`, and `agent_id` (admin only)."
           },
           "response": []
+        },
+        {
+          "name": "Agent Sales Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/sales",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agent Sales Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/sales/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "sales",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "50",
+                  "disabled": true
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -3111,6 +3209,61 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Commission Process History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/commission-calculations/process-history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "commission-calculations",
+                "process-history"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                },
+                {
+                  "key": "processed_by",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "period_type",
+                  "value": "month",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -5668,6 +5821,93 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Employee Tree",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/tree",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "tree"
+              ],
+              "query": [
+                {
+                  "key": "root_employee_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "max_depth",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "rank",
+                  "value": "GM",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Employee Tree Node Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/tree/node/{{employee_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "tree",
+                "node",
+                "{{employee_id}}"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                }
+              ]
+            }
+          }
         }
       ]
     },
