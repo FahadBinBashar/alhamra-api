@@ -22,7 +22,7 @@ class ProcessPendingCommissions extends Command
         $dateOption = $this->option('date');
         $upTo = $dateOption ? Carbon::parse($dateOption) : null;
 
-        $commissions = $this->commissionService->processPendingCommissions($upTo);
+        $commissions = $this->commissionService->processPendingCommissions(null, $upTo);
 
         $this->info(sprintf('Processed %d commission payouts.', $commissions->count()));
 

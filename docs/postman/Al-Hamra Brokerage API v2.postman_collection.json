@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "1e12646b-a15f-4e0f-b016-20ed527c926a",
+    "_postman_id": "b37c9f28-1977-4cf3-b6be-8acbde34ac3a",
     "name": "Al-Hamra Brokerage API v2",
     "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights pre-calculated EMI plans per product/tenure, installment generation on total payable (principal + EMI extra), and EMI extra income reporting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27980978",
-    "_collection_link": "https://blue-sunset-638226.postman.co/workspace/Team-Workspace~99a2ec44-cf11-4803-8795-179b7759dfeb/collection/27980978-1e12646b-a15f-4e0f-b016-20ed527c926a?action=share&source=collection_link&creator=27980978"
+    "_collection_link": "https://go.postman.co/collection/27980978-b37c9f28-1977-4cf3-b6be-8acbde34ac3a?source=collection_link"
   },
   "item": [
     {
@@ -470,12 +470,13 @@
                 },
                 {
                   "key": "is_stock_managed",
-                  "value": "true",
+                  "value": "1",
                   "type": "text"
                 },
                 {
                   "key": "image",
-                  "type": "file"
+                  "type": "file",
+                  "src": "5QTkQX7r5/screencapture-oursandbox-online-2026-02-09-12_45_13.png"
                 },
                 {
                   "key": "images[]",
@@ -935,7 +936,6 @@
         {
           "name": "List Services",
           "request": {
-            "description": "List services with pricing and `commission_percentage` so you can configure service sales and commissions.",
             "method": "GET",
             "header": [
               {
@@ -974,7 +974,8 @@
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "List services with pricing and `commission_percentage` so you can configure service sales and commissions."
           },
           "response": []
         },
@@ -1022,7 +1023,6 @@
         {
           "name": "Show Service",
           "request": {
-            "description": "Retrieve a single service with `price` and `commission_percentage` details.",
             "method": "GET",
             "header": [
               {
@@ -1052,7 +1052,8 @@
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Retrieve a single service with `price` and `commission_percentage` details."
           },
           "response": []
         },
@@ -1556,6 +1557,106 @@
             "description": "List commissions for the authenticated agent. Supports optional filters: `status[]`, `from_date`, `to_date`, and `agent_id` (admin only)."
           },
           "response": []
+        },
+        {
+          "name": "Agent Sales Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/sales",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Sales Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/dashboard/sales/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "agents",
+                "dashboard",
+                "sales",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "50",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1724,7 +1825,6 @@
         {
           "name": "Create Sales Order",
           "request": {
-            "description": "Branch, agent and marketing executive context is now derived automatically from the customer's stored sourcing information.",
             "method": "POST",
             "header": [
               {
@@ -1759,14 +1859,14 @@
                 "v1",
                 "sales-orders"
               ]
-            }
+            },
+            "description": "Branch, agent and marketing executive context is now derived automatically from the customer's stored sourcing information."
           },
           "response": []
         },
         {
           "name": "Create Service Sales Order",
           "request": {
-            "description": "Create a service sales order; pricing is taken from the service and down_payment/installments are not required.",
             "method": "POST",
             "header": [
               {
@@ -1801,7 +1901,8 @@
                 "v1",
                 "sales-orders"
               ]
-            }
+            },
+            "description": "Create a service sales order; pricing is taken from the service and down_payment/installments are not required."
           },
           "response": []
         },
@@ -2193,7 +2294,6 @@
     },
     {
       "name": "Installments",
-      "description": "CRUD endpoints for managing customer installments.",
       "item": [
         {
           "name": "List Installments",
@@ -2381,7 +2481,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "description": "CRUD endpoints for managing customer installments."
     },
     {
       "name": "Commission Rules",
@@ -3093,7 +3194,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/commission-calculations/{{commission_calculation_id}}",
+              "raw": "{{base_url}}/api/v1/commission-calculations/{{commission_calculation_id}}?include=items,payment.salesOrder.agent.user",
               "host": [
                 "{{base_url}}"
               ],
@@ -3106,8 +3207,7 @@
               "query": [
                 {
                   "key": "include",
-                  "value": "items,payment.salesOrder.agent.user",
-                  "disabled": false
+                  "value": "items,payment.salesOrder.agent.user"
                 }
               ]
             }
@@ -3151,6 +3251,62 @@
                 "v1",
                 "commission-calculations",
                 "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Commission Process History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/commission-calculations/process-history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "commission-calculations",
+                "process-history"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                },
+                {
+                  "key": "processed_by",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "period_type",
+                  "value": "month",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -3995,7 +4151,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/customer",
+              "raw": "{{base_url}}/api/v1/reports/ledger/customer?customer_id={{customer_id}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4047,7 +4203,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/supplier",
+              "raw": "{{base_url}}/api/v1/reports/ledger/supplier?supplier_id={{supplier_id}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4099,7 +4255,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/reports/ledger/account",
+              "raw": "{{base_url}}/api/v1/reports/ledger/account?account_code={{ledger_account_code}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -4869,7 +5025,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/employee/incentives?month=2025-01",
+              "raw": "{{base_url}}/api/v1/employee/incentives",
               "host": [
                 "{{base_url}}"
               ],
@@ -4967,12 +5123,12 @@
             ],
             "body": {
               "mode": "raw",
+              "raw": "{\n  \"employee_id\": 5,\n  \"activity_date\": \"2025-01-15\",\n  \"title\": \"Site Visit\",\n  \"location\": \"Dhaka Head Office\",\n  \"customer_id\": 12,\n  \"sales_order_id\": 45,\n  \"notes\": \"Discussed project timeline and gathered follow-up requirements.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 60\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
-              },
-              "raw": "{\n  \"employee_id\": 5,\n  \"activity_date\": \"2025-01-15\",\n  \"title\": \"Site Visit\",\n  \"location\": \"Dhaka Head Office\",\n  \"customer_id\": 12,\n  \"sales_order_id\": 45,\n  \"notes\": \"Discussed project timeline and gathered follow-up requirements.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 60\n  }\n}"
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/employees/dashboard/activities",
@@ -5010,12 +5166,12 @@
             ],
             "body": {
               "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Site Visit\",\n  \"notes\": \"Captured updated requirements after follow-up call.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 75\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
-              },
-              "raw": "{\n  \"title\": \"Updated Site Visit\",\n  \"notes\": \"Captured updated requirements after follow-up call.\",\n  \"meta\": {\n    \"meeting_type\": \"Follow-up\",\n    \"duration_minutes\": 75\n  }\n}"
+              }
             },
             "url": {
               "raw": "{{base_url}}/api/v1/employees/dashboard/activities/{{activity_id}}",
@@ -5481,7 +5637,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/admin/work-summaries?employee_id=&type=&from=&to=&per_page=15",
+              "raw": "{{base_url}}/api/v1/admin/work-summaries?per_page=15",
               "host": [
                 "{{base_url}}"
               ],
@@ -5708,6 +5864,95 @@
                 "v1",
                 "employees",
                 "{{employee_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Tree",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/tree",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "tree"
+              ],
+              "query": [
+                {
+                  "key": "root_employee_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "max_depth",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "rank",
+                  "value": "GM",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Tree Node Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/tree/node/{{employee_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "tree",
+                "node",
+                "{{employee_id}}"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -6728,7 +6973,8 @@
               ]
             },
             "description": "Fetch service commissions for an employee with status and calculated amounts."
-          }
+          },
+          "response": []
         },
         {
           "name": "Process Service Commissions (Monthly)",
@@ -6754,7 +7000,8 @@
               ]
             },
             "description": "Run month-end processing for draft service commissions to mark them paid and credit wallets."
-          }
+          },
+          "response": []
         },
         {
           "name": "Preview Pending Service Commissions (Monthly)",
@@ -6780,7 +7027,8 @@
               ]
             },
             "description": "List unpaid service commissions for a month so admins can review who will be paid before processing."
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -6891,6 +7139,11 @@
                     "accounting",
                     "accounts",
                     ":account"
+                  ],
+                  "variable": [
+                    {
+                      "key": "account"
+                    }
                   ]
                 }
               },
@@ -6921,6 +7174,11 @@
                     "accounting",
                     "accounts",
                     ":account"
+                  ],
+                  "variable": [
+                    {
+                      "key": "account"
+                    }
                   ]
                 }
               },

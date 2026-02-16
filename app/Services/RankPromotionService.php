@@ -151,15 +151,38 @@ class RankPromotionService
     protected function getDirectorRankSettings(): array
     {
         $defaults = [
-            Employee::RANK_ED => ['share_target' => 10, 'gm_target' => 10],
-            Employee::RANK_AMD => ['share_target' => 20, 'gm_target' => 20],
-            Employee::RANK_DMD => ['share_target' => 25, 'gm_target' => 25],
-            Employee::RANK_DIR => ['share_target' => 30, 'gm_target' => 30],
+            Employee::RANK_ED => ['share_target' => 10, 'gm_target' => 2],
+            Employee::RANK_AMD => ['share_target' => 12, 'gm_target' => 3],
+            Employee::RANK_DMD => ['share_target' => 8, 'gm_target' => 4],
+            Employee::RANK_DIR => ['share_target' => 8, 'gm_target' => 5],
         ];
 
         $settings = CommissionSetting::value('director_rank_settings', []);
 
-        return is_array($settings) ? array_merge($defaults, $settings) : $defaults;
+        if (! is_array($settings)) {
+            return $defaults;
+        }
+
+        $normalizedSettings = [];
+
+        foreach ($settings as $rankCode => $config) {
+            if (! is_array($config)) {
+                continue;
+            }
+
+            $normalizedRank = strtoupper((string) $rankCode);
+
+            if ($normalizedRank === 'VC') {
+                $normalizedRank = Employee::RANK_DIR;
+            }
+
+            $normalizedSettings[$normalizedRank] = [
+                'share_target' => (int) ($config['share_target'] ?? $config['share'] ?? 0),
+                'gm_target' => (int) ($config['gm_target'] ?? $config['gm'] ?? 0),
+            ];
+        }
+
+        return array_merge($defaults, $normalizedSettings);
     }
 
     protected function countDirectGmSubordinates(Employee $employee): int
