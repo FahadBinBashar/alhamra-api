@@ -30,17 +30,21 @@ class WalletWithdrawalService
                 throw new InvalidArgumentException('Insufficient wallet balance for withdrawal.');
             }
 
-            $wallet->balance = (float) $wallet->balance - (float) $withdrawRequest->amount;
-            $wallet->save();
+            $currentBalance = (float) $wallet->balance;
+            $amount = (float) $withdrawRequest->amount;
+
+            $wallet->forceFill([
+                'balance' => $currentBalance - $amount,
+            ])->save();
 
             $withdrawRequest->status = WalletWithdrawRequest::STATUS_APPROVED;
             $withdrawRequest->reviewed_by = $reviewer->id;
             $withdrawRequest->reviewed_at = now();
             $withdrawRequest->reject_reason = null;
 
-            $this->recordLedger($withdrawRequest);
-
             $withdrawRequest->save();
+
+            $this->recordLedger($withdrawRequest);
         });
 
         return $withdrawRequest;
