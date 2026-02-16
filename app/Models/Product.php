@@ -70,4 +70,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductEmiRule::class);
     }
+
+    public function emiPlans(): HasMany
+    {
+        return $this->hasMany(ProductEmiPlan::class);
+    }
 }

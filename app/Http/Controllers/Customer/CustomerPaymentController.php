@@ -136,15 +136,14 @@ class CustomerPaymentController extends Controller
 
             $intentMeta = $intent->meta ?? [];
             $baseAmount = isset($intentMeta['base_amount']) ? (float) $intentMeta['base_amount'] : $amount;
-            $emiExtraAmount = isset($intentMeta['emi_extra_amount']) ? (float) $intentMeta['emi_extra_amount'] : 0.0;
-            $amount = round($baseAmount + $emiExtraAmount, 2);
+            $amount = round($baseAmount, 2);
 
             $payment = Payment::create([
                 'sales_order_id' => $order->id,
                 'paid_at' => now(),
                 'amount' => $amount,
                 'base_amount' => $baseAmount,
-                'emi_extra_amount' => $emiExtraAmount,
+                'emi_extra_amount' => 0,
                 'type' => Payment::resolveTypeFromIntent($intent->type),
                 'intent_type' => $intent->type,
                 'method' => 'sslcommerz',
@@ -224,16 +223,12 @@ class CustomerPaymentController extends Controller
                 ]);
             }
 
-            $emiService = app(EmiExtraService::class);
-            $emiExtra = $emiService->calculateExtra($installment, $due);
-            $installmentNo = $emiService->resolveInstallmentIndex($installment);
-            $totalDue = round($due + $emiExtra, 2);
+            $totalDue = round($due, 2);
 
             $meta['installment_id'] = $installment->id;
             $meta['due_amount'] = $totalDue;
             $meta['base_amount'] = $due;
-            $meta['emi_extra_amount'] = $emiExtra;
-            $meta['installment_no'] = $installmentNo;
+            $meta['emi_extra_amount'] = 0;
 
             if ($amount === null) {
                 $amount = $totalDue;

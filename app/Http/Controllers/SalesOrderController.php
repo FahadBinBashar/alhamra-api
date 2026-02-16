@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agent;
 use App\Models\Employee;
 use App\Models\Product;
-use App\Models\ProductEmiRule;
+use App\Models\ProductEmiPlan;
 use App\Models\SalesOrder;
 use App\Models\StockMovement;
 use App\Models\Service;
@@ -99,7 +99,7 @@ class SalesOrderController extends Controller
             $data['down_payment'] = null;
         }
 
-        $this->ensureEmiRulesForTenure($data['installment_tenure_months'] ?? null, $preparedItems['items'] ?? []);
+        $this->ensureEmiPlanForTenure($data['installment_tenure_months'] ?? null, $preparedItems['items'] ?? []);
 
         if (isset($data['down_payment']) && $data['down_payment'] > $data['total']) {
             throw ValidationException::withMessages([
@@ -238,7 +238,7 @@ class SalesOrderController extends Controller
 
         $itemsForTenureCheck = $itemsProvided ? ($preparedItems['items'] ?? []) : $this->resolveExistingOrderItems($salesOrder);
         $tenureForCheck = $data['installment_tenure_months'] ?? $salesOrder->installment_tenure_months;
-        $this->ensureEmiRulesForTenure($tenureForCheck, $itemsForTenureCheck);
+        $this->ensureEmiPlanForTenure($tenureForCheck, $itemsForTenureCheck);
 
         $branchId = $data['branch_id'] ?? $salesOrder->branch_id;
         $agentId = $data['agent_id'] ?? $salesOrder->agent_id;
@@ -464,7 +464,7 @@ class SalesOrderController extends Controller
             ->all();
     }
 
-    private function ensureEmiRulesForTenure(?int $tenureMonths, array $items): void
+    private function ensureEmiPlanForTenure(?int $tenureMonths, array $items): void
     {
         if (! $tenureMonths) {
             return;
@@ -480,7 +480,7 @@ class SalesOrderController extends Controller
             return;
         }
 
-        $missing = $productIds->reject(fn ($productId) => ProductEmiRule::query()
+        $missing = $productIds->reject(fn ($productId) => ProductEmiPlan::query()
             ->where('product_id', $productId)
             ->where('tenure_months', $tenureMonths)
             ->where('is_active', true)
@@ -488,7 +488,7 @@ class SalesOrderController extends Controller
 
         if ($missing->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'installment_tenure_months' => 'The selected tenure does not have EMI rules configured for this product.',
+                'installment_tenure_months' => 'The selected tenure does not have an EMI plan configured for this product.',
             ]);
         }
     }

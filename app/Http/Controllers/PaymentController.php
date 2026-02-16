@@ -165,12 +165,9 @@ class PaymentController extends Controller
             $intentType = $data['intent_type'] ?? Payment::resolveIntentFromType($type);
 
             $meta = $data['meta'] ?? [];
-            $baseAmount = (float) $data['amount'];
-            $emiExtraAmount = 0.0;
-            $emiBreakdown = [];
+            $baseAmount = round((float) $data['amount'], 2);
 
             if (! empty($data['allocations'])) {
-                $emiService = app(EmiExtraService::class);
                 $baseAmount = 0.0;
 
                 foreach ($data['allocations'] as $allocation) {
@@ -197,21 +194,10 @@ class PaymentController extends Controller
                         ]);
                     }
 
-                    $emiExtra = $emiService->calculateExtra($installment, $dueAmount);
-                    $installmentNo = $emiService->resolveInstallmentIndex($installment);
-
-                    $emiBreakdown[] = [
-                        'installment_id' => $installment->id,
-                        'installment_no' => $installmentNo,
-                        'base_amount' => $dueAmount,
-                        'emi_extra_amount' => $emiExtra,
-                    ];
-
                     $baseAmount += $dueAmount;
-                    $emiExtraAmount += $emiExtra;
                 }
 
-                $expectedTotal = round($baseAmount + $emiExtraAmount, 2);
+                $expectedTotal = round($baseAmount, 2);
                 $requestedTotal = round((float) $data['amount'], 2);
 
                 if ($expectedTotal !== $requestedTotal) {
@@ -222,17 +208,16 @@ class PaymentController extends Controller
 
                 $meta = array_merge($meta, [
                     'base_amount' => $baseAmount,
-                    'emi_extra_amount' => $emiExtraAmount,
-                    'emi_breakdown' => $emiBreakdown,
+                    'emi_extra_amount' => 0,
                 ]);
             }
 
             $payment = Payment::create([
                 'sales_order_id' => $order->id,
                 'paid_at' => $data['paid_at'],
-                'amount' => round($baseAmount + $emiExtraAmount, 2),
+                'amount' => round($baseAmount, 2),
                 'base_amount' => round($baseAmount, 2),
-                'emi_extra_amount' => round($emiExtraAmount, 2),
+                'emi_extra_amount' => 0,
                 'type' => $type,
                 'intent_type' => $intentType,
                 'method' => $data['method'] ?? null,

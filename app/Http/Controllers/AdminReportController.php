@@ -473,20 +473,19 @@ class AdminReportController extends Controller
 
     public function emiExtraIncome(Request $request)
     {
-        $query = Payment::query()
-            ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+        $query = SalesOrder::query()
             ->leftJoin('order_items', function ($join) {
                 $join->on('order_items.sales_order_id', '=', 'sales_orders.id')
                     ->where('order_items.itemable_type', Product::class);
             })
-            ->where('payments.emi_extra_amount', '>', 0);
+            ->where('sales_orders.emi_extra_total', '>', 0);
 
         if ($request->filled('from')) {
-            $query->whereDate('payments.paid_at', '>=', $request->date('from'));
+            $query->whereDate('sales_orders.created_at', '>=', $request->date('from'));
         }
 
         if ($request->filled('to')) {
-            $query->whereDate('payments.paid_at', '<=', $request->date('to'));
+            $query->whereDate('sales_orders.created_at', '<=', $request->date('to'));
         }
 
         if ($request->filled('branch_id')) {
@@ -498,10 +497,10 @@ class AdminReportController extends Controller
         }
 
         $rows = $query
-            ->selectRaw("DATE_FORMAT(payments.paid_at, '%Y-%m') as month")
+            ->selectRaw("DATE_FORMAT(sales_orders.created_at, '%Y-%m') as month")
             ->selectRaw('sales_orders.branch_id as branch_id')
             ->selectRaw('order_items.itemable_id as product_id')
-            ->selectRaw('SUM(payments.emi_extra_amount) as emi_extra_total')
+            ->selectRaw('SUM(sales_orders.emi_extra_total) as emi_extra_total')
             ->groupBy('month', 'sales_orders.branch_id', 'order_items.itemable_id')
             ->orderBy('month')
             ->get();

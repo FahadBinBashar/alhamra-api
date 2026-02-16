@@ -6,10 +6,9 @@ use App\Models\Agent;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\CommissionSetting;
-use App\Models\CustomerInstallment;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\ProductEmiRule;
+use App\Models\ProductEmiPlan;
 use App\Models\SalesOrder;
 use App\Models\User;
 use App\Services\CommissionService;
@@ -31,7 +30,7 @@ class EmiExtraPaymentTest extends TestCase
         Sanctum::actingAs($admin);
     }
 
-    protected function createOrderWithInstallments(array $rules): array
+    protected function createOrderWithPlan(string $extraType, float $extraValue, int $tenure = 3): SalesOrder
     {
         $category = Category::create([
             'name' => 'Land',
@@ -46,13 +45,13 @@ class EmiExtraPaymentTest extends TestCase
             'is_stock_managed' => false,
         ]);
 
-        foreach ($rules as $rule) {
-            ProductEmiRule::create(array_merge([
-                'product_id' => $product->id,
-                'tenure_months' => 3,
-                'is_active' => true,
-            ], $rule));
-        }
+        ProductEmiPlan::create([
+            'product_id' => $product->id,
+            'tenure_months' => $tenure,
+            'extra_type' => $extraType,
+            'extra_value' => $extraValue,
+            'is_active' => true,
+        ]);
 
         $customer = User::factory()->create([
             'role' => User::ROLE_CUSTOMER,
@@ -63,7 +62,7 @@ class EmiExtraPaymentTest extends TestCase
             'sales_type' => SalesOrder::TYPE_LAND,
             'status' => SalesOrder::STATUS_ACTIVE,
             'down_payment' => 0,
-            'installment_tenure_months' => 3,
+            'installment_tenure_months' => $tenure,
             'total' => 30000,
         ]);
 
@@ -75,41 +74,67 @@ class EmiExtraPaymentTest extends TestCase
             'line_total' => 30000,
         ]);
 
-        $installments = collect([
-            CustomerInstallment::create([
-                'sales_order_id' => $order->id,
-                'due_date' => Carbon::now()->addMonth()->toDateString(),
-                'amount' => 10000,
-                'paid' => 0,
-                'status' => 'due',
-            ]),
-            CustomerInstallment::create([
-                'sales_order_id' => $order->id,
-                'due_date' => Carbon::now()->addMonths(2)->toDateString(),
-                'amount' => 10000,
-                'paid' => 0,
-                'status' => 'due',
-            ]),
-            CustomerInstallment::create([
-                'sales_order_id' => $order->id,
-                'due_date' => Carbon::now()->addMonths(3)->toDateString(),
-                'amount' => 10000,
-                'paid' => 0,
-                'status' => 'due',
-            ]),
-        ]);
-
-        return [$order, $installments];
+        return $order;
     }
 
-    public function test_it_applies_percent_rule_on_month_1(): void
+    public function test_generate_installments_with_percent_plan_precalculates_amount(): void
     {
         $this->actingAsAdmin();
-        [$order, $installments] = $this->createOrderWithInstallments([
-            ['rule_month' => 1, 'rule_type' => 'percent', 'percent' => 2, 'flat_amount' => null],
+        $order = $this->createOrderWithPlan('percent', 2, 3);
+
+        $response = $this->postJson("/api/v1/sales-orders/{$order->id}/installments/generate", [
+            'frequency' => 'monthly',
+            'count' => 3,
+            'start_date' => Carbon::now()->toDateString(),
+            'grace_days' => 0,
         ]);
 
-        $installment = $installments->first();
+        $response->assertCreated();
+
+        $order->refresh();
+
+        $this->assertSame(600.0, (float) $order->emi_extra_total);
+        $this->assertSame(30600.0, (float) $order->total_installment_payable);
+
+        $this->assertDatabaseHas('customer_installments', [
+            'sales_order_id' => $order->id,
+            'amount' => 10200.00,
+        ]);
+    }
+
+    public function test_generate_installments_with_flat_plan_precalculates_amount(): void
+    {
+        $this->actingAsAdmin();
+        $order = $this->createOrderWithPlan('flat', 900, 3);
+
+        $response = $this->postJson("/api/v1/sales-orders/{$order->id}/installments/generate", [
+            'frequency' => 'monthly',
+            'count' => 3,
+            'start_date' => Carbon::now()->toDateString(),
+            'grace_days' => 0,
+        ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('customer_installments', [
+            'sales_order_id' => $order->id,
+            'amount' => 10300.00,
+        ]);
+    }
+
+    public function test_payment_uses_precalculated_installment_without_runtime_emi_extra(): void
+    {
+        $this->actingAsAdmin();
+        $order = $this->createOrderWithPlan('percent', 2, 3);
+
+        $this->postJson("/api/v1/sales-orders/{$order->id}/installments/generate", [
+            'frequency' => 'monthly',
+            'count' => 3,
+            'start_date' => Carbon::now()->toDateString(),
+            'grace_days' => 0,
+        ])->assertCreated();
+
+        $installmentId = $order->installments()->orderBy('id')->value('id');
 
         $response = $this->postJson("/api/v1/sales-orders/{$order->id}/payments", [
             'paid_at' => Carbon::now()->toDateString(),
@@ -117,92 +142,25 @@ class EmiExtraPaymentTest extends TestCase
             'type' => Payment::TYPE_INSTALLMENT,
             'allocations' => [
                 [
-                    'installment_id' => $installment->id,
-                    'amount' => 10000,
+                    'installment_id' => $installmentId,
+                    'amount' => 10200,
                 ],
             ],
         ]);
 
         $response->assertCreated();
-
         $paymentId = $response->json('data.id');
 
         $this->assertDatabaseHas('payments', [
             'id' => $paymentId,
-            'base_amount' => 10000,
-            'emi_extra_amount' => 200,
+            'base_amount' => 10200,
+            'emi_extra_amount' => 0,
             'commission_base_amount' => 10200,
             'amount' => 10200,
         ]);
     }
 
-    public function test_it_applies_flat_rule_on_month_3(): void
-    {
-        $this->actingAsAdmin();
-        [$order, $installments] = $this->createOrderWithInstallments([
-            ['rule_month' => 3, 'rule_type' => 'flat', 'percent' => null, 'flat_amount' => 500],
-        ]);
-
-        $installment = $installments->last();
-
-        $response = $this->postJson("/api/v1/sales-orders/{$order->id}/payments", [
-            'paid_at' => Carbon::now()->toDateString(),
-            'amount' => 10500,
-            'type' => Payment::TYPE_INSTALLMENT,
-            'allocations' => [
-                [
-                    'installment_id' => $installment->id,
-                    'amount' => 10000,
-                ],
-            ],
-        ]);
-
-        $response->assertCreated();
-
-        $paymentId = $response->json('data.id');
-
-        $this->assertDatabaseHas('payments', [
-            'id' => $paymentId,
-            'base_amount' => 10000,
-            'emi_extra_amount' => 500,
-            'amount' => 10500,
-        ]);
-    }
-
-    public function test_it_defaults_to_zero_if_no_rule(): void
-    {
-        $this->actingAsAdmin();
-        [$order, $installments] = $this->createOrderWithInstallments([
-            ['rule_month' => 1, 'rule_type' => 'percent', 'percent' => 2, 'flat_amount' => null],
-        ]);
-
-        $installment = $installments->get(1);
-
-        $response = $this->postJson("/api/v1/sales-orders/{$order->id}/payments", [
-            'paid_at' => Carbon::now()->toDateString(),
-            'amount' => 10000,
-            'type' => Payment::TYPE_INSTALLMENT,
-            'allocations' => [
-                [
-                    'installment_id' => $installment->id,
-                    'amount' => 10000,
-                ],
-            ],
-        ]);
-
-        $response->assertCreated();
-
-        $paymentId = $response->json('data.id');
-
-        $this->assertDatabaseHas('payments', [
-            'id' => $paymentId,
-            'base_amount' => 10000,
-            'emi_extra_amount' => 0,
-            'amount' => 10000,
-        ]);
-    }
-
-    public function test_it_does_not_affect_commission_calculation(): void
+    public function test_commission_uses_full_installment_amount(): void
     {
         CommissionSetting::updateOrCreate([
             'key' => 'agent_rates',
@@ -265,8 +223,8 @@ class EmiExtraPaymentTest extends TestCase
             'sales_order_id' => $order->id,
             'paid_at' => Carbon::now(),
             'amount' => 10200,
-            'base_amount' => 10000,
-            'emi_extra_amount' => 200,
+            'base_amount' => 10200,
+            'emi_extra_amount' => 0,
             'type' => Payment::TYPE_INSTALLMENT,
         ]);
 

@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateInstallmentRequest;
 use App\Http\Resources\InstallmentResource;
 use App\Models\CustomerInstallment;
 use App\Models\Product;
-use App\Models\ProductEmiRule;
+use App\Models\ProductEmiPlan;
 use App\Models\SalesOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -175,16 +175,20 @@ class InstallmentController extends Controller
             ->unique()
             ->values();
 
+        $emiPlan = null;
+
         if ($productIds->isNotEmpty()) {
-            $missingRules = $productIds->reject(fn ($productId) => ProductEmiRule::query()
+            $productId = (int) $productIds->first();
+
+            $emiPlan = ProductEmiPlan::query()
                 ->where('product_id', $productId)
                 ->where('tenure_months', $tenureMonths)
                 ->where('is_active', true)
-                ->exists());
+                ->first();
 
-            if ($missingRules->isNotEmpty()) {
+            if (! $emiPlan) {
                 return response()->json([
-                    'message' => 'The selected tenure does not have EMI rules configured for this product.',
+                    'message' => 'The selected tenure does not have an EMI plan configured for this product.',
                 ], 422);
             }
         }
@@ -210,21 +214,36 @@ class InstallmentController extends Controller
             ], 422);
         }
 
+        $emiExtraTotal = 0.0;
+
+        if ($emiPlan) {
+            if ($emiPlan->extra_type === 'percent') {
+                $emiExtraTotal = round($principal * ((float) $emiPlan->extra_value / 100), 2);
+            } else {
+                $emiExtraTotal = round((float) $emiPlan->extra_value, 2);
+            }
+        }
+
+        $totalInstallmentPayable = round($principal + $emiExtraTotal, 2);
+
         $includes = $this->resolveIncludes($request, ['salesOrder', 'allocations']);
         $frequency = $data['frequency'];
         $startDate = Carbon::parse($data['start_date']);
         $graceDays = (int) ($data['grace_days'] ?? 0);
-        $totalCents = (int) round($principal * 100);
+        $totalCents = (int) round($totalInstallmentPayable * 100);
 
         if ($totalCents === 0 && $principal > 0) {
             $totalCents = 1;
         }
 
-        $installments = DB::transaction(function () use ($order, $includes, $frequency, $count, $startDate, $graceDays, $totalCents, $tenureMonths) {
+        $installments = DB::transaction(function () use ($order, $includes, $frequency, $count, $startDate, $graceDays, $totalCents, $tenureMonths, $emiExtraTotal, $totalInstallmentPayable) {
             if ((int) $order->installment_tenure_months !== $tenureMonths) {
                 $order->installment_tenure_months = $tenureMonths;
-                $order->save();
             }
+
+            $order->emi_extra_total = $emiExtraTotal;
+            $order->total_installment_payable = $totalInstallmentPayable;
+            $order->save();
 
             $order->installments()->delete();
 
