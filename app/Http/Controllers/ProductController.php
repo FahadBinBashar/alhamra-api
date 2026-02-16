@@ -7,9 +7,12 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\ProductEmiPlan;
+use App\Models\ProductEmiRule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -21,10 +24,10 @@ class ProductController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules', 'emiPlans']);
 
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules', 'emiPlans'];
         }
 
         $query = Product::query()->with($includes);
@@ -49,7 +52,24 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): ProductResource
     {
-        $product = Product::create($request->validated());
+        $data = $request->validated();
+        $emiRules = $data['emi_rules'] ?? null;
+        $emiPlans = $data['emi_plans'] ?? null;
+        unset($data['emi_rules'], $data['emi_plans']);
+
+        $product = DB::transaction(function () use ($data, $emiRules, $emiPlans) {
+            $product = Product::create($data);
+
+            if (! empty($emiRules)) {
+                $this->syncEmiRules($product, $emiRules);
+            }
+
+            if (! empty($emiPlans)) {
+                $this->syncEmiPlans($product, $emiPlans);
+            }
+
+            return $product;
+        });
 
         // Always store product images on PUBLIC disk so it becomes accessible via /storage after storage:link
         $uploadedImages = [];
@@ -77,9 +97,9 @@ class ProductController extends Controller
             ])->save();
         }
 
-        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules', 'emiPlans']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules', 'emiPlans'];
         }
 
         $product->load($includes);
@@ -92,9 +112,9 @@ class ProductController extends Controller
      */
     public function show(Request $request, Product $product): ProductResource
     {
-        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules', 'emiPlans']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules', 'emiPlans'];
         }
 
         $product->load($includes);
@@ -107,7 +127,22 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
-        $product->update($request->validated());
+        $data = $request->validated();
+        $emiRules = $data['emi_rules'] ?? null;
+        $emiPlans = $data['emi_plans'] ?? null;
+        unset($data['emi_rules'], $data['emi_plans']);
+
+        DB::transaction(function () use ($product, $data, $emiRules, $emiPlans) {
+            $product->update($data);
+
+            if ($emiRules !== null) {
+                $this->syncEmiRules($product, $emiRules);
+            }
+
+            if ($emiPlans !== null) {
+                $this->syncEmiPlans($product, $emiPlans);
+            }
+        });
 
         $uploadedImages = [];
 
@@ -149,9 +184,9 @@ class ProductController extends Controller
             ])->save();
         }
 
-        $includes = $this->resolveIncludes($request, ['category', 'supplier']);
+        $includes = $this->resolveIncludes($request, ['category', 'supplier', 'emiRules', 'emiPlans']);
         if (empty($includes)) {
-            $includes = ['category'];
+            $includes = ['category', 'emiRules', 'emiPlans'];
         }
 
         $product->load($includes);
@@ -181,5 +216,71 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(null, 204);
+    }
+
+
+
+    private function syncEmiPlans(Product $product, array $emiPlans): void
+    {
+        $now = now();
+
+        ProductEmiPlan::query()
+            ->where('product_id', $product->id)
+            ->delete();
+
+        $payload = [];
+
+        foreach ($emiPlans as $plan) {
+            $payload[] = [
+                'product_id' => $product->id,
+                'tenure_months' => (int) $plan['tenure_months'],
+                'extra_type' => $plan['extra_type'],
+                'extra_value' => (float) $plan['extra_value'],
+                'is_active' => (bool) ($plan['is_active'] ?? true),
+                'meta' => $plan['meta'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        if ($payload !== []) {
+            ProductEmiPlan::insert($payload);
+        }
+    }
+
+    private function syncEmiRules(Product $product, array $emiRules): void
+    {
+        $now = now();
+
+        foreach ($emiRules as $plan) {
+            $tenureMonths = (int) ($plan['tenure_months'] ?? 0);
+            $rules = $plan['rules'] ?? [];
+
+            ProductEmiRule::query()
+                ->where('product_id', $product->id)
+                ->where('tenure_months', $tenureMonths)
+                ->delete();
+
+            $payload = [];
+
+            foreach ($rules as $rule) {
+                $payload[] = [
+                    'product_id' => $product->id,
+                    'tenure_months' => $tenureMonths,
+                    'rule_month' => (int) $rule['month'],
+                    'rule_type' => $rule['type'],
+                    'percent' => $rule['type'] === 'percent' ? (float) $rule['percent'] : null,
+                    'flat_amount' => $rule['type'] === 'flat' ? (float) $rule['flat_amount'] : null,
+                    'is_active' => true,
+                    'meta' => $rule['meta'] ?? null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            if ($payload !== []) {
+                ProductEmiRule::insert($payload);
+            }
+        }
     }
 }

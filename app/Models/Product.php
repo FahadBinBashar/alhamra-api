@@ -65,4 +65,14 @@ class Product extends Model
     {
         return $this->hasMany(StockMovement::class);
     }
+
+    public function emiRules(): HasMany
+    {
+        return $this->hasMany(ProductEmiRule::class);
+    }
+
+    public function emiPlans(): HasMany
+    {
+        return $this->hasMany(ProductEmiPlan::class);
+    }
 }
