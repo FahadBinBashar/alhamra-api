@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "b37c9f28-1977-4cf3-b6be-8acbde34ac3a",
     "name": "Al-Hamra Brokerage API v2",
-    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights new installment CRUD endpoints, dynamic EMI rules per product/tenure, EMI extra-aware payment collection, and EMI extra income reporting.",
+    "description": "Comprehensive Postman collection for the Al-Hamra Brokerage Management System API. Covers authentication, catalog (categories, products, services), sales operations, stock management, reporting and document uploads for the v2 REST interface.\n\nVersion 2 highlights pre-calculated EMI plans per product/tenure, installment generation on total payable (principal + EMI extra), and EMI extra income reporting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27980978",
     "_collection_link": "https://go.postman.co/collection/27980978-b37c9f28-1977-4cf3-b6be-8acbde34ac3a?source=collection_link"
@@ -383,7 +383,7 @@
                 },
                 {
                   "key": "include",
-                  "value": "category,supplier,emiRules",
+                  "value": "category,supplier,emiPlans",
                   "disabled": true
                 },
                 {
@@ -485,36 +485,58 @@
                 {
                   "key": "emi_rules[0][tenure_months]",
                   "value": "12",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][month]",
                   "value": "1",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][type]",
                   "value": "percent",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][percent]",
                   "value": "2",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][month]",
                   "value": "2",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][type]",
                   "value": "flat",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][flat_amount]",
                   "value": "500",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "emi_plans[0][tenure_months]",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_plans[0][extra_type]",
+                  "value": "flat",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_plans[0][extra_value]",
+                  "value": "10000",
                   "type": "text"
                 }
               ]
@@ -561,7 +583,7 @@
               "query": [
                 {
                   "key": "include",
-                  "value": "category,supplier,emiRules",
+                  "value": "category,supplier,emiPlans",
                   "disabled": true
                 }
               ]
@@ -632,36 +654,58 @@
                 {
                   "key": "emi_rules[0][tenure_months]",
                   "value": "12",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][month]",
                   "value": "1",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][type]",
                   "value": "percent",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][0][percent]",
                   "value": "2",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][month]",
                   "value": "2",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][type]",
                   "value": "flat",
-                  "type": "text"
+                  "type": "text",
+                  "disabled": true
                 },
                 {
                   "key": "emi_rules[0][rules][1][flat_amount]",
                   "value": "500",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "emi_plans[0][tenure_months]",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_plans[0][extra_type]",
+                  "value": "flat",
+                  "type": "text"
+                },
+                {
+                  "key": "emi_plans[0][extra_value]",
+                  "value": "10000",
                   "type": "text"
                 }
               ]
@@ -2003,7 +2047,7 @@
                 "generate"
               ]
             },
-            "description": "Generates base installment schedule. Ensure sales order has installment_tenure_months and matching active EMI rules for the product tenure."
+            "description": "Generates installment schedule from pre-calculated payable amount: (total - down_payment + emi_plan_extra). Provide count/frequency/start_date; optional installment_tenure_months can override order tenure."
           },
           "response": []
         },
@@ -2027,7 +2071,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 10200,\n  \"type\": \"installment\",\n  \"method\": \"bank\",\n  \"meta\": {\n    \"reference\": \"BANK-REF-20250115\"\n  },\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 10000\n    }\n  ]\n}",
+              "raw": "{\n  \"paid_at\": \"2025-01-15\",\n  \"amount\": 38333.33,\n  \"type\": \"installment\",\n  \"method\": \"bank\",\n  \"meta\": {\n    \"reference\": \"BANK-REF-20250115\"\n  },\n  \"allocations\": [\n    {\n      \"installment_id\": {{installment_id}},\n      \"amount\": 38333.33\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2047,7 +2091,7 @@
                 "payments"
               ]
             },
-            "description": "Record installment payment where amount should be full payable (base installment + EMI extra). Allocation amount remains base installment due."
+            "description": "Record installment payment using the generated installment amount (pre-calculated principal + EMI extra share). Allocation amount must equal installment due."
           },
           "response": []
         }
@@ -4301,7 +4345,7 @@
                 }
               ]
             },
-            "description": "Monthly EMI extra income summary grouped by month, product and branch."
+            "description": "Monthly pre-calculated EMI extra income summary aggregated from sales orders (emi_extra_total), grouped by month, product and branch."
           },
           "response": []
         }
