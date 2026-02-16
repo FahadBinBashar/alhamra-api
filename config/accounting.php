@@ -42,5 +42,10 @@ return [
             'name' => 'Supplier Payable',
             'type' => 'liability',
         ],
+        'emi_extra_income' => [
+            'code' => '410',
+            'name' => 'EMI Extra Income',
+            'type' => 'income',
+        ],
     ],
 ];

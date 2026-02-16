@@ -46,6 +46,8 @@ class Payment extends Model
         'sales_order_id',
         'paid_at',
         'amount',
+        'base_amount',
+        'emi_extra_amount',
         'commission_base_amount',
         'commission_processed_at',
         'type',
@@ -57,6 +59,8 @@ class Payment extends Model
     protected $casts = [
         'paid_at' => 'date',
         'amount' => 'decimal:2',
+        'base_amount' => 'decimal:2',
+        'emi_extra_amount' => 'decimal:2',
         'commission_base_amount' => 'decimal:2',
         'commission_processed_at' => 'datetime',
         'meta' => 'array',

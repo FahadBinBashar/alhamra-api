@@ -163,14 +163,64 @@ class PaymentController extends Controller
 
             $intentType = $data['intent_type'] ?? Payment::resolveIntentFromType($type);
 
+            $meta = $data['meta'] ?? [];
+            $baseAmount = round((float) $data['amount'], 2);
+
+            if (! empty($data['allocations'])) {
+                $baseAmount = 0.0;
+
+                foreach ($data['allocations'] as $allocation) {
+                    /** @var CustomerInstallment $installment */
+                    $installment = CustomerInstallment::lockForUpdate()->find($allocation['installment_id']);
+
+                    if (! $installment) {
+                        continue;
+                    }
+
+                    $dueAmount = round((float) $installment->amount - (float) $installment->paid, 2);
+
+                    if ($dueAmount <= 0) {
+                        throw ValidationException::withMessages([
+                            'allocations' => ['The selected installment is already paid.'],
+                        ]);
+                    }
+
+                    $requestedAmount = round((float) $allocation['amount'], 2);
+
+                    if ($requestedAmount !== $dueAmount) {
+                        throw ValidationException::withMessages([
+                            'allocations' => ['Installment payments must cover the full base amount due.'],
+                        ]);
+                    }
+
+                    $baseAmount += $dueAmount;
+                }
+
+                $expectedTotal = round($baseAmount, 2);
+                $requestedTotal = round((float) $data['amount'], 2);
+
+                if ($expectedTotal !== $requestedTotal) {
+                    throw ValidationException::withMessages([
+                        'amount' => ['The payment amount must match the installment total due.'],
+                    ]);
+                }
+
+                $meta = array_merge($meta, [
+                    'base_amount' => $baseAmount,
+                    'emi_extra_amount' => 0,
+                ]);
+            }
+
             $payment = Payment::create([
                 'sales_order_id' => $order->id,
                 'paid_at' => $data['paid_at'],
-                'amount' => $data['amount'],
+                'amount' => round($baseAmount, 2),
+                'base_amount' => round($baseAmount, 2),
+                'emi_extra_amount' => 0,
                 'type' => $type,
                 'intent_type' => $intentType,
                 'method' => $data['method'] ?? null,
-                'meta' => $data['meta'] ?? null,
+                'meta' => $meta ?: null,
             ]);
 
             if (! empty($data['allocations'])) {
@@ -182,7 +232,7 @@ class PaymentController extends Controller
                         continue;
                     }
 
-                    $allocated = (float) $allocation['amount'];
+                    $allocated = round((float) $allocation['amount'], 2);
                     PaymentAllocation::create([
                         'payment_id' => $payment->id,
                         'customer_installment_id' => $installment->id,

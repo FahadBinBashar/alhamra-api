@@ -63,6 +63,34 @@ class ProductResource extends JsonResource
             'stock_qty' => $this->stock_qty,
             'min_stock_alert' => $this->min_stock_alert,
             'is_stock_managed' => $this->is_stock_managed,
+            'emi_plans' => $this->whenLoaded('emiPlans', function () {
+                return $this->emiPlans
+                    ->sortBy('tenure_months')
+                    ->values()
+                    ->map(fn ($plan) => [
+                        'tenure_months' => (int) $plan->tenure_months,
+                        'extra_type' => $plan->extra_type,
+                        'extra_value' => $plan->extra_value,
+                        'is_active' => $plan->is_active,
+                        'meta' => $plan->meta,
+                    ]);
+            }),
+            'emi_rules' => $this->whenLoaded('emiRules', function () {
+                return $this->emiRules
+                    ->groupBy('tenure_months')
+                    ->map(fn ($rules, $tenure) => [
+                        'tenure_months' => (int) $tenure,
+                        'rules' => $rules->sortBy('rule_month')->values()->map(fn ($rule) => [
+                            'month' => (int) $rule->rule_month,
+                            'type' => $rule->rule_type,
+                            'percent' => $rule->percent,
+                            'flat_amount' => $rule->flat_amount,
+                            'is_active' => $rule->is_active,
+                            'meta' => $rule->meta,
+                        ]),
+                    ])
+                    ->values();
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

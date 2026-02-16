@@ -133,10 +133,16 @@ class CustomerPaymentController extends Controller
                 return;
             }
 
+            $intentMeta = $intent->meta ?? [];
+            $baseAmount = isset($intentMeta['base_amount']) ? (float) $intentMeta['base_amount'] : $amount;
+            $amount = round($baseAmount, 2);
+
             $payment = Payment::create([
                 'sales_order_id' => $order->id,
                 'paid_at' => now(),
                 'amount' => $amount,
+                'base_amount' => $baseAmount,
+                'emi_extra_amount' => 0,
                 'type' => Payment::resolveTypeFromIntent($intent->type),
                 'intent_type' => $intent->type,
                 'method' => 'sslcommerz',
@@ -153,7 +159,7 @@ class CustomerPaymentController extends Controller
 
                 if ($installment) {
                     $outstanding = max((float) $installment->amount - (float) $installment->paid, 0.0);
-                    $allocated = min($amount, $outstanding);
+                    $allocated = min($baseAmount, $outstanding);
 
                     PaymentAllocation::create([
                         'payment_id' => $payment->id,
@@ -216,14 +222,18 @@ class CustomerPaymentController extends Controller
                 ]);
             }
 
+            $totalDue = round($due, 2);
+
             $meta['installment_id'] = $installment->id;
-            $meta['due_amount'] = $due;
+            $meta['due_amount'] = $totalDue;
+            $meta['base_amount'] = $due;
+            $meta['emi_extra_amount'] = 0;
 
             if ($amount === null) {
-                $amount = $due;
-            } elseif ($amount > $due) {
+                $amount = $totalDue;
+            } elseif (round((float) $amount, 2) !== $totalDue) {
                 throw ValidationException::withMessages([
-                    'amount' => 'The requested amount exceeds the installment due.',
+                    'amount' => 'The requested amount must match the installment total due.',
                 ]);
             }
         } elseif ($type === PaymentIntent::TYPE_DOWN_PAYMENT) {
