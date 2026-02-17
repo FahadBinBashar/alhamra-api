@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminWorkSummaryController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
@@ -96,6 +97,9 @@ Route::prefix('v1')->group(function () {
     Route::get('employees/tree/node/{employee}', [EmployeeTreeController::class, 'nodeDetails']);
     Route::apiResource('employees', EmployeeController::class);
     Route::prefix('employees/dashboard')->group(function () {
+      Route::get('announcements', [AnnouncementController::class, 'employeeAnnouncements']);
+      Route::get('announcements/unread-count', [AnnouncementController::class, 'unreadCount']);
+      Route::post('announcements/{announcement}/read', [AnnouncementController::class, 'markAsRead']);
       Route::get('customers', [EmployeeDashboardController::class, 'customers']);
       Route::get('sales', [EmployeeDashboardController::class, 'sales']);
       Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
@@ -148,6 +152,9 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('installments', InstallmentController::class);
     Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'store']);
     Route::apiResource('ranks', RankController::class);
+    Route::get('announcements', [AnnouncementController::class, 'index']);
+    Route::post('announcements', [AnnouncementController::class, 'store']);
+    Route::get('announcements/{announcement}', [AnnouncementController::class, 'show']);
     Route::post('sales-orders/{order}/installments/generate', [InstallmentController::class,'generate']);
     Route::get('payments', [PaymentController::class,'index']);
     Route::post('sales-orders/{order}/payments', [PaymentController::class,'store']);
