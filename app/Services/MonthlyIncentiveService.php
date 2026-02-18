@@ -19,11 +19,12 @@ class MonthlyIncentiveService
     }
 
     /**
-     * Calculate monthly incentives for the provided month (defaults to previous month).
+     * Calculate incentives for the provided period.
+     * Defaults to previous month for monthly frequency or previous week for weekly frequency.
      */
-    public function calculate(?string $month = null): Collection
+    public function calculate(?string $month = null, string $frequency = 'monthly', ?string $week = null): Collection
     {
-        [$periodStart, $periodEnd] = $this->resolvePeriod($month);
+        [$periodStart, $periodEnd, $frequency] = $this->resolvePeriod($month, $week, $frequency);
         [$maxLevels, $rate] = $this->getConfig();
 
         $employees = Employee::query()->select('id', 'superior_id')->get();
@@ -64,6 +65,10 @@ class MonthlyIncentiveService
                 'reviewed_at' => $status === MonthlyIncentive::STATUS_DRAFT ? null : $existing?->reviewed_at,
                 'review_note' => $status === MonthlyIncentive::STATUS_DRAFT ? null : $existing?->review_note,
                 'meta' => [
+                    'frequency' => $frequency,
+                    'period_label' => $frequency === 'weekly'
+                        ? $periodStart->format('Y-m-d').' to '.$periodEnd->format('Y-m-d')
+                        : $periodStart->format('Y-m'),
                     'subordinate_ids' => $subordinateIds,
                     'subordinate_steps' => $this->mapSubordinateSteps($levels),
                     'subordinate_count' => count($subordinateIds),
@@ -85,22 +90,34 @@ class MonthlyIncentiveService
     }
 
     /**
-     * Mark draft incentives as paid for the target month and credit employee wallets.
+     * Mark incentives as paid for the target period and credit employee wallets.
      */
-    public function process(?string $month = null): Collection
+    public function process(?string $month = null, string $frequency = 'monthly', ?string $week = null, ?int $reviewerId = null, bool $autoApprove = true): Collection
     {
-        [$periodStart] = $this->resolvePeriod($month);
+        [$periodStart] = $this->resolvePeriod($month, $week, $frequency);
+
+        $eligibleStatuses = $autoApprove
+            ? [MonthlyIncentive::STATUS_DRAFT, MonthlyIncentive::STATUS_APPROVED]
+            : [MonthlyIncentive::STATUS_APPROVED];
 
         $incentives = MonthlyIncentive::query()
             ->whereDate('period_start', $periodStart->toDateString())
-            ->where('status', MonthlyIncentive::STATUS_APPROVED)
+            ->whereIn('status', $eligibleStatuses)
             ->with('employee')
             ->get();
 
         $processed = collect();
 
         foreach ($incentives as $incentive) {
-            DB::transaction(function () use ($incentive, &$processed) {
+            DB::transaction(function () use ($incentive, &$processed, $reviewerId, $autoApprove) {
+                if ($autoApprove && $incentive->status === MonthlyIncentive::STATUS_DRAFT) {
+                    $incentive->forceFill([
+                        'status' => MonthlyIncentive::STATUS_APPROVED,
+                        'reviewed_by' => $incentive->reviewed_by ?? $reviewerId,
+                        'reviewed_at' => $incentive->reviewed_at ?? now(),
+                    ])->save();
+                }
+
                 $this->creditEmployeeWallet($incentive->employee_id, (float) $incentive->amount);
                 $this->recordIncentiveLiability($incentive);
 
@@ -116,8 +133,22 @@ class MonthlyIncentiveService
         return $processed;
     }
 
-    protected function resolvePeriod(?string $month): array
+    public function resolvePeriod(?string $month, ?string $week = null, string $frequency = 'monthly'): array
     {
+        $normalizedFrequency = in_array($frequency, ['weekly', 'monthly'], true) ? $frequency : 'monthly';
+
+        if ($normalizedFrequency === 'weekly') {
+            if ($week) {
+                $start = Carbon::parse($week)->startOfWeek(Carbon::MONDAY);
+            } else {
+                $start = now()->subWeek()->startOfWeek(Carbon::MONDAY);
+            }
+
+            $end = $start->copy()->endOfWeek(Carbon::SUNDAY);
+
+            return [$start, $end, $normalizedFrequency];
+        }
+
         if ($month) {
             $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
         } else {
@@ -126,7 +157,7 @@ class MonthlyIncentiveService
 
         $end = $start->copy()->endOfMonth();
 
-        return [$start, $end];
+        return [$start, $end, $normalizedFrequency];
     }
 
     protected function buildChildMap(Collection $employees): array

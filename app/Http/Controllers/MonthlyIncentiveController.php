@@ -24,6 +24,8 @@ class MonthlyIncentiveController extends Controller
             'employee_id' => ['sometimes', 'integer', 'exists:employees,id'],
             'status' => ['sometimes', Rule::in(MonthlyIncentive::STATUSES)],
             'month' => ['sometimes', 'date_format:Y-m'],
+            'week' => ['sometimes', 'date_format:Y-m-d'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'weekly'])],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
@@ -45,6 +47,25 @@ class MonthlyIncentiveController extends Controller
                 ->whereDate('period_start', '<=', $month->copy()->endOfMonth());
         }
 
+        if (isset($validated['week'])) {
+            $weekStart = Carbon::parse($validated['week'])->startOfWeek(Carbon::MONDAY);
+            $query->whereDate('period_start', '>=', $weekStart)
+                ->whereDate('period_start', '<=', $weekStart->copy()->endOfWeek(Carbon::SUNDAY));
+        }
+
+        if (isset($validated['frequency'])) {
+            $frequency = $validated['frequency'];
+
+            if ($frequency === 'monthly') {
+                $query->where(function ($q) {
+                    $q->whereNull('meta->frequency')
+                        ->orWhere('meta->frequency', 'monthly');
+                });
+            } else {
+                $query->where('meta->frequency', 'weekly');
+            }
+        }
+
         $incentives = $query
             ->paginate($validated['per_page'] ?? 15)
             ->appends($request->query());
@@ -56,15 +77,24 @@ class MonthlyIncentiveController extends Controller
     {
         $validated = $request->validate([
             'month' => ['sometimes', 'date_format:Y-m'],
+            'week' => ['sometimes', 'date_format:Y-m-d'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'weekly'])],
         ]);
 
-        $targetMonth = $validated['month'] ?? now()->subMonthNoOverflow()->format('Y-m');
-        $incentives = $this->monthlyIncentiveService->calculate($validated['month'] ?? null);
+        $frequency = $validated['frequency'] ?? 'monthly';
+        $month = $frequency === 'monthly' ? ($validated['month'] ?? null) : null;
+        $week = $frequency === 'weekly' ? ($validated['week'] ?? null) : null;
+
+        [$periodStart, $periodEnd] = $this->monthlyIncentiveService->resolvePeriod($month, $week, $frequency);
+
+        $incentives = $this->monthlyIncentiveService->calculate($month, $frequency, $week);
 
         return response()->json([
             'generated' => $incentives->count(),
             'total_amount' => (float) $incentives->sum('amount'),
-            'month' => $targetMonth,
+            'frequency' => $frequency,
+            'period_start' => $periodStart->toDateString(),
+            'period_end' => $periodEnd->toDateString(),
         ]);
     }
 
@@ -72,15 +102,29 @@ class MonthlyIncentiveController extends Controller
     {
         $validated = $request->validate([
             'month' => ['sometimes', 'date_format:Y-m'],
+            'week' => ['sometimes', 'date_format:Y-m-d'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'weekly'])],
         ]);
 
-        $targetMonth = $validated['month'] ?? now()->subMonthNoOverflow()->format('Y-m');
-        $processed = $this->monthlyIncentiveService->process($validated['month'] ?? null);
+        $frequency = $validated['frequency'] ?? 'monthly';
+        $month = $frequency === 'monthly' ? ($validated['month'] ?? null) : null;
+        $week = $frequency === 'weekly' ? ($validated['week'] ?? null) : null;
+
+        [$periodStart, $periodEnd] = $this->monthlyIncentiveService->resolvePeriod($month, $week, $frequency);
+        $processed = $this->monthlyIncentiveService->process(
+            $month,
+            $frequency,
+            $week,
+            $request->user()?->id,
+            true
+        );
 
         return response()->json([
             'processed' => $processed->count(),
             'total_amount' => (float) $processed->sum('amount'),
-            'month' => $targetMonth,
+            'frequency' => $frequency,
+            'period_start' => $periodStart->toDateString(),
+            'period_end' => $periodEnd->toDateString(),
         ]);
     }
 
@@ -132,6 +176,8 @@ class MonthlyIncentiveController extends Controller
     {
         $request->validate([
             'month' => ['sometimes', 'date_format:Y-m'],
+            'week' => ['sometimes', 'date_format:Y-m-d'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'weekly'])],
         ]);
 
         $employee = $request->user()?->employee;
@@ -140,10 +186,23 @@ class MonthlyIncentiveController extends Controller
             abort(404, 'Employee profile not found.');
         }
 
-        $month = $request->get('month');
+        $frequency = $request->get('frequency');
+        $month = $frequency === 'weekly' ? null : $request->get('month');
+        $week = $frequency === 'weekly' ? $request->get('week') : null;
 
         $incentive = MonthlyIncentive::where('employee_id', $employee->id)
             ->when($month, fn ($q) => $q->whereDate('period_start', Carbon::parse($month)->startOfMonth()))
+            ->when($week, function ($q) use ($week) {
+                $weekStart = Carbon::parse($week)->startOfWeek(Carbon::MONDAY);
+                $q->whereDate('period_start', $weekStart);
+            })
+            ->when($frequency === 'monthly', function ($q) {
+                $q->where(function ($inner) {
+                    $inner->whereNull('meta->frequency')
+                        ->orWhere('meta->frequency', 'monthly');
+                });
+            })
+            ->when($frequency === 'weekly', fn ($q) => $q->where('meta->frequency', 'weekly'))
             ->with('employee')
             ->orderByDesc('period_start')
             ->firstOrFail();
@@ -178,6 +237,7 @@ class MonthlyIncentiveController extends Controller
             'incentive_rate' => $incentive->incentive_rate,
             'total_commissionable_sales' => $incentive->total_commissionable_sales,
             'amount' => $incentive->amount,
+            'frequency' => $meta['frequency'] ?? 'monthly',
             'breakdown' => [
                 'max_levels' => $meta['max_levels'] ?? null,
                 'step_counts' => $meta['step_counts'] ?? [],

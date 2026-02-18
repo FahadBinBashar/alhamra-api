@@ -29,6 +29,7 @@ class MonthlyIncentiveResource extends JsonResource
             'incentive_rate' => $this->incentive_rate,
             'amount' => $this->amount,
             'status' => $this->status,
+            'frequency' => $this->meta['frequency'] ?? 'monthly',
             'reviewed_by' => $this->reviewed_by,
             'reviewer_name' => $reviewer?->name,
             'reviewed_at' => $this->reviewed_at,

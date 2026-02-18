@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('incentives:calculate')->monthlyOn(1, '03:00');
+        $schedule->command('incentives:calculate --frequency=weekly')->weeklyOn(1, '03:30');
         $schedule->command('ranks:evaluate')->monthlyOn(1, '02:00');
     }
 

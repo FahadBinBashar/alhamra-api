@@ -7,16 +7,19 @@ use Illuminate\Console\Command;
 
 class ProcessMonthlyIncentives extends Command
 {
-    protected $signature = 'incentives:process {--month=}';
+    protected $signature = 'incentives:process {--month=} {--week=} {--frequency=monthly}';
 
-    protected $description = 'Process draft monthly incentives for the specified month and credit wallets.';
+    protected $description = 'Approve (if needed) and pay incentives for a monthly or weekly period.';
 
     public function handle(MonthlyIncentiveService $service): int
     {
         $month = $this->option('month');
-        $processed = $service->process($month);
+        $week = $this->option('week');
+        $frequency = $this->option('frequency') ?? 'monthly';
 
-        $this->info(sprintf('Processed %d monthly incentives.', $processed->count()));
+        $processed = $service->process($month, $frequency, $week);
+
+        $this->info(sprintf('Processed %d %s incentives.', $processed->count(), $frequency));
 
         return self::SUCCESS;
     }

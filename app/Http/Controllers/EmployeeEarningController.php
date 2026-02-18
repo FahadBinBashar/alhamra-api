@@ -27,6 +27,7 @@ class EmployeeEarningController extends Controller
             $meta = $incentive->meta ?? [];
             $subordinateSteps = $meta['subordinate_steps'] ?? [];
             $subordinates = [];
+            $frequency = $meta['frequency'] ?? 'monthly';
 
             foreach ($subordinateSteps as $id => $step) {
                 $subordinates[] = [
@@ -41,7 +42,7 @@ class EmployeeEarningController extends Controller
                 'period_end' => $incentive->period_end,
                 'status' => $incentive->status,
                 'amount' => (float) $incentive->amount,
-                'type' => 'monthly',
+                'type' => $frequency,
                 'ccu_base_sales' => (float) $incentive->total_commissionable_sales,
                 'subordinate_breakdown' => [
                     'max_levels' => $meta['max_levels'] ?? null,

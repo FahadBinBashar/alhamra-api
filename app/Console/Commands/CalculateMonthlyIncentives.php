@@ -7,16 +7,23 @@ use Illuminate\Console\Command;
 
 class CalculateMonthlyIncentives extends Command
 {
-    protected $signature = 'incentives:calculate {--month=}';
+    protected $signature = 'incentives:calculate {--month=} {--week=} {--frequency=monthly}';
 
-    protected $description = 'Calculate monthly incentives for the specified month (defaults to previous month).';
+    protected $description = 'Calculate incentives for a monthly or weekly period (defaults to previous period).';
 
     public function handle(MonthlyIncentiveService $service): int
     {
         $month = $this->option('month');
-        $incentives = $service->calculate($month);
+        $week = $this->option('week');
+        $frequency = $this->option('frequency') ?? 'monthly';
 
-        $this->info(sprintf('Calculated %d monthly incentives.', $incentives->count()));
+        $incentives = $service->calculate($month, $frequency, $week);
+
+        $this->info(sprintf(
+            'Calculated %d %s incentives.',
+            $incentives->count(),
+            $frequency
+        ));
 
         return self::SUCCESS;
     }
