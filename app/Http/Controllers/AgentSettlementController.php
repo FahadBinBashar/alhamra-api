@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\AgentSettlementService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
@@ -54,11 +55,15 @@ class AgentSettlementController extends Controller
                 AgentSettlement::PAYMENT_METHOD_CHECK,
             ])],
             'reference_no' => ['nullable', 'string', 'max:255'],
-            'attachment_url' => ['required', 'string', 'max:2048'],
+            'attachment' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf,webp', 'max:10240'],
             'note' => ['nullable', 'string'],
         ]);
 
-        $settlement = DB::transaction(function () use ($agentId, $data) {
+        /** @var UploadedFile $attachment */
+        $attachment = $data['attachment'];
+        $attachmentPath = $attachment->store('agent-settlements/slips', config('filesystems.default'));
+
+        $settlement = DB::transaction(function () use ($agentId, $data, $attachmentPath) {
             $availableAmount = $this->settlementService->availableAmount($agentId);
 
             if ((float) $data['amount'] > $availableAmount) {
@@ -70,7 +75,7 @@ class AgentSettlementController extends Controller
                 'amount' => $data['amount'],
                 'payment_method' => $data['payment_method'],
                 'reference_no' => $data['reference_no'] ?? null,
-                'attachment_url' => $data['attachment_url'],
+                'attachment_url' => $attachmentPath,
                 'note' => $data['note'] ?? null,
                 'status' => AgentSettlement::STATUS_PENDING,
             ]);

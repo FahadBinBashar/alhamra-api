@@ -8083,17 +8083,39 @@
                 "value": "application/json"
               },
               {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"amount\": 1500,\n  \"payment_method\": \"bank\",\n  \"reference_no\": \"TXN-2026-001\",\n  \"attachment_url\": \"https://example.com/slips/txn-2026-001.png\",\n  \"note\": \"Deposited to company account\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "amount",
+                  "value": "1500",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_method",
+                  "value": "bank",
+                  "type": "text"
+                },
+                {
+                  "key": "reference_no",
+                  "value": "TXN-2026-001",
+                  "type": "text"
+                },
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "src": "/path/to/slip.png"
+                },
+                {
+                  "key": "note",
+                  "value": "Deposited to company account",
+                  "type": "text"
+                }
+              ]
             },
             "url": {
               "raw": "{{base_url}}/api/v1/agent-settlements/my",

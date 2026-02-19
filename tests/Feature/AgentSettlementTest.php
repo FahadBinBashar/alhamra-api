@@ -8,6 +8,8 @@ use App\Models\Payment;
 use App\Models\SalesOrder;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -45,11 +47,13 @@ class AgentSettlementTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.pending_settlement_amount', 2000);
 
+        Storage::fake(config('filesystems.default'));
+
         $this->postJson('/api/v1/agent-settlements/my', [
             'amount' => 1500,
             'payment_method' => AgentSettlement::PAYMENT_METHOD_BANK,
             'reference_no' => 'TXN-101',
-            'attachment_url' => 'https://example.com/slip.png',
+            'attachment' => UploadedFile::fake()->image('slip.png'),
             'note' => 'Bank deposit slip uploaded.',
         ])->assertOk()
             ->assertJsonPath('data.status', AgentSettlement::STATUS_PENDING);
