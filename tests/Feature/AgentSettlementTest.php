@@ -47,9 +47,9 @@ class AgentSettlementTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.pending_settlement_amount', 2000);
 
-        Storage::fake(config('filesystems.default'));
+        Storage::fake('public');
 
-        $this->postJson('/api/v1/agent-settlements/my', [
+        $response = $this->postJson('/api/v1/agent-settlements/my', [
             'amount' => 1500,
             'payment_method' => AgentSettlement::PAYMENT_METHOD_BANK,
             'reference_no' => 'TXN-101',
@@ -57,6 +57,10 @@ class AgentSettlementTest extends TestCase
             'note' => 'Bank deposit slip uploaded.',
         ])->assertOk()
             ->assertJsonPath('data.status', AgentSettlement::STATUS_PENDING);
+
+        $storedPath = $response->json('data.attachment_url');
+        $this->assertNotEmpty($storedPath);
+        Storage::disk('public')->assertExists($storedPath);
 
         $this->getJson('/api/v1/agent-settlements/my/pending')
             ->assertOk()

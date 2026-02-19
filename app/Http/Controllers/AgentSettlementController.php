@@ -61,7 +61,7 @@ class AgentSettlementController extends Controller
 
         /** @var UploadedFile $attachment */
         $attachment = $data['attachment'];
-        $attachmentPath = $attachment->store('agent-settlements/slips', config('filesystems.default'));
+        $attachmentPath = $attachment->store('agent-settlements/slips', 'public');
 
         $settlement = DB::transaction(function () use ($agentId, $data, $attachmentPath) {
             $availableAmount = $this->settlementService->availableAmount($agentId);
