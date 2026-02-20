@@ -439,7 +439,8 @@ class EmployeeTreeController extends Controller
                     'date' => $commission->payment?->paid_at?->toDateString(),
                     'category' => $commission->meta['category'] ?? null,
                 ];
-            });
+            })
+            ->toBase();
 
         $drafts = CommissionCalculationItem::query()
             ->with('unit.payment')
@@ -459,7 +460,8 @@ class EmployeeTreeController extends Controller
                     'date' => $item->unit?->payment?->paid_at?->toDateString(),
                     'category' => $item->meta['category'] ?? null,
                 ];
-            });
+            })
+            ->toBase();
 
         return $commissions
             ->merge($drafts)
