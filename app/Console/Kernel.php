@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\CalculateMonthlyIncentives::class,
         Commands\ProcessMonthlyIncentives::class,
         Commands\ProcessPendingCommissions::class,
+        Commands\ReprocessPayments::class,
     ];
 
     /**

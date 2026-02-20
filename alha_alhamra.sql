@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 19, 2026 at 04:14 PM
+-- Generation Time: Feb 20, 2026 at 10:25 AM
 -- Server version: 10.11.14-MariaDB-ubu2204
 -- PHP Version: 8.0.30
 
@@ -4149,7 +4149,345 @@ INSERT INTO `activity_log` (`id`, `log_name`, `event`, `description`, `subject_t
 (4071, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 825, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":413,\"tx_id\":\"PMT-162\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
 (4072, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 826, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":413,\"tx_id\":\"PMT-162\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
 (4073, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 45, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
-(4074, 'audit', 'created', 'created', 'App\\Models\\Payment', 162, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":149,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":\"ssdfdsf\"}}}', NULL, '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(4074, 'audit', 'created', 'created', 'App\\Models\\Payment', 162, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":149,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":\"ssdfdsf\"}}}', NULL, '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(4075, 'audit', 'created', 'created', 'App\\Models\\Journal', 414, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_5\",\"description\":null,\"occurred_at\":\"2026-02-19T17:15:33.000000Z\",\"meta\":{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}}}', NULL, '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(4076, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 827, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":414,\"tx_id\":\"agent_settlement_5\",\"account_id\":2,\"debit\":\"2000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T17:15:33.000000Z\",\"meta\":{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}}}', NULL, '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(4077, 'audit', 'created', 'created', 'App\\Models\\LedgerAccount', 14, 'App\\Models\\User', 10, '{\"attributes\":{\"code\":\"agent_hand_cash\",\"name\":\"Agent Hand Cash\",\"type\":\"asset\",\"meta\":null}}', NULL, '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(4078, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 828, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":414,\"tx_id\":\"agent_settlement_5\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"2000.00\",\"occurred_at\":\"2026-02-19T17:15:33.000000Z\",\"meta\":{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}}}', NULL, '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(4079, 'audit', 'created', 'created', 'App\\Models\\Journal', 415, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_6\",\"description\":null,\"occurred_at\":\"2026-02-19T17:26:32.000000Z\",\"meta\":{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}}}', NULL, '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(4080, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 829, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":415,\"tx_id\":\"agent_settlement_6\",\"account_id\":2,\"debit\":\"1000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T17:26:32.000000Z\",\"meta\":{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}}}', NULL, '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(4081, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 830, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":415,\"tx_id\":\"agent_settlement_6\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"1000.00\",\"occurred_at\":\"2026-02-19T17:26:32.000000Z\",\"meta\":{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}}}', NULL, '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(4082, 'audit', 'created', 'created', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":193,\"branch_id\":1,\"agent_id\":null,\"superior_id\":null,\"employee_code\":\"21330296\",\"rank\":\"ME\",\"full_name_en\":\"z1\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"245465757\",\"national_id\":\"456646\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"sdd\",\"permanent_address\":\"fgfg\",\"post_code\":null}}', NULL, '2026-02-19 17:50:48', '2026-02-19 17:50:48'),
+(4083, 'audit', 'created', 'created', 'App\\Models\\Employee', 50, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":195,\"branch_id\":1,\"agent_id\":null,\"superior_id\":23,\"employee_code\":\"97161577\",\"rank\":\"ME\",\"full_name_en\":\"rahim\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"23443555\",\"national_id\":\"343555\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"sdsf\",\"permanent_address\":\"gfghh\",\"post_code\":null}}', NULL, '2026-02-19 17:56:43', '2026-02-19 17:56:43'),
+(4084, 'audit', 'created', 'created', 'App\\Models\\Employee', 51, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":196,\"branch_id\":1,\"agent_id\":null,\"superior_id\":49,\"employee_code\":\"66544767\",\"rank\":\"GM\",\"full_name_en\":\"z3\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"13424355\",\"mobile\":\"123433444\",\"national_id\":\"5454554\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"ssdd\",\"permanent_address\":\"asss\",\"post_code\":null}}', NULL, '2026-02-19 18:07:34', '2026-02-19 18:07:34'),
+(4085, 'audit', 'created', 'created', 'App\\Models\\Employee', 52, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":198,\"branch_id\":1,\"agent_id\":null,\"superior_id\":49,\"employee_code\":\"83854391\",\"rank\":\"GM\",\"full_name_en\":\"z4\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"23234535\",\"national_id\":\"5656667\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"sdsd\",\"permanent_address\":\"dfdff\",\"post_code\":null}}', NULL, '2026-02-19 18:11:50', '2026-02-19 18:11:50'),
+(4086, 'audit', 'created', 'created', 'App\\Models\\Journal', 416, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_4\",\"description\":null,\"occurred_at\":\"2026-02-19T18:30:27.000000Z\",\"meta\":{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}}}', NULL, '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(4087, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 831, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":416,\"tx_id\":\"agent_settlement_4\",\"account_id\":2,\"debit\":\"1500.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T18:30:27.000000Z\",\"meta\":{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}}}', NULL, '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(4088, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 832, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":416,\"tx_id\":\"agent_settlement_4\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"1500.00\",\"occurred_at\":\"2026-02-19T18:30:27.000000Z\",\"meta\":{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}}}', NULL, '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(4089, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 150, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":194,\"employee_id\":49,\"source_me_id\":49,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"450000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"4500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 18:33:40', '2026-02-19 18:33:40'),
+(4090, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 150, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":9,\"unit_price\":\"500000.00\",\"line_total\":\"4500000.00\"}}', NULL, '2026-02-19 18:33:40', '2026-02-19 18:33:40'),
+(4091, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 150, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4060000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4092, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1560, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"338333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4093, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1561, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"338333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4094, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1562, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"338333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4095, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1563, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"338333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4096, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1564, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4097, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1565, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4098, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1566, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4099, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1567, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43');
+INSERT INTO `activity_log` (`id`, `log_name`, `event`, `description`, `subject_type`, `subject_id`, `causer_type`, `causer_id`, `properties`, `batch_uuid`, `created_at`, `updated_at`) VALUES
+(4100, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1568, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4101, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1569, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4102, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1570, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4103, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1571, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"338333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(4104, 'audit', 'created', 'created', 'App\\Models\\Journal', 417, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-163\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4105, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 833, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":417,\"tx_id\":\"PMT-163\",\"account_id\":1,\"debit\":\"450000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4106, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 834, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":417,\"tx_id\":\"PMT-163\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"450000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4107, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4108, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4109, 'audit', 'created', 'created', 'App\\Models\\Payment', 163, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":150,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"450000.00\",\"base_amount\":\"450000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"360000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(4110, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 151, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":194,\"employee_id\":49,\"source_me_id\":49,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 18:38:35', '2026-02-19 18:38:35'),
+(4111, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 151, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 18:38:35', '2026-02-19 18:38:35'),
+(4112, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 151, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4113, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1572, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4114, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1573, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4115, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1574, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4116, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1575, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4117, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1576, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4118, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1577, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4119, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1578, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4120, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1579, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4121, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1580, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4122, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1581, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4123, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1582, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4124, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1583, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(4125, 'audit', 'created', 'created', 'App\\Models\\Journal', 418, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-164\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4126, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 835, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":418,\"tx_id\":\"PMT-164\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4127, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 836, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":418,\"tx_id\":\"PMT-164\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4128, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4129, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4130, 'audit', 'created', 'created', 'App\\Models\\Payment', 164, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":151,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(4131, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 152, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":194,\"employee_id\":49,\"source_me_id\":49,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 18:41:21', '2026-02-19 18:41:21'),
+(4132, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 152, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 18:41:21', '2026-02-19 18:41:21'),
+(4133, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 152, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4134, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1584, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4135, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1585, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4136, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1586, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4137, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1587, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4138, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1588, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4139, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1589, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4140, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1590, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4141, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1591, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4142, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1592, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4143, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1593, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4144, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1594, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4145, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1595, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(4146, 'audit', 'created', 'created', 'App\\Models\\Journal', 419, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-165\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:41:44', '2026-02-19 18:41:44'),
+(4147, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 837, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":419,\"tx_id\":\"PMT-165\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(4148, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 838, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":419,\"tx_id\":\"PMT-165\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(4149, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(4150, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 49, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(4151, 'audit', 'created', 'created', 'App\\Models\\Payment', 165, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":152,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(4152, 'audit', 'created', 'created', 'App\\Models\\Employee', 53, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":200,\"branch_id\":1,\"agent_id\":null,\"superior_id\":49,\"employee_code\":\"23863689\",\"rank\":\"ME\",\"full_name_en\":\"z5\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"2343545\",\"national_id\":\"3435555\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"sdd\",\"permanent_address\":\"fff\",\"post_code\":null}}', NULL, '2026-02-19 18:53:27', '2026-02-19 18:53:27'),
+(4153, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 153, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":201,\"employee_id\":53,\"source_me_id\":53,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"100000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"1000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 18:57:01', '2026-02-19 18:57:01'),
+(4154, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 153, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":2,\"unit_price\":\"500000.00\",\"line_total\":\"1000000.00\"}}', NULL, '2026-02-19 18:57:01', '2026-02-19 18:57:01'),
+(4155, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 153, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"910000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4156, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1596, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"75833.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4157, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1597, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"75833.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4158, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1598, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"75833.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4159, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1599, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"75833.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4160, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1600, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4161, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1601, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4162, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1602, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4163, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1603, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4164, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1604, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4165, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1605, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4166, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1606, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4167, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1607, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"75833.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(4168, 'audit', 'created', 'created', 'App\\Models\\Journal', 420, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-166\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(4169, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 839, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":420,\"tx_id\":\"PMT-166\",\"account_id\":1,\"debit\":\"100000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(4170, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 840, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":420,\"tx_id\":\"PMT-166\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"100000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(4171, 'audit', 'created', 'created', 'App\\Models\\Payment', 166, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":153,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"100000.00\",\"base_amount\":\"100000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"80000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(4172, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 154, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":201,\"employee_id\":53,\"source_me_id\":53,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:02:58', '2026-02-19 19:02:58'),
+(4173, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 154, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 19:02:58', '2026-02-19 19:02:58'),
+(4174, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 154, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4175, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1608, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4176, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1609, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4177, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1610, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4178, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1611, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4179, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1612, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4180, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1613, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4181, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1614, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4182, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1615, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4183, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1616, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4184, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1617, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4185, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1618, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4186, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1619, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(4187, 'audit', 'created', 'created', 'App\\Models\\Journal', 421, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-167\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4188, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 841, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":421,\"tx_id\":\"PMT-167\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4189, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 842, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":421,\"tx_id\":\"PMT-167\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4190, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 53, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4191, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 53, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4192, 'audit', 'created', 'created', 'App\\Models\\Payment', 167, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":154,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(4193, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 155, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":201,\"employee_id\":53,\"source_me_id\":53,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:04:48', '2026-02-19 19:04:48'),
+(4194, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 155, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 19:04:48', '2026-02-19 19:04:48'),
+(4195, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 155, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4196, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1620, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4197, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1621, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4198, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1622, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4199, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1623, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4200, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1624, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4201, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1625, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4202, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1626, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4203, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1627, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4204, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1628, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4205, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1629, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4206, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1630, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4207, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1631, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(4208, 'audit', 'created', 'created', 'App\\Models\\Journal', 422, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-168\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(4209, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 843, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":422,\"tx_id\":\"PMT-168\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(4210, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 844, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":422,\"tx_id\":\"PMT-168\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(4211, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 53, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(4212, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 53, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-19 19:05:25', '2026-02-19 19:05:25'),
+(4213, 'audit', 'created', 'created', 'App\\Models\\Payment', 168, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":155,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:05:25', '2026-02-19 19:05:25'),
+(4214, 'audit', 'created', 'created', 'App\\Models\\Employee', 54, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":202,\"branch_id\":1,\"agent_id\":null,\"superior_id\":null,\"employee_code\":\"11703726\",\"rank\":\"ME\",\"full_name_en\":\"z6\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"2334444\",\"national_id\":\"2324455\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"assd\",\"permanent_address\":\"fddf\",\"post_code\":null}}', NULL, '2026-02-19 19:08:31', '2026-02-19 19:08:31'),
+(4215, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 156, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":203,\"employee_id\":54,\"source_me_id\":54,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:09:44', '2026-02-19 19:09:44'),
+(4216, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 156, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 19:09:44', '2026-02-19 19:09:44'),
+(4217, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 156, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4218, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1632, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4219, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1633, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4220, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1634, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4221, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1635, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4222, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1636, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(4223, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1637, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4224, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1638, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4225, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1639, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4226, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1640, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4227, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1641, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4228, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1642, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4229, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1643, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(4230, 'audit', 'created', 'created', 'App\\Models\\Journal', 423, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-169\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(4231, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 845, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":423,\"tx_id\":\"PMT-169\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(4232, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 846, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":423,\"tx_id\":\"PMT-169\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(4233, 'audit', 'created', 'created', 'App\\Models\\Payment', 169, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":156,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(4234, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 157, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":203,\"employee_id\":54,\"source_me_id\":54,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"500000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:10:33', '2026-02-19 19:10:33'),
+(4235, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 157, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"itemable_id\":10,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"500000.00\",\"line_total\":\"500000.00\"}}', NULL, '2026-02-19 19:10:33', '2026-02-19 19:10:33'),
+(4236, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 157, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"460000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4237, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1644, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4238, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1645, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4239, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1646, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4240, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1647, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"38333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4241, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1648, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4242, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1649, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36');
+INSERT INTO `activity_log` (`id`, `log_name`, `event`, `description`, `subject_type`, `subject_id`, `causer_type`, `causer_id`, `properties`, `batch_uuid`, `created_at`, `updated_at`) VALUES
+(4243, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1650, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4244, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1651, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4245, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1652, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4246, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1653, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4247, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1654, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4248, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1655, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"38333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(4249, 'audit', 'created', 'created', 'App\\Models\\Journal', 424, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-170\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(4250, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 847, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":424,\"tx_id\":\"PMT-170\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(4251, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 848, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":424,\"tx_id\":\"PMT-170\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(4252, 'audit', 'created', 'created', 'App\\Models\\Payment', 170, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":157,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"40000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(4253, 'audit', 'created', 'created', 'App\\Models\\Employee', 55, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":204,\"branch_id\":1,\"agent_id\":null,\"superior_id\":null,\"employee_code\":\"67530576\",\"rank\":\"ME\",\"full_name_en\":\"z8\",\"full_name_bn\":\"ra\",\"father_name\":\"aas\",\"mother_name\":\"xx\",\"mobile\":\"23344\",\"national_id\":\"6566\",\"date_of_birth\":\"2000-02-22T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":\"asdd\",\"permanent_address\":\"ffff\",\"post_code\":null}}', NULL, '2026-02-19 19:16:30', '2026-02-19 19:16:30'),
+(4254, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 158, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:17:54', '2026-02-19 19:17:54'),
+(4255, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 158, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-19 19:17:54', '2026-02-19 19:17:54'),
+(4256, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 158, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4257, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1656, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4258, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1657, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4259, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1658, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4260, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1659, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4261, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1660, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4262, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1661, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4263, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1662, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4264, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1663, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4265, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1664, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4266, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1665, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4267, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1666, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4268, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1667, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(4269, 'audit', 'created', 'created', 'App\\Models\\Journal', 425, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-171\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(4270, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 849, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":425,\"tx_id\":\"PMT-171\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(4271, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 850, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":425,\"tx_id\":\"PMT-171\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(4272, 'audit', 'created', 'created', 'App\\Models\\Payment', 171, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":158,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(4273, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 159, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(4274, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 159, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(4275, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 160, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(4276, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 160, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":160,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(4277, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 159, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4278, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1668, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-02-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4279, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1669, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-03-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4280, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1670, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-04-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4281, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1671, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-05-24T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4282, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1672, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-06-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4283, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1673, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-07-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4284, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1674, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-08-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4285, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1675, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-09-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4286, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1676, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-10-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4287, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1677, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-11-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4288, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1678, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2026-12-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4289, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1679, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"due_date\":\"2027-01-24T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(4290, 'audit', 'created', 'created', 'App\\Models\\Journal', 426, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-172\",\"description\":null,\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(4291, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 851, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":426,\"tx_id\":\"PMT-172\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(4292, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 852, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":426,\"tx_id\":\"PMT-172\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-19T00:00:00.000000Z\",\"meta\":{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(4293, 'audit', 'created', 'created', 'App\\Models\\Payment', 172, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":159,\"paid_at\":\"2026-02-19T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-19 19:19:50', '2026-02-19 19:19:50'),
+(4294, 'audit', 'created', 'created', 'App\\Models\\Journal', 427, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_7\",\"description\":null,\"occurred_at\":\"2026-02-19T19:38:02.000000Z\",\"meta\":{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(4295, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 853, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":427,\"tx_id\":\"agent_settlement_7\",\"account_id\":1,\"debit\":\"200.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T19:38:02.000000Z\",\"meta\":{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(4296, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 854, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":427,\"tx_id\":\"agent_settlement_7\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"200.00\",\"occurred_at\":\"2026-02-19T19:38:02.000000Z\",\"meta\":{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(4297, 'audit', 'created', 'created', 'App\\Models\\Journal', 428, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_8\",\"description\":null,\"occurred_at\":\"2026-02-19T19:38:12.000000Z\",\"meta\":{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(4298, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 855, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":428,\"tx_id\":\"agent_settlement_8\",\"account_id\":1,\"debit\":\"200.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T19:38:12.000000Z\",\"meta\":{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(4299, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 856, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":428,\"tx_id\":\"agent_settlement_8\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"200.00\",\"occurred_at\":\"2026-02-19T19:38:12.000000Z\",\"meta\":{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}}}', NULL, '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(4300, 'audit', 'created', 'created', 'App\\Models\\Journal', 429, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"agent_settlement_9\",\"description\":null,\"occurred_at\":\"2026-02-19T19:40:13.000000Z\",\"meta\":{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}}}', NULL, '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(4301, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 857, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":429,\"tx_id\":\"agent_settlement_9\",\"account_id\":1,\"debit\":\"300.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-19T19:40:13.000000Z\",\"meta\":{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}}}', NULL, '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(4302, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 858, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":429,\"tx_id\":\"agent_settlement_9\",\"account_id\":14,\"debit\":\"0.00\",\"credit\":\"300.00\",\"occurred_at\":\"2026-02-19T19:40:13.000000Z\",\"meta\":{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}}}', NULL, '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(4303, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 161, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:28:46', '2026-02-20 09:28:46'),
+(4304, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 161, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-20 09:28:46', '2026-02-20 09:28:46'),
+(4305, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 161, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4306, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1680, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-02-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4307, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1681, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-03-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4308, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1682, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-04-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4309, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1683, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-05-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4310, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1684, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-06-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4311, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1685, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-07-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4312, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1686, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-08-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4313, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1687, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-09-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4314, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1688, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-10-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4315, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1689, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-11-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4316, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1690, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2026-12-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4317, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1691, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":161,\"due_date\":\"2027-01-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(4318, 'audit', 'deleted', 'deleted', 'App\\Models\\SalesOrder', 160, 'App\\Models\\User', 10, '{\"old\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:30:25', '2026-02-20 09:30:25'),
+(4319, 'audit', 'deleted', 'deleted', 'App\\Models\\SalesOrder', 161, 'App\\Models\\User', 10, '{\"old\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\",\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:30:33', '2026-02-20 09:30:33'),
+(4320, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 162, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":205,\"employee_id\":55,\"source_me_id\":55,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:31:29', '2026-02-20 09:31:29'),
+(4321, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 162, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-20 09:31:29', '2026-02-20 09:31:29'),
+(4322, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 162, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4323, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1692, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-02-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4324, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1693, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-03-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4325, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1694, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-04-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4326, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1695, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-05-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4327, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1696, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-06-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4328, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1697, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-07-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4329, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1698, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-08-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4330, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1699, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-09-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4331, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1700, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-10-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4332, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1701, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-11-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4333, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1702, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2026-12-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4334, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1703, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"due_date\":\"2027-01-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(4335, 'audit', 'created', 'created', 'App\\Models\\Journal', 430, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-173\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4336, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 859, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":430,\"tx_id\":\"PMT-173\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4337, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 860, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":430,\"tx_id\":\"PMT-173\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4338, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 55, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4339, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 55, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4340, 'audit', 'created', 'created', 'App\\Models\\Payment', 173, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"paid_at\":\"2026-02-20T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":\"asdf\"}}}', NULL, '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(4341, 'audit', 'created', 'created', 'App\\Models\\Journal', 431, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-174\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4342, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 861, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":431,\"tx_id\":\"PMT-174\",\"account_id\":1,\"debit\":\"413333.34\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4343, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 862, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":431,\"tx_id\":\"PMT-174\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"413333.34\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4344, 'audit', 'created', 'created', 'App\\Models\\Journal', 432, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"SUPP-PAYABLE-174-2\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4345, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 863, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":432,\"tx_id\":\"SUPP-PAYABLE-174-2\",\"account_id\":7,\"debit\":\"82666.67\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4346, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 864, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":432,\"tx_id\":\"SUPP-PAYABLE-174-2\",\"account_id\":8,\"debit\":\"0.00\",\"credit\":\"82666.67\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4347, 'audit', 'created', 'created', 'App\\Models\\Payment', 174, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":162,\"paid_at\":\"2026-02-20T00:00:00.000000Z\",\"amount\":\"413333.34\",\"base_amount\":\"413333.34\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"372000.01\",\"commission_processed_at\":null,\"type\":\"installment\",\"intent_type\":\"installment_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null,\"base_amount\":413333.34,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4348, 'audit', 'created', 'created', 'App\\Models\\PaymentAllocation', 122, 'App\\Models\\User', 10, '{\"attributes\":{\"payment_id\":174,\"customer_installment_id\":1692,\"allocated\":\"413333.34\"}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4349, 'audit', 'updated', 'updated', 'App\\Models\\CustomerInstallment', 1692, 'App\\Models\\User', 10, '{\"attributes\":{\"paid\":\"413333.34\",\"status\":\"paid\"},\"old\":{\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(4350, 'audit', 'created', 'created', 'App\\Models\\Employee', 56, 'App\\Models\\User', 10, '{\"attributes\":{\"user_id\":206,\"branch_id\":1,\"agent_id\":null,\"superior_id\":15,\"employee_code\":\"10286526\",\"rank\":\"ME\",\"full_name_en\":\"test100\",\"full_name_bn\":\"test100\",\"father_name\":\"sdf\",\"mother_name\":\"asdf\",\"mobile\":\"0174566\",\"national_id\":\"asdfasdf6566666\",\"date_of_birth\":\"2026-02-20T00:00:00.000000Z\",\"marital_status\":\"Single\",\"religion\":\"Islam\",\"gender\":\"Male\",\"nationality\":\"Bangladeshi\",\"district\":null,\"upazila\":null,\"present_address\":null,\"permanent_address\":null,\"post_code\":null}}', NULL, '2026-02-20 09:44:20', '2026-02-20 09:44:20'),
+(4351, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 163, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":207,\"employee_id\":56,\"source_me_id\":56,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:46:44', '2026-02-20 09:46:44'),
+(4352, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 163, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-20 09:46:44', '2026-02-20 09:46:44'),
+(4353, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 163, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4354, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1704, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-02-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4355, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1705, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-03-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4356, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1706, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-04-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4357, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1707, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-05-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4358, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1708, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-06-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4359, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1709, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-07-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4360, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1710, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-08-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4361, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1711, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-09-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4362, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1712, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-10-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4363, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1713, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-11-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4364, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1714, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2026-12-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4365, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1715, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"due_date\":\"2027-01-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(4366, 'audit', 'created', 'created', 'App\\Models\\Journal', 433, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-175\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(4367, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 865, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":433,\"tx_id\":\"PMT-175\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(4368, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 866, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":433,\"tx_id\":\"PMT-175\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(4369, 'audit', 'created', 'created', 'App\\Models\\Payment', 175, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":163,\"paid_at\":\"2026-02-20T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":\"321213232\"}}}', NULL, '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(4370, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 164, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":207,\"employee_id\":56,\"source_me_id\":56,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"1000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 09:50:13', '2026-02-20 09:50:13'),
+(4371, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 164, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"itemable_id\":3,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"1000000.00\",\"line_total\":\"1000000.00\"}}', NULL, '2026-02-20 09:50:13', '2026-02-20 09:50:13'),
+(4372, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 164, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"95000.00\",\"total_installment_payable\":\"1045000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4373, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1716, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-02-25T00:00:00.000000Z\",\"amount\":\"87083.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4374, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1717, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-03-25T00:00:00.000000Z\",\"amount\":\"87083.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4375, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1718, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-04-25T00:00:00.000000Z\",\"amount\":\"87083.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4376, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1719, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-05-25T00:00:00.000000Z\",\"amount\":\"87083.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4377, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1720, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-06-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4378, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1721, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-07-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4379, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1722, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-08-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15');
+INSERT INTO `activity_log` (`id`, `log_name`, `event`, `description`, `subject_type`, `subject_id`, `causer_type`, `causer_id`, `properties`, `batch_uuid`, `created_at`, `updated_at`) VALUES
+(4380, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1723, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-09-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4381, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1724, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-10-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4382, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1725, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-11-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4383, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1726, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2026-12-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4384, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1727, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"due_date\":\"2027-01-25T00:00:00.000000Z\",\"amount\":\"87083.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(4385, 'audit', 'created', 'created', 'App\\Models\\Journal', 434, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-176\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:50:56', '2026-02-20 09:50:56'),
+(4386, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 867, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":434,\"tx_id\":\"PMT-176\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:50:56', '2026-02-20 09:50:56'),
+(4387, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 868, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":434,\"tx_id\":\"PMT-176\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(4388, 'audit', 'created', 'created', 'App\\Models\\Payment', 176, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":164,\"paid_at\":\"2026-02-20T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":\"dfjl;;;;;\"}}}', NULL, '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(4389, 'audit', 'created', 'created', 'App\\Models\\SalesOrder', 165, 'App\\Models\\User', 10, '{\"attributes\":{\"customer_id\":207,\"employee_id\":56,\"source_me_id\":56,\"agent_id\":null,\"branch_id\":1,\"sales_type\":\"order\",\"rank\":\"ME\",\"introducer_id\":null,\"down_payment\":\"50000.00\",\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null,\"total\":\"5000000.00\",\"status\":\"active\",\"created_by\":\"admin\"}}', NULL, '2026-02-20 10:14:30', '2026-02-20 10:14:30'),
+(4390, 'audit', 'created', 'created', 'App\\Models\\OrderItem', 165, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"itemable_id\":1,\"itemable_type\":\"App\\\\Models\\\\Product\",\"qty\":1,\"unit_price\":\"5000000.00\",\"line_total\":\"5000000.00\"}}', NULL, '2026-02-20 10:14:30', '2026-02-20 10:14:30'),
+(4391, 'audit', 'updated', 'updated', 'App\\Models\\SalesOrder', 165, 'App\\Models\\User', 10, '{\"attributes\":{\"installment_tenure_months\":12,\"emi_extra_total\":\"10000.00\",\"total_installment_payable\":\"4960000.00\"},\"old\":{\"installment_tenure_months\":null,\"emi_extra_total\":\"0.00\",\"total_installment_payable\":null}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4392, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1728, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-02-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4393, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1729, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-03-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4394, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1730, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-04-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4395, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1731, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-05-25T00:00:00.000000Z\",\"amount\":\"413333.34\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4396, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1732, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-06-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4397, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1733, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-07-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4398, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1734, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-08-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4399, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1735, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-09-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4400, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1736, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-10-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4401, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1737, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-11-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4402, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1738, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2026-12-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4403, 'audit', 'created', 'created', 'App\\Models\\CustomerInstallment', 1739, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"due_date\":\"2027-01-25T00:00:00.000000Z\",\"amount\":\"413333.33\",\"paid\":\"0.00\",\"status\":\"due\"}}', NULL, '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(4404, 'audit', 'created', 'created', 'App\\Models\\Journal', 435, 'App\\Models\\User', 10, '{\"attributes\":{\"tx_id\":\"PMT-177\",\"description\":null,\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(4405, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 869, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":435,\"tx_id\":\"PMT-177\",\"account_id\":1,\"debit\":\"50000.00\",\"credit\":\"0.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(4406, 'audit', 'created', 'created', 'App\\Models\\LedgerEntry', 870, 'App\\Models\\User', 10, '{\"attributes\":{\"journal_id\":435,\"tx_id\":\"PMT-177\",\"account_id\":3,\"debit\":\"0.00\",\"credit\":\"50000.00\",\"occurred_at\":\"2026-02-20T00:00:00.000000Z\",\"meta\":{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(4407, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 56, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"MM\"},\"old\":{\"rank\":\"ME\"}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(4408, 'audit', 'updated', 'updated', 'App\\Models\\Employee', 56, 'App\\Models\\User', 10, '{\"attributes\":{\"rank\":\"ME\"},\"old\":{\"rank\":\"MM\"}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(4409, 'audit', 'created', 'created', 'App\\Models\\Payment', 177, 'App\\Models\\User', 10, '{\"attributes\":{\"sales_order_id\":165,\"paid_at\":\"2026-02-20T00:00:00.000000Z\",\"amount\":\"50000.00\",\"base_amount\":\"50000.00\",\"emi_extra_amount\":\"0.00\",\"commission_base_amount\":\"45000.00\",\"commission_processed_at\":null,\"type\":\"down_payment\",\"intent_type\":\"down_payment\",\"method\":\"cash\",\"meta\":{\"reference\":null}}}', NULL, '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -4176,6 +4514,44 @@ INSERT INTO `agents` (`id`, `user_id`, `branch_id`, `agent_code`, `mobile`, `add
 (1, 111, 1, 'AGT-0001', '43456', 'weesdd', '2026-01-08 14:30:39', '2026-01-08 14:30:39'),
 (2, 166, 1, 'AGT-0002', '01766686301', 'qw', '2026-02-16 19:53:27', '2026-02-16 19:53:27'),
 (3, 167, 1, 'AGT-0003', '01780267799', 'Dhaka', '2026-02-17 06:26:37', '2026-02-17 06:26:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `agent_settlements`
+--
+
+CREATE TABLE `agent_settlements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `agent_id` bigint(20) UNSIGNED NOT NULL,
+  `amount` decimal(14,2) NOT NULL,
+  `payment_method` varchar(255) NOT NULL,
+  `reference_no` varchar(255) DEFAULT NULL,
+  `attachment_url` varchar(255) NOT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `note` text DEFAULT NULL,
+  `admin_note` text DEFAULT NULL,
+  `approved_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `approved_at` timestamp NULL DEFAULT NULL,
+  `rejected_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `agent_settlements`
+--
+
+INSERT INTO `agent_settlements` (`id`, `agent_id`, `amount`, `payment_method`, `reference_no`, `attachment_url`, `status`, `note`, `admin_note`, `approved_by`, `approved_at`, `rejected_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 1500.00, 'bank', 'TXN-2026-001', 'https://example.com/slips/txn-2026-001.png', 'pending', 'Deposited to company account', NULL, NULL, NULL, NULL, '2026-02-19 10:29:23', '2026-02-19 10:29:23'),
+(2, 1, 1500.00, 'bank', 'TXN-2026-001', 'https://example.com/slips/txn-2026-001.png', 'pending', 'Deposited to company account', NULL, NULL, NULL, NULL, '2026-02-19 16:41:54', '2026-02-19 16:41:54'),
+(3, 1, 50000.00, 'bank', 'adsadsad', 'dsfdsfdsf', 'rejected', 'Bank transfer', 'dsfdsfsfds', 10, NULL, '2026-02-19 17:28:59', '2026-02-19 16:51:27', '2026-02-19 17:28:59'),
+(4, 1, 1500.00, 'bank', 'TXN-2026-001', 'agent-settlements/slips/20xgE2N6SBkCHUR6Sy7yIElx5xBbsNSUmTo4jxGS.jpg', 'approved', 'Deposited to company account', NULL, 10, '2026-02-19 18:30:27', NULL, '2026-02-19 17:05:04', '2026-02-19 18:30:27'),
+(5, 1, 2000.00, 'bank', 'dsfdsfds', 'agent-settlements/slips/DzmLYx2OjQE47s3nj2IWIt1tbka2CfRwSpI9yBgE.jpg', 'approved', 'dsfdsfsef', NULL, 10, '2026-02-19 17:15:33', NULL, '2026-02-19 17:10:02', '2026-02-19 17:15:33'),
+(6, 1, 1000.00, 'bank', 'Re123123123', 'agent-settlements/slips/ti8JHdWPyBf7EfaOWQTQ33NjOE89QBaAQdC6ncpP.jpg', 'approved', 'dfsdfsfsdf', NULL, 10, '2026-02-19 17:26:32', NULL, '2026-02-19 17:24:39', '2026-02-19 17:26:32'),
+(7, 2, 200.00, 'cash', '456', 'agent-settlements/slips/vwuG4OahhtIaK0vjwA6QHPCxd6Pg473I4b4frnTd.jpg', 'approved', NULL, NULL, 10, '2026-02-19 19:38:02', NULL, '2026-02-19 19:36:46', '2026-02-19 19:38:02'),
+(8, 2, 200.00, 'cash', '456', 'agent-settlements/slips/yG3hPDEb8z2tlJeDSHOjYIGdPAGfBYwKb8KvErr0.jpg', 'approved', NULL, NULL, 10, '2026-02-19 19:38:12', NULL, '2026-02-19 19:36:46', '2026-02-19 19:38:12'),
+(9, 2, 300.00, 'cash', '5666', 'agent-settlements/slips/NrF5fbDSsf51N2J5tLo0VI3SVvDMEEJQArzV7fGU.jpg', 'approved', 'ddf', NULL, 10, '2026-02-19 19:40:13', NULL, '2026-02-19 19:39:43', '2026-02-19 19:40:13');
 
 -- --------------------------------------------------------
 
@@ -4824,7 +5200,29 @@ INSERT INTO `commission_calculation_items` (`id`, `commission_calculation_unit_i
 (209, 159, 'App\\Models\\Employee', 5, 2250.00, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":5,\"recipient_name\":\"rahim\"}', '2026-02-19 08:43:08', '2026-02-19 08:43:08'),
 (210, 160, 'App\\Models\\Employee', 45, 3918.75, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"installment\",\"percentage\":5,\"recipient_name\":\"TAHSIN\"}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
 (211, 160, 'App\\Models\\Employee', 5, 783.75, 1.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"installment\",\"percentage\":1,\"recipient_name\":\"rahim\"}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
-(212, 161, 'App\\Models\\Employee', 45, 7650.00, 17.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":17,\"recipient_name\":\"TAHSIN\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(212, 161, 'App\\Models\\Employee', 45, 7650.00, 17.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":17,\"recipient_name\":\"TAHSIN\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(213, 162, 'App\\Models\\Employee', 49, 43200.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z1\"}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(214, 163, 'App\\Models\\Employee', 49, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z1\"}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(215, 164, 'App\\Models\\Employee', 49, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z1\"}', '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(216, 165, 'App\\Models\\Employee', 53, 9600.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z5\"}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(217, 166, 'App\\Models\\Employee', 53, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z5\"}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(218, 167, 'App\\Models\\Employee', 53, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z5\"}', '2026-02-19 19:05:25', '2026-02-19 19:05:25'),
+(219, 168, 'App\\Models\\Employee', 54, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z6\"}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(220, 169, 'App\\Models\\Employee', 54, 4800.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z6\"}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(221, 170, 'App\\Models\\Employee', 55, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z8\"}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(222, 171, 'App\\Models\\Employee', 55, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z8\"}', '2026-02-19 19:19:50', '2026-02-19 19:19:50'),
+(223, 172, 'App\\Models\\Employee', 55, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"z8\"}', '2026-02-20 09:32:58', '2026-02-20 09:32:58');
+INSERT INTO `commission_calculation_items` (`id`, `commission_calculation_unit_id`, `recipient_type`, `recipient_id`, `amount`, `percentage`, `meta`, `created_at`, `updated_at`) VALUES
+(224, 173, 'App\\Models\\Employee', 55, 18600.00, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"installment\",\"percentage\":5,\"recipient_name\":\"z8\"}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(225, 174, 'App\\Models\\Employee', 56, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"test100\"}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(226, 174, 'App\\Models\\Employee', 15, 2250.00, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":5,\"recipient_name\":\"zaman2\"}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(227, 174, 'App\\Models\\Employee', 1, 5850.00, 13.000, '{\"category\":\"development_bonus\",\"rank\":\"GM\",\"payment_type\":\"down_payment\",\"percentage\":13,\"recipient_name\":\"zaman\"}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(228, 175, 'App\\Models\\Employee', 56, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"test100\"}', '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(229, 175, 'App\\Models\\Employee', 15, 2250.00, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":5,\"recipient_name\":\"zaman2\"}', '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(230, 175, 'App\\Models\\Employee', 1, 5850.00, 13.000, '{\"category\":\"development_bonus\",\"rank\":\"GM\",\"payment_type\":\"down_payment\",\"percentage\":13,\"recipient_name\":\"zaman\"}', '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(231, 176, 'App\\Models\\Employee', 56, 5400.00, 12.000, '{\"category\":\"development_bonus\",\"rank\":\"ME\",\"payment_type\":\"down_payment\",\"percentage\":12,\"recipient_name\":\"test100\"}', '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(232, 176, 'App\\Models\\Employee', 15, 2250.00, 5.000, '{\"category\":\"development_bonus\",\"rank\":\"MM\",\"payment_type\":\"down_payment\",\"percentage\":5,\"recipient_name\":\"zaman2\"}', '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(233, 176, 'App\\Models\\Employee', 1, 5850.00, 13.000, '{\"category\":\"development_bonus\",\"rank\":\"GM\",\"payment_type\":\"down_payment\",\"percentage\":13,\"recipient_name\":\"zaman\"}', '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -5005,7 +5403,22 @@ INSERT INTO `commission_calculation_units` (`id`, `payment_id`, `sales_order_id`
 (158, 159, 147, 'draft', '2026-02-19 08:42:18', NULL, '{\"commissionable_amount\":372000.01,\"payment_type\":\"installment\",\"order_created_by\":\"admin\"}', '2026-02-19 08:42:18', '2026-02-19 08:42:18'),
 (159, 160, 148, 'draft', '2026-02-19 08:43:08', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 08:43:08', '2026-02-19 08:43:08'),
 (160, 161, 148, 'draft', '2026-02-19 08:43:13', NULL, '{\"commissionable_amount\":78375.01,\"payment_type\":\"installment\",\"order_created_by\":\"admin\"}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
-(161, 162, 149, 'draft', '2026-02-19 08:46:08', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(161, 162, 149, 'draft', '2026-02-19 08:46:08', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(162, 163, 150, 'draft', '2026-02-19 18:33:57', NULL, '{\"commissionable_amount\":360000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(163, 164, 151, 'draft', '2026-02-19 18:38:56', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(164, 165, 152, 'draft', '2026-02-19 18:41:45', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(165, 166, 153, 'draft', '2026-02-19 18:57:29', NULL, '{\"commissionable_amount\":80000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(166, 167, 154, 'draft', '2026-02-19 19:03:11', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(167, 168, 155, 'draft', '2026-02-19 19:05:25', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:05:25', '2026-02-19 19:05:25'),
+(168, 169, 156, 'draft', '2026-02-19 19:09:58', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(169, 170, 157, 'draft', '2026-02-19 19:10:57', NULL, '{\"commissionable_amount\":40000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(170, 171, 158, 'draft', '2026-02-19 19:18:05', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(171, 172, 159, 'draft', '2026-02-19 19:19:50', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-19 19:19:50', '2026-02-19 19:19:50'),
+(172, 173, 162, 'draft', '2026-02-20 09:32:58', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(173, 174, 162, 'draft', '2026-02-20 09:33:12', NULL, '{\"commissionable_amount\":372000.01,\"payment_type\":\"installment\",\"order_created_by\":\"admin\"}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(174, 175, 163, 'draft', '2026-02-20 09:47:05', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(175, 176, 164, 'draft', '2026-02-20 09:50:57', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(176, 177, 165, 'draft', '2026-02-20 10:14:43', NULL, '{\"commissionable_amount\":45000,\"payment_type\":\"down_payment\",\"order_created_by\":\"admin\"}', '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -6697,7 +7110,188 @@ INSERT INTO `customer_installments` (`id`, `sales_order_id`, `due_date`, `amount
 (1556, 149, '2026-10-24', 413333.33, 0.00, 'due', '2026-02-19 08:46:00', '2026-02-19 08:46:00'),
 (1557, 149, '2026-11-24', 413333.33, 0.00, 'due', '2026-02-19 08:46:00', '2026-02-19 08:46:00'),
 (1558, 149, '2026-12-24', 413333.33, 0.00, 'due', '2026-02-19 08:46:00', '2026-02-19 08:46:00'),
-(1559, 149, '2027-01-24', 413333.33, 0.00, 'due', '2026-02-19 08:46:00', '2026-02-19 08:46:00');
+(1559, 149, '2027-01-24', 413333.33, 0.00, 'due', '2026-02-19 08:46:00', '2026-02-19 08:46:00'),
+(1560, 150, '2026-02-24', 338333.34, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1561, 150, '2026-03-24', 338333.34, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1562, 150, '2026-04-24', 338333.34, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1563, 150, '2026-05-24', 338333.34, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1564, 150, '2026-06-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1565, 150, '2026-07-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1566, 150, '2026-08-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1567, 150, '2026-09-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1568, 150, '2026-10-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1569, 150, '2026-11-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1570, 150, '2026-12-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1571, 150, '2027-01-24', 338333.33, 0.00, 'due', '2026-02-19 18:33:43', '2026-02-19 18:33:43'),
+(1572, 151, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1573, 151, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1574, 151, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1575, 151, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1576, 151, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1577, 151, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1578, 151, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1579, 151, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1580, 151, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1581, 151, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1582, 151, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1583, 151, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 18:38:37', '2026-02-19 18:38:37'),
+(1584, 152, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1585, 152, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1586, 152, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1587, 152, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1588, 152, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1589, 152, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1590, 152, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1591, 152, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1592, 152, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1593, 152, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1594, 152, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1595, 152, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 18:41:23', '2026-02-19 18:41:23'),
+(1596, 153, '2026-02-24', 75833.34, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1597, 153, '2026-03-24', 75833.34, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04');
+INSERT INTO `customer_installments` (`id`, `sales_order_id`, `due_date`, `amount`, `paid`, `status`, `created_at`, `updated_at`) VALUES
+(1598, 153, '2026-04-24', 75833.34, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1599, 153, '2026-05-24', 75833.34, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1600, 153, '2026-06-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1601, 153, '2026-07-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1602, 153, '2026-08-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1603, 153, '2026-09-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1604, 153, '2026-10-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1605, 153, '2026-11-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1606, 153, '2026-12-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1607, 153, '2027-01-24', 75833.33, 0.00, 'due', '2026-02-19 18:57:04', '2026-02-19 18:57:04'),
+(1608, 154, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1609, 154, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1610, 154, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1611, 154, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1612, 154, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1613, 154, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1614, 154, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1615, 154, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1616, 154, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1617, 154, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1618, 154, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1619, 154, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 19:03:00', '2026-02-19 19:03:00'),
+(1620, 155, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1621, 155, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1622, 155, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1623, 155, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1624, 155, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1625, 155, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1626, 155, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1627, 155, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1628, 155, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1629, 155, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1630, 155, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1631, 155, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 19:04:50', '2026-02-19 19:04:50'),
+(1632, 156, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(1633, 156, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(1634, 156, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(1635, 156, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(1636, 156, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:45', '2026-02-19 19:09:45'),
+(1637, 156, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1638, 156, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1639, 156, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1640, 156, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1641, 156, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1642, 156, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1643, 156, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 19:09:46', '2026-02-19 19:09:46'),
+(1644, 157, '2026-02-24', 38333.34, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1645, 157, '2026-03-24', 38333.34, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1646, 157, '2026-04-24', 38333.34, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1647, 157, '2026-05-24', 38333.34, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1648, 157, '2026-06-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1649, 157, '2026-07-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1650, 157, '2026-08-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1651, 157, '2026-09-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1652, 157, '2026-10-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1653, 157, '2026-11-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1654, 157, '2026-12-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1655, 157, '2027-01-24', 38333.33, 0.00, 'due', '2026-02-19 19:10:36', '2026-02-19 19:10:36'),
+(1656, 158, '2026-02-24', 413333.34, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1657, 158, '2026-03-24', 413333.34, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1658, 158, '2026-04-24', 413333.34, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1659, 158, '2026-05-24', 413333.34, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1660, 158, '2026-06-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1661, 158, '2026-07-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1662, 158, '2026-08-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1663, 158, '2026-09-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1664, 158, '2026-10-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1665, 158, '2026-11-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1666, 158, '2026-12-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1667, 158, '2027-01-24', 413333.33, 0.00, 'due', '2026-02-19 19:17:56', '2026-02-19 19:17:56'),
+(1668, 159, '2026-02-24', 413333.34, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1669, 159, '2026-03-24', 413333.34, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1670, 159, '2026-04-24', 413333.34, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1671, 159, '2026-05-24', 413333.34, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1672, 159, '2026-06-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1673, 159, '2026-07-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1674, 159, '2026-08-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1675, 159, '2026-09-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1676, 159, '2026-10-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1677, 159, '2026-11-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1678, 159, '2026-12-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1679, 159, '2027-01-24', 413333.33, 0.00, 'due', '2026-02-19 19:19:29', '2026-02-19 19:19:29'),
+(1680, 161, '2026-02-25', 413333.34, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1681, 161, '2026-03-25', 413333.34, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1682, 161, '2026-04-25', 413333.34, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1683, 161, '2026-05-25', 413333.34, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1684, 161, '2026-06-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1685, 161, '2026-07-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1686, 161, '2026-08-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1687, 161, '2026-09-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1688, 161, '2026-10-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1689, 161, '2026-11-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1690, 161, '2026-12-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1691, 161, '2027-01-25', 413333.33, 0.00, 'due', '2026-02-20 09:28:49', '2026-02-20 09:28:49'),
+(1692, 162, '2026-02-25', 413333.34, 413333.34, 'paid', '2026-02-20 09:32:27', '2026-02-20 09:33:12'),
+(1693, 162, '2026-03-25', 413333.34, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1694, 162, '2026-04-25', 413333.34, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1695, 162, '2026-05-25', 413333.34, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1696, 162, '2026-06-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1697, 162, '2026-07-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1698, 162, '2026-08-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1699, 162, '2026-09-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1700, 162, '2026-10-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1701, 162, '2026-11-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1702, 162, '2026-12-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1703, 162, '2027-01-25', 413333.33, 0.00, 'due', '2026-02-20 09:32:27', '2026-02-20 09:32:27'),
+(1704, 163, '2026-02-25', 413333.34, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1705, 163, '2026-03-25', 413333.34, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1706, 163, '2026-04-25', 413333.34, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1707, 163, '2026-05-25', 413333.34, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1708, 163, '2026-06-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1709, 163, '2026-07-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1710, 163, '2026-08-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1711, 163, '2026-09-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1712, 163, '2026-10-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1713, 163, '2026-11-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1714, 163, '2026-12-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1715, 163, '2027-01-25', 413333.33, 0.00, 'due', '2026-02-20 09:46:47', '2026-02-20 09:46:47'),
+(1716, 164, '2026-02-25', 87083.34, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1717, 164, '2026-03-25', 87083.34, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1718, 164, '2026-04-25', 87083.34, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1719, 164, '2026-05-25', 87083.34, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1720, 164, '2026-06-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1721, 164, '2026-07-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1722, 164, '2026-08-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1723, 164, '2026-09-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1724, 164, '2026-10-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1725, 164, '2026-11-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1726, 164, '2026-12-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1727, 164, '2027-01-25', 87083.33, 0.00, 'due', '2026-02-20 09:50:15', '2026-02-20 09:50:15'),
+(1728, 165, '2026-02-25', 413333.34, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1729, 165, '2026-03-25', 413333.34, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1730, 165, '2026-04-25', 413333.34, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1731, 165, '2026-05-25', 413333.34, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1732, 165, '2026-06-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1733, 165, '2026-07-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1734, 165, '2026-08-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1735, 165, '2026-09-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1736, 165, '2026-10-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1737, 165, '2026-11-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1738, 165, '2026-12-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33'),
+(1739, 165, '2027-01-25', 413333.33, 0.00, 'due', '2026-02-20 10:14:33', '2026-02-20 10:14:33');
 
 -- --------------------------------------------------------
 
@@ -6828,7 +7422,15 @@ INSERT INTO `employees` (`id`, `employee_code`, `full_name_en`, `full_name_bn`, 
 (45, '17455929', 'TAHSIN', 'TAHSIN', 'fdfdg', 'dfgf', '01780261111', '845454545454', '1995-10-10', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'ds', 'sdafsdfsdf', NULL, 187, 1, NULL, 32, 'MM', '2026-02-19 08:34:26', '2026-02-19 08:46:08'),
 (46, '80563409', 'b23', 'ra', 'aas', 'xx', '23345', '5655', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'sdsd', 'sdssd', NULL, 189, 1, NULL, 40, 'GM', '2026-02-19 08:36:04', '2026-02-19 08:36:04'),
 (47, '11910053', 't2', 't2', 'dsf', 'dsf', '0178023243243', '4324324324', '1995-02-05', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, NULL, NULL, NULL, 191, 1, NULL, 45, 'MM', '2026-02-19 08:44:44', '2026-02-19 08:44:44'),
-(48, '37915535', 't3', 't3', 'sdf', 'dsf', '01783213213', '213213213213', '1995-02-05', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, NULL, NULL, NULL, 192, 1, NULL, 45, 'MM', '2026-02-19 08:45:24', '2026-02-19 08:45:24');
+(48, '37915535', 't3', 't3', 'sdf', 'dsf', '01783213213', '213213213213', '1995-02-05', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, NULL, NULL, NULL, 192, 1, NULL, 45, 'MM', '2026-02-19 08:45:24', '2026-02-19 08:45:24'),
+(49, '21330296', 'z1', 'ra', 'aas', 'xx', '245465757', '456646', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'sdd', 'fgfg', NULL, 193, 1, NULL, NULL, 'ME', '2026-02-19 17:50:48', '2026-02-19 18:41:45'),
+(50, '97161577', 'rahim', 'ra', 'aas', 'xx', '23443555', '343555', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'sdsf', 'gfghh', NULL, 195, 1, NULL, 23, 'ME', '2026-02-19 17:56:43', '2026-02-19 17:56:43'),
+(51, '66544767', 'z3', 'ra', 'aas', '13424355', '123433444', '5454554', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'ssdd', 'asss', NULL, 196, 1, NULL, 49, 'GM', '2026-02-19 18:07:34', '2026-02-19 18:07:34'),
+(52, '83854391', 'z4', 'ra', 'aas', 'xx', '23234535', '5656667', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'sdsd', 'dfdff', NULL, 198, 1, NULL, 49, 'GM', '2026-02-19 18:11:50', '2026-02-19 18:11:50'),
+(53, '23863689', 'z5', 'ra', 'aas', 'xx', '2343545', '3435555', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'sdd', 'fff', NULL, 200, 1, NULL, 49, 'ME', '2026-02-19 18:53:27', '2026-02-19 19:05:25'),
+(54, '11703726', 'z6', 'ra', 'aas', 'xx', '2334444', '2324455', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'assd', 'fddf', NULL, 202, 1, NULL, NULL, 'ME', '2026-02-19 19:08:31', '2026-02-19 19:08:31'),
+(55, '67530576', 'z8', 'ra', 'aas', 'xx', '23344', '6566', '2000-02-22', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, 'asdd', 'ffff', NULL, 204, 1, NULL, NULL, 'ME', '2026-02-19 19:16:30', '2026-02-20 09:32:58'),
+(56, '10286526', 'test100', 'test100', 'sdf', 'asdf', '0174566', 'asdfasdf6566666', '2026-02-20', 'Single', 'Islam', 'Male', 'Bangladeshi', NULL, NULL, NULL, NULL, NULL, 206, 1, NULL, 15, 'ME', '2026-02-20 09:44:20', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -6955,7 +7557,11 @@ INSERT INTO `employee_wallets` (`id`, `employee_id`, `balance`, `created_at`, `u
 (22, 40, 0.00, '2026-02-17 20:02:18', '2026-02-17 20:02:18'),
 (23, 41, 0.00, '2026-02-18 20:05:33', '2026-02-18 20:05:33'),
 (24, 42, 0.00, '2026-02-18 20:10:54', '2026-02-18 20:10:54'),
-(25, 43, 0.00, '2026-02-18 20:32:41', '2026-02-18 20:32:41');
+(25, 43, 0.00, '2026-02-18 20:32:41', '2026-02-18 20:32:41'),
+(26, 49, 0.00, '2026-02-19 18:13:42', '2026-02-19 18:13:42'),
+(27, 50, 0.00, '2026-02-19 19:00:20', '2026-02-19 19:00:20'),
+(28, 53, 0.00, '2026-02-19 19:02:09', '2026-02-19 19:02:09'),
+(29, 55, 0.00, '2026-02-19 19:20:57', '2026-02-19 19:20:57');
 
 -- --------------------------------------------------------
 
@@ -7407,7 +8013,29 @@ INSERT INTO `journals` (`id`, `tx_id`, `description`, `occurred_at`, `meta`, `cr
 (410, 'PMT-160', NULL, '2026-02-19 00:00:00', '{\"payment_id\":160,\"sales_order_id\":148,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:43:08', '2026-02-19 08:43:08'),
 (411, 'PMT-161', NULL, '2026-02-19 00:00:00', '{\"payment_id\":161,\"sales_order_id\":148,\"method\":\"cash\",\"base_amount\":87083.34,\"emi_extra_amount\":0}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
 (412, 'SUPP-PAYABLE-161-2', NULL, '2026-02-19 00:00:00', '{\"payment_id\":161,\"sales_order_id\":148,\"supplier_id\":2}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
-(413, 'PMT-162', NULL, '2026-02-19 00:00:00', '{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(413, 'PMT-162', NULL, '2026-02-19 00:00:00', '{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(414, 'agent_settlement_5', NULL, '2026-02-19 17:15:33', '{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}', '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(415, 'agent_settlement_6', NULL, '2026-02-19 17:26:32', '{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}', '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(416, 'agent_settlement_4', NULL, '2026-02-19 18:30:27', '{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}', '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(417, 'PMT-163', NULL, '2026-02-19 00:00:00', '{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(418, 'PMT-164', NULL, '2026-02-19 00:00:00', '{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(419, 'PMT-165', NULL, '2026-02-19 00:00:00', '{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:41:44', '2026-02-19 18:41:44'),
+(420, 'PMT-166', NULL, '2026-02-19 00:00:00', '{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(421, 'PMT-167', NULL, '2026-02-19 00:00:00', '{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(422, 'PMT-168', NULL, '2026-02-19 00:00:00', '{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(423, 'PMT-169', NULL, '2026-02-19 00:00:00', '{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(424, 'PMT-170', NULL, '2026-02-19 00:00:00', '{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(425, 'PMT-171', NULL, '2026-02-19 00:00:00', '{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(426, 'PMT-172', NULL, '2026-02-19 00:00:00', '{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(427, 'agent_settlement_7', NULL, '2026-02-19 19:38:02', '{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(428, 'agent_settlement_8', NULL, '2026-02-19 19:38:12', '{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(429, 'agent_settlement_9', NULL, '2026-02-19 19:40:13', '{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}', '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(430, 'PMT-173', NULL, '2026-02-20 00:00:00', '{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(431, 'PMT-174', NULL, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(432, 'SUPP-PAYABLE-174-2', NULL, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(433, 'PMT-175', NULL, '2026-02-20 00:00:00', '{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(434, 'PMT-176', NULL, '2026-02-20 00:00:00', '{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:50:56', '2026-02-20 09:50:56'),
+(435, 'PMT-177', NULL, '2026-02-20 00:00:00', '{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -7454,7 +8082,8 @@ INSERT INTO `ledger_accounts` (`id`, `code`, `name`, `type`, `meta`, `created_at
 (10, 'employee_wallet', 'Employee Wallet Payable', 'liability', NULL, '2025-12-14 16:01:18', '2025-12-14 16:01:18'),
 (11, 'bkash', 'Bkash Payout', 'asset', NULL, '2025-12-14 16:01:18', '2025-12-14 16:01:18'),
 (12, 'agent_wallet', 'Agent Wallet Payable', 'liability', NULL, '2025-12-14 19:18:36', '2025-12-14 19:18:36'),
-(13, 'cash', 'Cash Payout', 'asset', NULL, '2026-02-17 18:41:09', '2026-02-17 18:41:09');
+(13, 'cash', 'Cash Payout', 'asset', NULL, '2026-02-17 18:41:09', '2026-02-17 18:41:09'),
+(14, 'agent_hand_cash', 'Agent Hand Cash', 'asset', NULL, '2026-02-19 17:15:33', '2026-02-19 17:15:33');
 
 -- --------------------------------------------------------
 
@@ -8308,7 +8937,51 @@ INSERT INTO `ledger_entries` (`id`, `journal_id`, `tx_id`, `account_id`, `debit`
 (823, 412, 'SUPP-PAYABLE-161-2', 7, 10450.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":161,\"sales_order_id\":148,\"supplier_id\":2}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
 (824, 412, 'SUPP-PAYABLE-161-2', 8, 0.00, 10450.00, '2026-02-19 00:00:00', '{\"payment_id\":161,\"sales_order_id\":148,\"supplier_id\":2}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
 (825, 413, 'PMT-162', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
-(826, 413, 'PMT-162', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(826, 413, 'PMT-162', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":162,\"sales_order_id\":149,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(827, 414, 'agent_settlement_5', 2, 2000.00, 0.00, '2026-02-19 17:15:33', '{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}', '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(828, 414, 'agent_settlement_5', 14, 0.00, 2000.00, '2026-02-19 17:15:33', '{\"agent_settlement_id\":5,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"dsfdsfds\"}', '2026-02-19 17:15:33', '2026-02-19 17:15:33'),
+(829, 415, 'agent_settlement_6', 2, 1000.00, 0.00, '2026-02-19 17:26:32', '{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}', '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(830, 415, 'agent_settlement_6', 14, 0.00, 1000.00, '2026-02-19 17:26:32', '{\"agent_settlement_id\":6,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"Re123123123\"}', '2026-02-19 17:26:32', '2026-02-19 17:26:32'),
+(831, 416, 'agent_settlement_4', 2, 1500.00, 0.00, '2026-02-19 18:30:27', '{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}', '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(832, 416, 'agent_settlement_4', 14, 0.00, 1500.00, '2026-02-19 18:30:27', '{\"agent_settlement_id\":4,\"agent_id\":1,\"agent_name\":\"fusion\",\"payment_method\":\"bank\",\"reference_no\":\"TXN-2026-001\"}', '2026-02-19 18:30:27', '2026-02-19 18:30:27'),
+(833, 417, 'PMT-163', 1, 450000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(834, 417, 'PMT-163', 3, 0.00, 450000.00, '2026-02-19 00:00:00', '{\"payment_id\":163,\"sales_order_id\":150,\"method\":\"cash\",\"base_amount\":450000,\"emi_extra_amount\":0}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(835, 418, 'PMT-164', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(836, 418, 'PMT-164', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":164,\"sales_order_id\":151,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(837, 419, 'PMT-165', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(838, 419, 'PMT-165', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":165,\"sales_order_id\":152,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 18:41:45', '2026-02-19 18:41:45'),
+(839, 420, 'PMT-166', 1, 100000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(840, 420, 'PMT-166', 3, 0.00, 100000.00, '2026-02-19 00:00:00', '{\"payment_id\":166,\"sales_order_id\":153,\"method\":\"cash\",\"base_amount\":100000,\"emi_extra_amount\":0}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(841, 421, 'PMT-167', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(842, 421, 'PMT-167', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":167,\"sales_order_id\":154,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(843, 422, 'PMT-168', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(844, 422, 'PMT-168', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":168,\"sales_order_id\":155,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(845, 423, 'PMT-169', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(846, 423, 'PMT-169', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":169,\"sales_order_id\":156,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(847, 424, 'PMT-170', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(848, 424, 'PMT-170', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":170,\"sales_order_id\":157,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(849, 425, 'PMT-171', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(850, 425, 'PMT-171', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":171,\"sales_order_id\":158,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(851, 426, 'PMT-172', 1, 50000.00, 0.00, '2026-02-19 00:00:00', '{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(852, 426, 'PMT-172', 3, 0.00, 50000.00, '2026-02-19 00:00:00', '{\"payment_id\":172,\"sales_order_id\":159,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(853, 427, 'agent_settlement_7', 1, 200.00, 0.00, '2026-02-19 19:38:02', '{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(854, 427, 'agent_settlement_7', 14, 0.00, 200.00, '2026-02-19 19:38:02', '{\"agent_settlement_id\":7,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:02', '2026-02-19 19:38:02'),
+(855, 428, 'agent_settlement_8', 1, 200.00, 0.00, '2026-02-19 19:38:12', '{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(856, 428, 'agent_settlement_8', 14, 0.00, 200.00, '2026-02-19 19:38:12', '{\"agent_settlement_id\":8,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"456\"}', '2026-02-19 19:38:12', '2026-02-19 19:38:12'),
+(857, 429, 'agent_settlement_9', 1, 300.00, 0.00, '2026-02-19 19:40:13', '{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}', '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(858, 429, 'agent_settlement_9', 14, 0.00, 300.00, '2026-02-19 19:40:13', '{\"agent_settlement_id\":9,\"agent_id\":2,\"agent_name\":\"zaman\",\"payment_method\":\"cash\",\"reference_no\":\"5666\"}', '2026-02-19 19:40:14', '2026-02-19 19:40:14'),
+(859, 430, 'PMT-173', 1, 50000.00, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(860, 430, 'PMT-173', 3, 0.00, 50000.00, '2026-02-20 00:00:00', '{\"payment_id\":173,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(861, 431, 'PMT-174', 1, 413333.34, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(862, 431, 'PMT-174', 3, 0.00, 413333.34, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"method\":\"cash\",\"base_amount\":413333.34,\"emi_extra_amount\":0}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(863, 432, 'SUPP-PAYABLE-174-2', 7, 82666.67, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(864, 432, 'SUPP-PAYABLE-174-2', 8, 0.00, 82666.67, '2026-02-20 00:00:00', '{\"payment_id\":174,\"sales_order_id\":162,\"supplier_id\":2}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(865, 433, 'PMT-175', 1, 50000.00, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(866, 433, 'PMT-175', 3, 0.00, 50000.00, '2026-02-20 00:00:00', '{\"payment_id\":175,\"sales_order_id\":163,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(867, 434, 'PMT-176', 1, 50000.00, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:50:56', '2026-02-20 09:50:56'),
+(868, 434, 'PMT-176', 3, 0.00, 50000.00, '2026-02-20 00:00:00', '{\"payment_id\":176,\"sales_order_id\":164,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 09:50:57', '2026-02-20 09:50:57'),
+(869, 435, 'PMT-177', 1, 50000.00, 0.00, '2026-02-20 00:00:00', '{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 10:14:43', '2026-02-20 10:14:43'),
+(870, 435, 'PMT-177', 3, 0.00, 50000.00, '2026-02-20 00:00:00', '{\"payment_id\":177,\"sales_order_id\":165,\"method\":\"cash\",\"base_amount\":50000,\"emi_extra_amount\":0}', '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -8398,7 +9071,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (69, '2025_12_15_000003_add_installment_tenure_to_sales_orders_table', 23),
 (70, '2026_02_16_000001_create_product_emi_plans_table', 24),
 (71, '2026_02_16_000002_add_emi_totals_to_sales_orders_table', 24),
-(72, '2026_02_17_000000_create_announcements_tables', 25);
+(72, '2026_02_17_000000_create_announcements_tables', 25),
+(73, '2026_02_19_000000_create_agent_settlements_table', 26);
 
 -- --------------------------------------------------------
 
@@ -8479,7 +9153,15 @@ INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 (9, 'App\\Models\\User', 187),
 (9, 'App\\Models\\User', 189),
 (9, 'App\\Models\\User', 191),
-(9, 'App\\Models\\User', 192);
+(9, 'App\\Models\\User', 192),
+(9, 'App\\Models\\User', 193),
+(9, 'App\\Models\\User', 195),
+(9, 'App\\Models\\User', 196),
+(9, 'App\\Models\\User', 198),
+(9, 'App\\Models\\User', 200),
+(9, 'App\\Models\\User', 202),
+(9, 'App\\Models\\User', 204),
+(9, 'App\\Models\\User', 206);
 
 -- --------------------------------------------------------
 
@@ -8697,7 +9379,23 @@ INSERT INTO `order_items` (`id`, `sales_order_id`, `itemable_type`, `itemable_id
 (146, 146, 'App\\Models\\Product', 3, 6, 1000000.00, 6000000.00, '2026-02-19 08:41:52', '2026-02-19 08:41:52'),
 (147, 147, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 08:41:59', '2026-02-19 08:41:59'),
 (148, 148, 'App\\Models\\Product', 3, 1, 1000000.00, 1000000.00, '2026-02-19 08:43:01', '2026-02-19 08:43:01'),
-(149, 149, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 08:45:59', '2026-02-19 08:45:59');
+(149, 149, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 08:45:59', '2026-02-19 08:45:59'),
+(150, 150, 'App\\Models\\Product', 10, 9, 500000.00, 4500000.00, '2026-02-19 18:33:40', '2026-02-19 18:33:40'),
+(151, 151, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 18:38:35', '2026-02-19 18:38:35'),
+(152, 152, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 18:41:21', '2026-02-19 18:41:21'),
+(153, 153, 'App\\Models\\Product', 10, 2, 500000.00, 1000000.00, '2026-02-19 18:57:01', '2026-02-19 18:57:01'),
+(154, 154, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 19:02:58', '2026-02-19 19:02:58'),
+(155, 155, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 19:04:48', '2026-02-19 19:04:48'),
+(156, 156, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 19:09:44', '2026-02-19 19:09:44'),
+(157, 157, 'App\\Models\\Product', 10, 1, 500000.00, 500000.00, '2026-02-19 19:10:33', '2026-02-19 19:10:33'),
+(158, 158, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 19:17:54', '2026-02-19 19:17:54'),
+(159, 159, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(160, 160, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-19 19:19:00', '2026-02-19 19:19:00'),
+(161, 161, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-20 09:28:46', '2026-02-20 09:28:46'),
+(162, 162, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-20 09:31:29', '2026-02-20 09:31:29'),
+(163, 163, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-20 09:46:44', '2026-02-20 09:46:44'),
+(164, 164, 'App\\Models\\Product', 3, 1, 1000000.00, 1000000.00, '2026-02-20 09:50:13', '2026-02-20 09:50:13'),
+(165, 165, 'App\\Models\\Product', 1, 1, 5000000.00, 5000000.00, '2026-02-20 10:14:30', '2026-02-20 10:14:30');
 
 -- --------------------------------------------------------
 
@@ -8900,7 +9598,22 @@ INSERT INTO `payments` (`id`, `sales_order_id`, `paid_at`, `amount`, `base_amoun
 (159, 147, '2026-02-19', 413333.34, 413333.34, 0.00, 372000.01, NULL, 'installment', 'installment_payment', 'cash', '{\"reference\":\"sdfdsfdsf\",\"base_amount\":413333.34,\"emi_extra_amount\":0}', '2026-02-19 08:42:18', '2026-02-19 08:42:18'),
 (160, 148, '2026-02-19', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"dfdsafdsf\"}', '2026-02-19 08:43:08', '2026-02-19 08:43:08'),
 (161, 148, '2026-02-19', 87083.34, 87083.34, 0.00, 78375.01, NULL, 'installment', 'installment_payment', 'cash', '{\"reference\":\"dfdsf\",\"base_amount\":87083.34,\"emi_extra_amount\":0}', '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
-(162, 149, '2026-02-19', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"ssdfdsf\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08');
+(162, 149, '2026-02-19', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"ssdfdsf\"}', '2026-02-19 08:46:08', '2026-02-19 08:46:08'),
+(163, 150, '2026-02-19', 450000.00, 450000.00, 0.00, 360000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 18:33:57', '2026-02-19 18:33:57'),
+(164, 151, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 18:38:56', '2026-02-19 18:38:56'),
+(165, 152, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 18:41:44', '2026-02-19 18:41:44'),
+(166, 153, '2026-02-19', 100000.00, 100000.00, 0.00, 80000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 18:57:29', '2026-02-19 18:57:29'),
+(167, 154, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:03:11', '2026-02-19 19:03:11'),
+(168, 155, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:05:24', '2026-02-19 19:05:24'),
+(169, 156, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:09:58', '2026-02-19 19:09:58'),
+(170, 157, '2026-02-19', 50000.00, 50000.00, 0.00, 40000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:10:57', '2026-02-19 19:10:57'),
+(171, 158, '2026-02-19', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:18:05', '2026-02-19 19:18:05'),
+(172, 159, '2026-02-19', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-19 19:19:49', '2026-02-19 19:19:49'),
+(173, 162, '2026-02-20', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"asdf\"}', '2026-02-20 09:32:58', '2026-02-20 09:32:58'),
+(174, 162, '2026-02-20', 413333.34, 413333.34, 0.00, 372000.01, NULL, 'installment', 'installment_payment', 'cash', '{\"reference\":null,\"base_amount\":413333.34,\"emi_extra_amount\":0}', '2026-02-20 09:33:12', '2026-02-20 09:33:12'),
+(175, 163, '2026-02-20', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"321213232\"}', '2026-02-20 09:47:05', '2026-02-20 09:47:05'),
+(176, 164, '2026-02-20', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":\"dfjl;;;;;\"}', '2026-02-20 09:50:56', '2026-02-20 09:50:56'),
+(177, 165, '2026-02-20', 50000.00, 50000.00, 0.00, 45000.00, NULL, 'down_payment', 'down_payment', 'cash', '{\"reference\":null}', '2026-02-20 10:14:43', '2026-02-20 10:14:43');
 
 -- --------------------------------------------------------
 
@@ -9042,7 +9755,8 @@ INSERT INTO `payment_allocations` (`id`, `payment_id`, `customer_installment_id`
 (118, 141, 1333, 413333.34, '2026-02-18 18:58:01', '2026-02-18 18:58:01'),
 (119, 155, 1488, 413333.34, '2026-02-19 07:47:37', '2026-02-19 07:47:37'),
 (120, 159, 1524, 413333.34, '2026-02-19 08:42:18', '2026-02-19 08:42:18'),
-(121, 161, 1536, 87083.34, '2026-02-19 08:43:13', '2026-02-19 08:43:13');
+(121, 161, 1536, 87083.34, '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
+(122, 174, 1692, 413333.34, '2026-02-20 09:33:12', '2026-02-20 09:33:12');
 
 -- --------------------------------------------------------
 
@@ -9866,7 +10580,23 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (1220, 'App\\Models\\User', 166, 'api_token', '3560a97bf65a81f4790efb4728c1ebd36eb2fb05356160313446f5b4520b6e29', '[\"*\"]', '2026-02-19 08:04:49', NULL, '2026-02-19 08:04:26', '2026-02-19 08:04:49'),
 (1225, 'App\\Models\\User', 172, 'api_token', '2d3240eac88fc9560c14cb2a3c885d76c48b2cbd0149a4806ea2c4d639994af4', '[\"*\"]', '2026-02-19 08:44:27', NULL, '2026-02-19 08:44:08', '2026-02-19 08:44:27'),
 (1226, 'App\\Models\\User', 10, 'api_token', '456348d7f80b01e243df4927e4274d70242af26837c45eac046d0701864f5499', '[\"*\"]', '2026-02-19 08:59:35', NULL, '2026-02-19 08:55:12', '2026-02-19 08:59:35'),
-(1227, 'App\\Models\\User', 10, 'api_token', 'f1809b7627378a88115bd84728c3a071372469510396901a60062aa3a8616005', '[\"*\"]', '2026-02-19 15:55:23', NULL, '2026-02-19 15:51:33', '2026-02-19 15:55:23');
+(1227, 'App\\Models\\User', 10, 'api_token', 'f1809b7627378a88115bd84728c3a071372469510396901a60062aa3a8616005', '[\"*\"]', '2026-02-19 19:48:27', NULL, '2026-02-19 15:51:33', '2026-02-19 19:48:27'),
+(1228, 'App\\Models\\User', 10, 'api_token', '7ab68339b1ce8f424aa9e8b019c19b113e60ed2defa4e168faafb84aff1f20ec', '[\"*\"]', '2026-02-19 10:27:57', NULL, '2026-02-19 10:27:28', '2026-02-19 10:27:57'),
+(1229, 'App\\Models\\User', 111, 'api_token', '3d7d94b360db3faf99bdd9cc842e14d1e0af45451d4e4a865a9f509e83a9c2d3', '[\"*\"]', '2026-02-19 10:29:36', NULL, '2026-02-19 10:28:52', '2026-02-19 10:29:36'),
+(1232, 'App\\Models\\User', 111, 'api_token', 'c2684b3b5873555154e9b2b8cf6c33971d8c421025e72443b3e4cf1088ebd7eb', '[\"*\"]', '2026-02-19 16:51:52', NULL, '2026-02-19 16:41:32', '2026-02-19 16:51:52'),
+(1233, 'App\\Models\\User', 10, 'api_token', '8817cfacfe39185b67e9446f776c0d2d429e1b52fc6eedd75797538e647d4f60', '[\"*\"]', NULL, NULL, '2026-02-19 17:04:17', '2026-02-19 17:04:17'),
+(1234, 'App\\Models\\User', 111, 'api_token', '8a6dc24b033a5d14741ac51a8b37daeac107c9c0dee4efdb3d97b06c4476c1dc', '[\"*\"]', '2026-02-19 17:10:18', NULL, '2026-02-19 17:04:34', '2026-02-19 17:10:18'),
+(1236, 'App\\Models\\User', 10, 'api_token', 'dcfa367a8e96e9ab210f6812588d92a0666b488aa0fabe258a4025b0bc58c9fa', '[\"*\"]', '2026-02-19 17:14:16', NULL, '2026-02-19 17:14:03', '2026-02-19 17:14:16'),
+(1238, 'App\\Models\\User', 166, 'api_token', 'cc2c562447deb3d80e944bd4d529f736da55c1cf19734ccbc4f4c5c9939a36b4', '[\"*\"]', '2026-02-19 17:21:35', NULL, '2026-02-19 17:20:35', '2026-02-19 17:21:35'),
+(1239, 'App\\Models\\User', 10, 'api_token', '57c58cc325bb504ce611edca8a471c8d2edf9d8280685ec47e4fba315e0a9bee', '[\"*\"]', '2026-02-19 17:30:39', NULL, '2026-02-19 17:24:53', '2026-02-19 17:30:39'),
+(1240, 'App\\Models\\User', 111, 'api_token', '66e27a61854616ada3a091a924cd6149100f607a0464eb1ba0fbc36572626962', '[\"*\"]', '2026-02-19 17:29:07', NULL, '2026-02-19 17:25:50', '2026-02-19 17:29:07'),
+(1241, 'App\\Models\\User', 10, 'api_token', 'bf80258d3e5f5bf18c0269619cce8bc236de7816e1fa4f869fc820595de8b4cc', '[\"*\"]', '2026-02-19 17:32:33', NULL, '2026-02-19 17:32:13', '2026-02-19 17:32:33'),
+(1248, 'App\\Models\\User', 10, 'api_token', 'd0cbc73bf378a3570b1ad24ddecc9cfc4e8c96540542e1705d07cdab45b42694', '[\"*\"]', '2026-02-19 18:23:00', NULL, '2026-02-19 18:21:50', '2026-02-19 18:23:00'),
+(1255, 'App\\Models\\User', 166, 'api_token', 'd81668df253f1a57d52f20834c1130440be93777fd6333c50e240c5c280959f6', '[\"*\"]', '2026-02-19 19:39:44', NULL, '2026-02-19 19:32:52', '2026-02-19 19:39:44'),
+(1256, 'App\\Models\\User', 10, 'api_token', '2bafaaffaa05e2891993c18d3635b8c11f7123e18ba45b1b265a5e052360a626', '[\"*\"]', '2026-02-19 22:40:30', NULL, '2026-02-19 22:40:15', '2026-02-19 22:40:30'),
+(1257, 'App\\Models\\User', 10, 'api_token', '7f607d617e47092b6d80ee63dd060ff53689c7bedd00138a234e4c8819fe584a', '[\"*\"]', '2026-02-19 23:15:16', NULL, '2026-02-19 23:07:14', '2026-02-19 23:15:16'),
+(1258, 'App\\Models\\User', 193, 'api_token', '82d2b1c707544634dc06556c8ff2c52186e54c5b66a4d90c0999532ffc05db67', '[\"*\"]', '2026-02-19 23:09:37', NULL, '2026-02-19 23:09:30', '2026-02-19 23:09:37'),
+(1261, 'App\\Models\\User', 10, 'api_token', 'b4cbd322b79455baffe037df0f4daf3f5c341aaf22ae0caad7e6b3be684ebad9', '[\"*\"]', '2026-02-20 10:23:19', NULL, '2026-02-20 09:27:02', '2026-02-20 10:23:19');
 
 -- --------------------------------------------------------
 
@@ -9904,7 +10634,7 @@ INSERT INTO `products` (`id`, `category_id`, `supplier_id`, `supplier_percentage
 (1, 1, 2, 20, 'Bashundhara Residential Plot', 'land', 5000000.00, 'dsfgdgfdgfdg', 50000.00, 10, '{\"size\":\"5 katha\",\"location\":\"Bashundhara Block D\"}', 'products/images/nOHg4g10pbkeSF3tsfhOAnDwNLnWK6Oqy7l02nab.jpg', 'public', NULL, '2025-10-20 13:59:05', '2025-12-29 17:12:51', 100.00, 10.00, 1),
 (3, 10, 2, 12, 'ma-shopnoo bilash', 'land', 1000000.00, 'sfsdf', 50000.00, 10, NULL, 'products/images/Tv8jpkry3njpz60jkIP6VrwX2tPVQi360iTUlTTI.jpg', 'public', NULL, '2025-10-31 17:42:03', '2025-12-29 17:14:50', 1000.00, 10.00, 1),
 (6, 1, 2, 15, 'Dhaka South', 'land', 50000.00, 'sdfsf', 50000.00, 10, NULL, 'products/images/rVJXAdAqEQjveibyN3Nvxmo1iR3sOEl6GHKoFBpx.jpg', 'public', NULL, '2025-11-11 15:44:51', '2025-12-29 17:21:43', 500.00, 0.00, 1),
-(10, 1, 1, 10, 'Dhaka_North', 'flat', 500000.00, 'dsfdsf', 50000.00, 20, NULL, 'products/images/5E85ScfABDwC2JqPXsZQSatWRg7yQsWNAR42xm5M.jpg', 'public', NULL, '2025-11-11 17:00:02', '2025-12-29 17:21:53', 96.00, 5.00, 1),
+(10, 1, 1, 10, 'Dhaka_North', 'flat', 500000.00, 'dsfdsf', 50000.00, 20, NULL, 'products/images/5E85ScfABDwC2JqPXsZQSatWRg7yQsWNAR42xm5M.jpg', 'public', NULL, '2025-11-11 17:00:02', '2026-02-19 19:10:33', 79.00, 5.00, 1),
 (12, 1, 1, 20, 'Duplex Home', 'flat', 500000.00, 'dfsf', 50000.00, 20, NULL, 'products/images/8k92YuLZOAA9rJJUVn8wJEX7EWGVldHg6LJgplB1.jpg', 'public', NULL, '2025-11-13 04:06:06', '2025-12-29 17:22:11', 98.00, 5.00, 1),
 (13, 1, 1, 20, 'Banasree Project', 'flat', 500000.00, 'fds', 50000.00, 10, NULL, 'products/images/6u76U0unGGBOMjT2hpSQqVWqGo8g1mPZQbEqhO3a.jpg', 'public', NULL, '2025-12-23 16:29:59', '2025-12-29 17:22:20', 100.00, 5.00, 1),
 (15, 1, 1, 5, 'testing', 'flat', 500000.00, 'Premium land parcel in a prime location.', 50000.00, 10, NULL, 'products/images/gkdPKviydMJbdttERJPx0dTPeF2gNf1a1M85UKAP.jpg', 'public', NULL, '2025-12-29 16:04:05', '2025-12-29 17:22:40', 100.00, 5.00, 1),
@@ -9941,8 +10671,6 @@ INSERT INTO `product_emi_plans` (`id`, `product_id`, `tenure_months`, `extra_typ
 (2, 27, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 07:19:11', '2026-02-16 07:19:11'),
 (5, 3, 12, 'percent', 10.00, 1, NULL, '2026-02-16 07:34:38', '2026-02-16 07:34:38'),
 (6, 3, 24, 'percent', 20.00, 1, NULL, '2026-02-16 07:34:38', '2026-02-16 07:34:38'),
-(7, 1, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 07:35:02', '2026-02-16 07:35:02'),
-(8, 1, 24, 'flat', 30000.00, 1, NULL, '2026-02-16 07:35:02', '2026-02-16 07:35:02'),
 (9, 6, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 08:39:38', '2026-02-16 08:39:38'),
 (10, 6, 24, 'flat', 19999.99, 1, NULL, '2026-02-16 08:39:38', '2026-02-16 08:39:38'),
 (11, 10, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 08:39:58', '2026-02-16 08:39:58'),
@@ -9952,7 +10680,9 @@ INSERT INTO `product_emi_plans` (`id`, `product_id`, `tenure_months`, `extra_typ
 (15, 13, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 08:40:32', '2026-02-16 08:40:32'),
 (16, 13, 24, 'flat', 20000.00, 1, NULL, '2026-02-16 08:40:32', '2026-02-16 08:40:32'),
 (17, 15, 12, 'flat', 10000.00, 1, NULL, '2026-02-16 15:01:57', '2026-02-16 15:01:57'),
-(18, 15, 24, 'flat', 20000.00, 1, NULL, '2026-02-16 15:01:57', '2026-02-16 15:01:57');
+(18, 15, 24, 'flat', 20000.00, 1, NULL, '2026-02-16 15:01:57', '2026-02-16 15:01:57'),
+(19, 1, 12, 'flat', 10000.00, 1, NULL, '2026-02-20 09:46:25', '2026-02-20 09:46:25'),
+(20, 1, 24, 'flat', 30000.00, 1, NULL, '2026-02-20 09:46:25', '2026-02-20 09:46:25');
 
 -- --------------------------------------------------------
 
@@ -10285,7 +11015,21 @@ INSERT INTO `sales_orders` (`id`, `customer_id`, `employee_id`, `source_me_id`, 
 (146, 173, 40, 40, 'admin', 2, 'order', 'MM', NULL, 1, 300000.00, 12, 570000.00, 6270000.00, 6000000.00, 'active', '2026-02-19 08:41:52', '2026-02-19 08:41:56'),
 (147, 190, 45, 45, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-19 08:41:59', '2026-02-19 08:42:01'),
 (148, 190, 45, 45, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 95000.00, 1045000.00, 1000000.00, 'active', '2026-02-19 08:43:01', '2026-02-19 08:43:02'),
-(149, 190, 45, 45, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-19 08:45:59', '2026-02-19 08:46:00');
+(149, 190, 45, 45, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-19 08:45:59', '2026-02-19 08:46:00'),
+(150, 194, 49, 49, 'admin', NULL, 'order', 'ME', NULL, 1, 450000.00, 12, 10000.00, 4060000.00, 4500000.00, 'active', '2026-02-19 18:33:40', '2026-02-19 18:33:43'),
+(151, 194, 49, 49, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 18:38:35', '2026-02-19 18:38:37'),
+(152, 194, 49, 49, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 18:41:21', '2026-02-19 18:41:23'),
+(153, 201, 53, 53, 'admin', NULL, 'order', 'ME', NULL, 1, 100000.00, 12, 10000.00, 910000.00, 1000000.00, 'active', '2026-02-19 18:57:01', '2026-02-19 18:57:04'),
+(154, 201, 53, 53, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 19:02:58', '2026-02-19 19:03:00'),
+(155, 201, 53, 53, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 19:04:48', '2026-02-19 19:04:50'),
+(156, 203, 54, 54, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 19:09:44', '2026-02-19 19:09:45'),
+(157, 203, 54, 54, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 460000.00, 500000.00, 'active', '2026-02-19 19:10:33', '2026-02-19 19:10:35'),
+(158, 205, 55, 55, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-19 19:17:54', '2026-02-19 19:17:56'),
+(159, 205, 55, 55, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-19 19:19:00', '2026-02-19 19:19:29'),
+(162, 205, 55, 55, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-20 09:31:29', '2026-02-20 09:32:27'),
+(163, 207, 56, 56, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-20 09:46:44', '2026-02-20 09:46:47'),
+(164, 207, 56, 56, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 95000.00, 1045000.00, 1000000.00, 'active', '2026-02-20 09:50:13', '2026-02-20 09:50:15'),
+(165, 207, 56, 56, 'admin', NULL, 'order', 'ME', NULL, 1, 50000.00, 12, 10000.00, 4960000.00, 5000000.00, 'active', '2026-02-20 10:14:30', '2026-02-20 10:14:33');
 
 -- --------------------------------------------------------
 
@@ -10342,7 +11086,15 @@ INSERT INTO `stock_movements` (`id`, `product_id`, `type`, `qty`, `ref_type`, `r
 (4, 12, 'out', 1.00, 'sales_order', 15, NULL, '2025-11-13 04:32:14', '2025-11-13 04:32:14'),
 (5, 12, 'out', 1.00, 'sales_order', 36, NULL, '2025-12-10 17:14:51', '2025-12-10 17:14:51'),
 (6, 10, 'out', 1.00, 'sales_order', 39, NULL, '2025-12-10 17:24:18', '2025-12-10 17:24:18'),
-(7, 10, 'out', 1.00, 'sales_order', 42, NULL, '2025-12-10 17:44:36', '2025-12-10 17:44:36');
+(7, 10, 'out', 1.00, 'sales_order', 42, NULL, '2025-12-10 17:44:36', '2025-12-10 17:44:36'),
+(8, 10, 'out', 9.00, 'sales_order', 150, NULL, '2026-02-19 18:33:40', '2026-02-19 18:33:40'),
+(9, 10, 'out', 1.00, 'sales_order', 151, NULL, '2026-02-19 18:38:35', '2026-02-19 18:38:35'),
+(10, 10, 'out', 1.00, 'sales_order', 152, NULL, '2026-02-19 18:41:21', '2026-02-19 18:41:21'),
+(11, 10, 'out', 2.00, 'sales_order', 153, NULL, '2026-02-19 18:57:01', '2026-02-19 18:57:01'),
+(12, 10, 'out', 1.00, 'sales_order', 154, NULL, '2026-02-19 19:02:58', '2026-02-19 19:02:58'),
+(13, 10, 'out', 1.00, 'sales_order', 155, NULL, '2026-02-19 19:04:48', '2026-02-19 19:04:48'),
+(14, 10, 'out', 1.00, 'sales_order', 156, NULL, '2026-02-19 19:09:44', '2026-02-19 19:09:44'),
+(15, 10, 'out', 1.00, 'sales_order', 157, NULL, '2026-02-19 19:10:33', '2026-02-19 19:10:33');
 
 -- --------------------------------------------------------
 
@@ -10425,7 +11177,8 @@ INSERT INTO `supplier_payables` (`id`, `supplier_id`, `payment_id`, `sales_order
 (32, 2, 141, 129, 82666.67, 'unpaid', NULL, '2026-02-18 18:58:01', '2026-02-18 18:58:01'),
 (33, 2, 155, 144, 82666.67, 'unpaid', NULL, '2026-02-19 07:47:37', '2026-02-19 07:47:37'),
 (34, 2, 159, 147, 82666.67, 'unpaid', NULL, '2026-02-19 08:42:18', '2026-02-19 08:42:18'),
-(35, 2, 161, 148, 10450.00, 'unpaid', NULL, '2026-02-19 08:43:13', '2026-02-19 08:43:13');
+(35, 2, 161, 148, 10450.00, 'unpaid', NULL, '2026-02-19 08:43:13', '2026-02-19 08:43:13'),
+(36, 2, 174, 162, 82666.67, 'unpaid', NULL, '2026-02-20 09:33:12', '2026-02-20 09:33:12');
 
 -- --------------------------------------------------------
 
@@ -10563,7 +11316,22 @@ INSERT INTO `users` (`id`, `name`, `father_name`, `mother_name`, `marital_status
 (189, 'b23', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'b23@gmail.com', 'employee', NULL, '$2y$12$bnnuFCmMSts8N/EwS5OYQ..bgVtbqKo.c1jn61RBStNq8WsNydIuO', NULL, '2026-02-19 08:36:04', '2026-02-19 08:36:04'),
 (190, 'Islam vaia', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 45, 'islam@gmail.com', 'customer', NULL, '$2y$12$gQJQxy5t9XZlfwQPNGsQ5uZggyENrozCjLhSVygVcH/WgFzZ20sXe', NULL, '2026-02-19 08:37:04', '2026-02-19 08:37:04'),
 (191, 't2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 't2@gmail.com', 'employee', NULL, '$2y$12$p2.TnFWyDEYPK4NbEB59tu.VJtq3CLvDqkabP36CM/WQfemQfrVAq', NULL, '2026-02-19 08:44:44', '2026-02-19 08:44:44'),
-(192, 't3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 't3@gmail.com', 'employee', NULL, '$2y$12$msguU6nqlx2sebM6inMCeeQydIMFH4NM8FWorNwZAYCWFJIVlj6qO', NULL, '2026-02-19 08:45:24', '2026-02-19 08:45:24');
+(192, 't3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 't3@gmail.com', 'employee', NULL, '$2y$12$msguU6nqlx2sebM6inMCeeQydIMFH4NM8FWorNwZAYCWFJIVlj6qO', NULL, '2026-02-19 08:45:24', '2026-02-19 08:45:24'),
+(193, 'z1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z1@gmail.com', 'employee', NULL, '$2y$12$3TxzI.AOtKr340Wj5MUVoukvcIe5IrnZoGBG/TOdraMkyX3ReFgxS', NULL, '2026-02-19 17:50:48', '2026-02-19 17:50:48'),
+(194, 'z1c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 49, 'z1c@gmail.com', 'customer', NULL, '$2y$12$0l/FuskPHaeL/N1oWzrZiO4lWXD50CVuBRXpEGrj.3XW5sxVsfQNW', NULL, '2026-02-19 17:51:49', '2026-02-19 17:51:49'),
+(195, 'rahim', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z2@gmail.com', 'employee', NULL, '$2y$12$BBCbuZ/l02muMqgJZKAk3ebZn4tRKBDc1BcrvQvQ.nwuGBDU2AHha', NULL, '2026-02-19 17:56:43', '2026-02-19 17:56:43'),
+(196, 'z3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z3@gmail.com', 'employee', NULL, '$2y$12$rj99kxI4GNTAjaMzCIB2uOt9TdSjhypK70kJgY5tC.8JXiLyH/tju', NULL, '2026-02-19 18:07:34', '2026-02-19 18:07:34'),
+(197, 'z3c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 51, 'z3c@gmail.com', 'customer', NULL, '$2y$12$driezGtycpNP9q16BkqjLOBCB95K6TBn18BYL4LbLSsK8UmKFdzSq', NULL, '2026-02-19 18:08:58', '2026-02-19 18:08:58'),
+(198, 'z4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z4@gmail.com', 'employee', NULL, '$2y$12$pbH.gME6.72r7S2wda5SHOD1j.ufeNHDI5Ykpgp/n1mGJxgUPHR02', NULL, '2026-02-19 18:11:50', '2026-02-19 18:11:50'),
+(199, 'z4c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 52, 'z4c@gmail.com', 'customer', NULL, '$2y$12$SUbuFsf9aJf6P/idNyIJ1OAzlsxgXEREx4pYjZsZlkKcUBBrxfQVy', NULL, '2026-02-19 18:13:00', '2026-02-19 18:13:00'),
+(200, 'z5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z5c@gmail.com', 'employee', NULL, '$2y$12$UNQQ8WIUAqMmaT99/XsqhOx7liYtpUpnRYl8pHxNA27JlllmP6Uyq', NULL, '2026-02-19 18:53:27', '2026-02-19 18:53:27'),
+(201, 'z5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 53, 'z5cc@gmail.com', 'customer', NULL, '$2y$12$Es6nTn6IoGNKhx2VtotPM.dfw8nhWjWVexkZQoeyTUDwcti2oyoHa', NULL, '2026-02-19 18:55:51', '2026-02-19 18:55:51'),
+(202, 'z6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z6@gmail.com', 'employee', NULL, '$2y$12$hXlXmwvalddmLcH/SHGRcuBZfyia/Gjynou.ptTv4uvRUxcfFlhIW', NULL, '2026-02-19 19:08:31', '2026-02-19 19:08:31'),
+(203, 'z6c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 54, 'z6c@gmail.com', 'customer', NULL, '$2y$12$NNhgTghHCN53tgXZBAp9O.bU0gLdWpM34DtzKZK5UDV8yUI27DxJa', NULL, '2026-02-19 19:09:13', '2026-02-19 19:09:13'),
+(204, 'z8', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'z8@gmail.com', 'employee', NULL, '$2y$12$JMmnaXJziWzvrxP0kXGXvuyMe2bM7wysfaTXFgQWmGm2W8Kkrbcr.', NULL, '2026-02-19 19:16:30', '2026-02-19 19:16:30'),
+(205, 'z8c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 55, 'z8c@gmail.com', 'customer', NULL, '$2y$12$U2KJrjgsC..psDerm/NncO5KmwS5MXLEDKFWJNEIl3EQLcMu/UFmS', NULL, '2026-02-19 19:17:14', '2026-02-19 19:17:14'),
+(206, 'test100', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'test100@gmail.com', 'employee', NULL, '$2y$12$/ZT9UrHprHUB66IcA0Maguebw1HNc64KHxN41KhSKTTxwCkL9mbEO', NULL, '2026-02-20 09:44:20', '2026-02-20 09:44:20'),
+(207, 'test100c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '014745', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 1, NULL, 56, 'test100c@example.com', 'customer', NULL, '$2y$12$C5F.wTqZiPt6PBmJoltmI.oRMk.R2Vz.ykrSYtwaY8gobTR8eTXnC', NULL, '2026-02-20 09:45:29', '2026-02-20 09:45:29');
 
 -- --------------------------------------------------------
 
@@ -10664,6 +11432,14 @@ ALTER TABLE `agents`
   ADD UNIQUE KEY `agents_agent_code_unique` (`agent_code`),
   ADD KEY `agents_user_id_foreign` (`user_id`),
   ADD KEY `agents_branch_id_foreign` (`branch_id`);
+
+--
+-- Indexes for table `agent_settlements`
+--
+ALTER TABLE `agent_settlements`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `agent_settlements_agent_id_foreign` (`agent_id`),
+  ADD KEY `agent_settlements_approved_by_foreign` (`approved_by`);
 
 --
 -- Indexes for table `agent_wallets`
@@ -11095,13 +11871,19 @@ ALTER TABLE `work_summaries`
 -- AUTO_INCREMENT for table `activity_log`
 --
 ALTER TABLE `activity_log`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4075;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4410;
 
 --
 -- AUTO_INCREMENT for table `agents`
 --
 ALTER TABLE `agents`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `agent_settlements`
+--
+ALTER TABLE `agent_settlements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `agent_wallets`
@@ -11143,13 +11925,13 @@ ALTER TABLE `commissions`
 -- AUTO_INCREMENT for table `commission_calculation_items`
 --
 ALTER TABLE `commission_calculation_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=234;
 
 --
 -- AUTO_INCREMENT for table `commission_calculation_units`
 --
 ALTER TABLE `commission_calculation_units`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
 
 --
 -- AUTO_INCREMENT for table `commission_process_batches`
@@ -11173,7 +11955,7 @@ ALTER TABLE `commission_settings`
 -- AUTO_INCREMENT for table `customer_installments`
 --
 ALTER TABLE `customer_installments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1560;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1740;
 
 --
 -- AUTO_INCREMENT for table `director_funds`
@@ -11191,7 +11973,7 @@ ALTER TABLE `documents`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `employee_activities`
@@ -11221,7 +12003,7 @@ ALTER TABLE `employee_recruit_requests`
 -- AUTO_INCREMENT for table `employee_wallets`
 --
 ALTER TABLE `employee_wallets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -11233,7 +12015,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `journals`
 --
 ALTER TABLE `journals`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=414;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=436;
 
 --
 -- AUTO_INCREMENT for table `land_lots`
@@ -11245,19 +12027,19 @@ ALTER TABLE `land_lots`
 -- AUTO_INCREMENT for table `ledger_accounts`
 --
 ALTER TABLE `ledger_accounts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `ledger_entries`
 --
 ALTER TABLE `ledger_entries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=827;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=871;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `monthly_incentives`
@@ -11269,19 +12051,19 @@ ALTER TABLE `monthly_incentives`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=178;
 
 --
 -- AUTO_INCREMENT for table `payment_allocations`
 --
 ALTER TABLE `payment_allocations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT for table `payment_intents`
@@ -11317,7 +12099,7 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1228;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1262;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -11329,7 +12111,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `product_emi_plans`
 --
 ALTER TABLE `product_emi_plans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `product_emi_rules`
@@ -11365,7 +12147,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sales_orders`
 --
 ALTER TABLE `sales_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
 
 --
 -- AUTO_INCREMENT for table `services`
@@ -11377,7 +12159,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `stock_movements`
 --
 ALTER TABLE `stock_movements`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -11389,13 +12171,13 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `supplier_payables`
 --
 ALTER TABLE `supplier_payables`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
 -- AUTO_INCREMENT for table `wallet_withdraw_requests`
@@ -11419,6 +12201,13 @@ ALTER TABLE `work_summaries`
 ALTER TABLE `agents`
   ADD CONSTRAINT `agents_branch_id_foreign` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `agents_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `agent_settlements`
+--
+ALTER TABLE `agent_settlements`
+  ADD CONSTRAINT `agent_settlements_agent_id_foreign` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `agent_settlements_approved_by_foreign` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `agent_wallets`
