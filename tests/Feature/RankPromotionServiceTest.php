@@ -56,6 +56,24 @@ class RankPromotionServiceTest extends TestCase
         $this->assertSame(Employee::RANK_ED, $employee->fresh()->rank);
     }
 
+    public function test_it_does_not_downgrade_existing_higher_rank_employee_when_requirements_start_from_me(): void
+    {
+        CommissionSetting::create(['key' => 'share_value', 'value' => 50000]);
+
+        RankRequirement::insert([
+            $this->requirement(Employee::RANK_ME, 1),
+            $this->requirement(Employee::RANK_MM, 2),
+            $this->requirement(Employee::RANK_AGM, 3),
+            $this->requirement(Employee::RANK_DGM, 4),
+        ]);
+
+        $employee = $this->createEmployee('agm@alhamra.test', Employee::RANK_AGM);
+
+        app(RankPromotionService::class)->evaluateEmployee($employee->fresh());
+
+        $this->assertSame(Employee::RANK_AGM, $employee->fresh()->rank);
+    }
+
     private function requirement(string $rank, int $sequence): array
     {
         return [

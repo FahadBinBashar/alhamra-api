@@ -58,11 +58,22 @@ class RankPromotionService
         $totalDownPayment = (float) (clone $ordersQuery)->sum('down_payment');
         $shareCount = $shareValue > 0 ? floor($totalDownPayment / $shareValue) : 0;
 
+        $rankSequences = $requirements
+            ->pluck('sequence', 'rank')
+            ->map(fn ($sequence) => (int) $sequence);
+
+        $currentSequence = $rankSequences->get($employee->rank);
         $eligibleRank = $employee->rank;
 
         $directorSettings = $this->getDirectorRankSettings();
 
         foreach ($requirements as $requirement) {
+            $requirementSequence = (int) $requirement->sequence;
+
+            if ($currentSequence !== null && $requirementSequence <= $currentSequence) {
+                continue;
+            }
+
             if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery, $directorSettings)) {
                 break;
             }
