@@ -74,7 +74,55 @@ class RankPromotionServiceTest extends TestCase
         $this->assertSame(Employee::RANK_AGM, $employee->fresh()->rank);
     }
 
-    private function requirement(string $rank, int $sequence): array
+
+    public function test_it_counts_higher_ranks_towards_gm_target_for_director_promotions(): void
+    {
+        CommissionSetting::create(['key' => 'share_value', 'value' => 50000]);
+        CommissionSetting::create([
+            'key' => 'director_rank_settings',
+            'value' => [
+                'ed' => ['share_target' => 0, 'gm_target' => 2],
+            ],
+        ]);
+
+        RankRequirement::insert([
+            $this->requirement(Employee::RANK_PD, 1),
+            $this->requirement(Employee::RANK_ED, 2),
+        ]);
+
+        $employee = $this->createEmployee('pd-candidate@alhamra.test', Employee::RANK_PD);
+
+        $this->createEmployee('direct-gm@alhamra.test', Employee::RANK_GM, $employee->id);
+        $this->createEmployee('direct-dmd@alhamra.test', Employee::RANK_DMD, $employee->id);
+
+        app(RankPromotionService::class)->evaluateEmployee($employee->fresh());
+
+        $this->assertSame(Employee::RANK_ED, $employee->fresh()->rank);
+    }
+
+    public function test_it_counts_higher_direct_ranks_towards_lower_rank_requirements(): void
+    {
+        CommissionSetting::create(['key' => 'share_value', 'value' => 50000]);
+
+        RankRequirement::insert([
+            $this->requirement(Employee::RANK_ME, 1),
+            $this->requirement(Employee::RANK_MM, 2),
+            $this->requirement(Employee::RANK_AGM, 3),
+            $this->requirement(Employee::RANK_DGM, 4, ['direct_mm_required' => 3]),
+        ]);
+
+        $employee = $this->createEmployee('candidate@alhamra.test', Employee::RANK_AGM);
+
+        $this->createEmployee('direct-mm@alhamra.test', Employee::RANK_MM, $employee->id);
+        $this->createEmployee('direct-agm@alhamra.test', Employee::RANK_AGM, $employee->id);
+        $this->createEmployee('direct-dgm@alhamra.test', Employee::RANK_DGM, $employee->id);
+
+        app(RankPromotionService::class)->evaluateEmployee($employee->fresh());
+
+        $this->assertSame(Employee::RANK_DGM, $employee->fresh()->rank);
+    }
+
+    private function requirement(string $rank, int $sequence, array $meta = []): array
     {
         return [
             'rank' => $rank,
@@ -83,7 +131,7 @@ class RankPromotionServiceTest extends TestCase
             'bonus_down_payment' => 0,
             'bonus_installment' => 0,
             'direct_required' => 0,
-            'meta' => json_encode(['shares_required' => 0]),
+            'meta' => json_encode(array_merge(['shares_required' => 0], $meta)),
             'created_at' => now(),
             'updated_at' => now(),
         ];
