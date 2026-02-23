@@ -74,7 +74,7 @@ class RankPromotionService
                 continue;
             }
 
-            if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery, $directorSettings)) {
+            if (! $this->meetsRequirement($employee, $requirement, $shareCount, $shareValue, $ordersQuery, $directorSettings, $rankSequences)) {
                 break;
             }
 
@@ -90,7 +90,15 @@ class RankPromotionService
         });
     }
 
-    protected function meetsRequirement(Employee $employee, RankRequirement $requirement, int $shareCount, float $shareValue, Builder $ordersQuery, array $directorSettings): bool
+    protected function meetsRequirement(
+        Employee $employee,
+        RankRequirement $requirement,
+        int $shareCount,
+        float $shareValue,
+        Builder $ordersQuery,
+        array $directorSettings,
+        Collection $rankSequences
+    ): bool
     {
         if (isset($directorSettings[$requirement->rank])) {
             $config = $directorSettings[$requirement->rank];
@@ -98,7 +106,7 @@ class RankPromotionService
             $gmTarget = (int) ($config['gm_target'] ?? 0);
 
             return $this->meetsDirectorRequirement($shareCount, $shareTarget)
-                && $this->meetsGmRequirement($employee, $gmTarget);
+                && $this->meetsGmRequirement($employee, $gmTarget, $rankSequences);
         }
 
         $meta = $requirement->meta ?? [];
@@ -133,9 +141,7 @@ class RankPromotionService
 
         foreach ($directRequirements as $key => $requiredCount) {
             $rankCode = strtoupper(str_replace(['direct_', '_required'], ['', ''], $key));
-            $count = $employee->subordinates()
-                ->where('rank', $rankCode)
-                ->count();
+            $count = $this->countDirectSubordinatesForRequiredRank($employee, $rankCode, $rankSequences);
 
             if ($count < (int) $requiredCount) {
                 return false;
@@ -150,13 +156,13 @@ class RankPromotionService
         return $shareCount >= $shareTarget;
     }
 
-    protected function meetsGmRequirement(Employee $employee, int $gmTarget): bool
+    protected function meetsGmRequirement(Employee $employee, int $gmTarget, Collection $rankSequences): bool
     {
         if ($gmTarget <= 0) {
             return true;
         }
 
-        return $this->countDirectGmSubordinates($employee) >= $gmTarget;
+        return $this->countDirectSubordinatesForRequiredRank($employee, Employee::RANK_GM, $rankSequences) >= $gmTarget;
     }
 
     protected function getDirectorRankSettings(): array
@@ -196,10 +202,35 @@ class RankPromotionService
         return array_merge($defaults, $normalizedSettings);
     }
 
-    protected function countDirectGmSubordinates(Employee $employee): int
+
+    protected function countDirectSubordinatesForRequiredRank(Employee $employee, string $requiredRank, Collection $rankSequences): int
     {
+        $requiredSequence = $rankSequences->get($requiredRank);
+
+        if ($requiredSequence === null) {
+            $defaultSequences = collect(Employee::RANKS)->flip()->map(fn (int $sequence) => $sequence + 1);
+            $requiredSequence = $defaultSequences->get($requiredRank);
+
+            if ($requiredSequence === null) {
+                return $employee->subordinates()
+                    ->where('rank', $requiredRank)
+                    ->count();
+            }
+
+            $rankSequences = $defaultSequences;
+        }
+
+        $eligibleRanks = $rankSequences
+            ->filter(fn (int $sequence) => $sequence >= (int) $requiredSequence)
+            ->keys()
+            ->values();
+
+        if ($eligibleRanks->isEmpty()) {
+            return 0;
+        }
+
         return $employee->subordinates()
-            ->where('rank', Employee::RANK_GM)
+            ->whereIn('rank', $eligibleRanks->all())
             ->count();
     }
 }
