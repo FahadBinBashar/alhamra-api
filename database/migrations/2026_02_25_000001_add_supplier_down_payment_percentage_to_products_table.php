@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table): void {
-            $table->decimal('supplier_down_payment_percentage', 5, 2)
+            $table->unsignedTinyInteger('supplier_down_payment_percentage')
                 ->default(0)
                 ->after('supplier_percentage');
         });

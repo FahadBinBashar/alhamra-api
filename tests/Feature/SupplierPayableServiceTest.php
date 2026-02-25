@@ -20,7 +20,7 @@ class SupplierPayableServiceTest extends TestCase
 
     public function test_down_payment_creates_supplier_payable_using_product_down_payment_percentage(): void
     {
-        [$order, $supplier] = $this->createOrderWithSupplierProduct(0, 12.5);
+        [$order, $supplier] = $this->createOrderWithSupplierProduct(0, 10);
 
         $payment = Payment::withoutEvents(fn () => Payment::create([
             'sales_order_id' => $order->id,
@@ -36,7 +36,7 @@ class SupplierPayableServiceTest extends TestCase
             'supplier_id' => $supplier->id,
             'payment_id' => $payment->id,
             'sales_order_id' => $order->id,
-            'amount' => 2500.00,
+            'amount' => 2000.00,
             'status' => SupplierPayable::STATUS_UNPAID,
         ]);
     }
@@ -67,7 +67,7 @@ class SupplierPayableServiceTest extends TestCase
     /**
      * @return array{0: SalesOrder, 1: Supplier}
      */
-    protected function createOrderWithSupplierProduct(float $installmentPercentage, float $downPaymentPercentage): array
+    protected function createOrderWithSupplierProduct(int $installmentPercentage, int $downPaymentPercentage): array
     {
         $customer = User::factory()->create();
 

@@ -43,7 +43,7 @@ class Product extends Model
         'down_payment' => 'decimal:2',
         'ccu_percentage' => 'integer',
         'supplier_percentage' => 'integer',
-        'supplier_down_payment_percentage' => 'decimal:2',
+        'supplier_down_payment_percentage' => 'integer',
         'image_paths' => 'array',
         'stock_qty' => 'decimal:2',
         'min_stock_alert' => 'decimal:2',

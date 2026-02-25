@@ -625,7 +625,12 @@
                 },
                 {
                   "key": "supplier_percentage",
-                  "value": "22.5",
+                  "value": "22",
+                  "type": "text"
+                },
+                {
+                  "key": "supplier_down_payment_percentage",
+                  "value": "12",
                   "type": "text"
                 },
                 {
