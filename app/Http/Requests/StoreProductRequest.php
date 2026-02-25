@@ -21,6 +21,7 @@ class StoreProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'supplier_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'supplier_down_payment_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'product_type' => ['required', 'in:consumer,flat,land,share,other'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
