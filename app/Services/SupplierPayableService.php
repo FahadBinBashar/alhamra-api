@@ -24,7 +24,10 @@ class SupplierPayableService
         $isInstallment = $payment->type === Payment::TYPE_INSTALLMENT
             || $payment->intent_type === Payment::INTENT_INSTALLMENT;
 
-        if (! $isInstallment) {
+        $isDownPayment = $payment->type === Payment::TYPE_DOWN_PAYMENT
+            || $payment->intent_type === Payment::INTENT_DOWN_PAYMENT;
+
+        if (! $isInstallment && ! $isDownPayment) {
             return;
         }
 
@@ -36,7 +39,7 @@ class SupplierPayableService
             return;
         }
 
-        $eligibleItems = $this->resolveEligibleItems($order);
+        $eligibleItems = $this->resolveEligibleItems($order, $isInstallment);
 
         if ($eligibleItems->isEmpty()) {
             return;
@@ -57,7 +60,9 @@ class SupplierPayableService
         foreach ($eligibleItems as $item) {
             /** @var \App\Models\Product $product */
             $product = $item->itemable;
-            $percentage = max((float) $product->supplier_percentage, 0);
+            $percentage = $isInstallment
+                ? max((float) $product->supplier_percentage, 0)
+                : max((float) $product->supplier_down_payment_percentage, 0);
 
             if ($percentage <= 0) {
                 continue;
@@ -141,15 +146,23 @@ class SupplierPayableService
         });
     }
 
-    protected function resolveEligibleItems(SalesOrder $order): Collection
+    protected function resolveEligibleItems(SalesOrder $order, bool $isInstallment): Collection
     {
         return $order->items
             ->filter(function ($item) {
                 $itemable = $item->itemable;
 
                 return $itemable instanceof Product
-                    && (int) $itemable->supplier_id > 0
-                    && (float) $itemable->supplier_percentage > 0;
+                    && (int) $itemable->supplier_id > 0;
+            })
+            ->filter(function ($item) use ($isInstallment) {
+                $itemable = $item->itemable;
+
+                $percentage = $isInstallment
+                    ? (float) $itemable->supplier_percentage
+                    : (float) $itemable->supplier_down_payment_percentage;
+
+                return $percentage > 0;
             });
     }
 
