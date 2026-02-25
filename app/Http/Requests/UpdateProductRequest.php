@@ -21,6 +21,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'supplier_id' => ['sometimes', 'nullable', 'integer', 'exists:suppliers,id'],
             'supplier_percentage' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
+            'supplier_down_payment_percentage' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
             'product_type' => ['sometimes', 'required', 'in:consumer,flat,land,share,other'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'description' => ['sometimes', 'nullable', 'string'],
