@@ -143,6 +143,8 @@ Route::prefix('v1')->group(function () {
     Route::post('monthly-incentives/process', [MonthlyIncentiveController::class, 'process']);
     Route::get('promotions/sessions', [PromotionController::class, 'sessions']);
     Route::post('promotions/sessions', [PromotionController::class, 'storeSession']);
+    Route::match(['put', 'patch'], 'promotions/sessions/{session}', [PromotionController::class, 'updateSession']);
+    Route::delete('promotions/sessions/{session}', [PromotionController::class, 'deleteSession']);
     Route::post('promotions/sessions/{session}/activate', [PromotionController::class, 'activateSession']);
     Route::post('promotions/sessions/{session}/close', [PromotionController::class, 'closeSession']);
     Route::post('promotions/sessions/{session}/calculate-eligibility', [PromotionController::class, 'calculateEligibility']);

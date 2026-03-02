@@ -94,6 +94,85 @@ class PromotionController extends Controller
         return response()->json($session->load('rules'), 201);
     }
 
+    public function updateSession(Request $request, PromotionSession $session): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'start_date' => ['sometimes', 'date'],
+            'end_date' => ['sometimes', 'date', 'after:start_date'],
+            'target_metric' => ['sometimes', 'string', 'max:100'],
+            'target_value' => ['sometimes', 'integer', 'min:1'],
+            'min_product_or_share_sales' => ['sometimes', 'integer', 'min:2'],
+            'rules' => ['sometimes', 'array', 'min:1'],
+            'rules.*.slot_no' => ['required_with:rules', 'integer', 'min:1'],
+            'rules.*.eligibility_basis' => ['required_with:rules', Rule::in(PromotionRule::BASIS_TYPES)],
+            'rules.*.finance_verified_only' => ['sometimes', 'boolean'],
+            'rules.*.incentive_type' => ['required_with:rules', Rule::in(PromotionRule::INCENTIVE_TYPES)],
+            'rules.*.fund_amount' => ['nullable', 'numeric', 'min:0.01'],
+            'rules.*.currency' => ['nullable', 'string', 'max:10'],
+        ]);
+
+        if (isset($validated['end_date']) && ! isset($validated['start_date'])) {
+            $request->validate([
+                'end_date' => ['date', 'after_or_equal:'.$session->start_date->toDateString()],
+            ]);
+        }
+
+        $session->fill([
+            'name' => $validated['name'] ?? $session->name,
+            'start_date' => $validated['start_date'] ?? $session->start_date,
+            'end_date' => $validated['end_date'] ?? $session->end_date,
+            'target_metric' => $validated['target_metric'] ?? $session->target_metric,
+            'target_value' => $validated['target_value'] ?? $session->target_value,
+            'min_product_or_share_sales' => $validated['min_product_or_share_sales'] ?? $session->min_product_or_share_sales,
+            'updated_by' => $request->user()?->id,
+        ])->save();
+
+        if (isset($validated['rules'])) {
+            foreach ($validated['rules'] as $rule) {
+                if ($session->session_type === PromotionSession::TYPE_YEARLY && $rule['eligibility_basis'] !== PromotionRule::BASIS_COMBINED) {
+                    return response()->json([
+                        'message' => 'Yearly session requires combined_step_1_2 eligibility basis.',
+                    ], 422);
+                }
+
+                if ($session->session_type === PromotionSession::TYPE_MONTHLY && ! in_array($rule['eligibility_basis'], [PromotionRule::BASIS_PERSONAL, PromotionRule::BASIS_FIRST_STEP], true)) {
+                    return response()->json([
+                        'message' => 'Monthly session allows only personal or first_step eligibility basis.',
+                    ], 422);
+                }
+            }
+
+            $session->rules()->delete();
+            foreach ($validated['rules'] as $ruleData) {
+                $session->rules()->create([
+                    'slot_no' => $ruleData['slot_no'],
+                    'eligibility_basis' => $ruleData['eligibility_basis'],
+                    'finance_verified_only' => $ruleData['finance_verified_only'] ?? true,
+                    'incentive_type' => $ruleData['incentive_type'],
+                    'fund_amount' => $ruleData['fund_amount'] ?? null,
+                    'currency' => $ruleData['currency'] ?? 'BDT',
+                ]);
+            }
+        }
+
+        return response()->json($session->fresh('rules'));
+    }
+
+    public function deleteSession(PromotionSession $session): JsonResponse
+    {
+        if ($session->status === PromotionSession::STATUS_ACTIVE) {
+            return response()->json([
+                'message' => 'Active session cannot be deleted. Close it first.',
+            ], 422);
+        }
+
+        $session->delete();
+
+        return response()->json(['message' => 'Session deleted.']);
+    }
+
+
     public function activateSession(Request $request, PromotionSession $session): JsonResponse
     {
         $session->forceFill([
