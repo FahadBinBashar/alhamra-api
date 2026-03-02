@@ -5763,7 +5763,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
+              "raw": "{\n  \"employee_code\": \"EMP-001\",\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"জন ডো\",\n  \"father_name\": \"Mr. Doe\",\n  \"mother_name\": \"Mrs. Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"marital_status\": \"Married\",\n  \"religion\": \"Islam\",\n  \"gender\": \"Male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Gulshan\",\n  \"present_address\": \"House 1, Road 2\",\n  \"permanent_address\": \"Village, District\",\n  \"post_code\": \"1212\",\n  \"branch_id\": 2,\n  \"rank\": \"MM\",\n  \"superior_id\": 1,\n  \"educations\": [\n    {\n      \"level\": \"BBA\",\n      \"institution\": \"University of Dhaka\",\n      \"passing_year\": \"2015\",\n      \"result\": \"3.5\"\n    }\n  ],\n  \"nominees\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"relation\": \"Spouse\",\n      \"phone\": \"01700000001\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -6043,7 +6043,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"branch_id\": 1,\n  \"agent_id\": 1,\n  \"superior_id\": 1,\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"\u099c\u09a8 \u09a1\u09cb\",\n  \"father_name\": \"Father Name\",\n  \"mother_name\": \"Mother Name\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1995-05-10\",\n  \"marital_status\": \"single\",\n  \"religion\": \"Islam\",\n  \"gender\": \"male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Dhanmondi\",\n  \"present_address\": \"House 10, Road 12, Dhanmondi\",\n  \"permanent_address\": \"Village Example, District Example\",\n  \"post_code\": \"1209\"\n}"
+              "raw": "{\n  \"branch_id\": 1,\n  \"agent_id\": 1,\n  \"superior_id\": 1,\n  \"full_name_en\": \"John Doe\",\n  \"full_name_bn\": \"জন ডো\",\n  \"father_name\": \"Father Name\",\n  \"mother_name\": \"Mother Name\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"01700000000\",\n  \"national_id\": \"1234567890\",\n  \"date_of_birth\": \"1995-05-10\",\n  \"marital_status\": \"single\",\n  \"religion\": \"Islam\",\n  \"gender\": \"male\",\n  \"nationality\": \"Bangladeshi\",\n  \"district\": \"Dhaka\",\n  \"upazila\": \"Dhanmondi\",\n  \"present_address\": \"House 10, Road 12, Dhanmondi\",\n  \"permanent_address\": \"Village Example, District Example\",\n  \"post_code\": \"1209\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/employee-recruit-requests",
@@ -8288,6 +8288,360 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "List Promotion Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/sessions?per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "sessions"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Promotion Session (Monthly)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly Promotion - Mar 2026\",\n  \"session_type\": \"monthly\",\n  \"start_date\": \"2026-03-01\",\n  \"end_date\": \"2026-03-31\",\n  \"target_metric\": \"down_payment_count\",\n  \"target_value\": 20,\n  \"min_product_or_share_sales\": 2,\n  \"rules\": [\n    {\n      \"slot_no\": 1,\n      \"eligibility_basis\": \"personal\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"national_tour_self\"\n    },\n    {\n      \"slot_no\": 2,\n      \"eligibility_basis\": \"first_step\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"fund\",\n      \"fund_amount\": 50000,\n      \"currency\": \"BDT\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activate Promotion Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/activate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "sessions",
+                "{{session_id}}",
+                "activate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Close Promotion Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/close",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "sessions",
+                "{{session_id}}",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calculate Session Eligibility",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/calculate-eligibility",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "sessions",
+                "{{session_id}}",
+                "calculate-eligibility"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Promotion Awards",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/awards/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "awards",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Promotion Awards",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/promotions/awards/process",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "promotions",
+                "awards",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Promotion Achievements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee/promotions/achievements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "promotions",
+                "achievements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Promotion Progress",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee/promotions/progress",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "promotions",
+                "progress"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Promotion Reward Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employee/wallet/transactions?per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "wallet",
+                "transactions"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -8377,6 +8731,10 @@
     },
     {
       "key": "agent_settlement_id",
+      "value": "1"
+    },
+    {
+      "key": "session_id",
       "value": "1"
     }
   ]
