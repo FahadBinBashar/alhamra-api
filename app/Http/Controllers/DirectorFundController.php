@@ -53,15 +53,21 @@ class DirectorFundController extends Controller
         $validated = $request->validate([
             'type' => ['required', Rule::in([DirectorFund::TYPE_ED, DirectorFund::TYPE_AMD, DirectorFund::TYPE_DMD])],
             'month' => ['sometimes', 'date_format:Y-m'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'quarterly', 'yearly'])],
         ]);
 
-        $funds = $this->directorFundService->calculate($validated['type'], $validated['month'] ?? null);
+        $frequency = $validated['frequency'] ?? null;
+        $funds = $this->directorFundService->calculate($validated['type'], $validated['month'] ?? null, $frequency);
+        $firstFund = $funds->first();
 
         return response()->json([
             'generated' => $funds->count(),
             'total_fund' => (float) $funds->sum('per_person_amount'),
             'type' => $validated['type'],
             'month' => $validated['month'] ?? null,
+            'frequency' => $firstFund?->meta['frequency'] ?? $frequency,
+            'period_start' => $firstFund?->period_start?->toDateString(),
+            'period_end' => $firstFund?->period_end?->toDateString(),
         ]);
     }
 
@@ -70,15 +76,21 @@ class DirectorFundController extends Controller
         $validated = $request->validate([
             'type' => ['required', Rule::in([DirectorFund::TYPE_ED, DirectorFund::TYPE_AMD, DirectorFund::TYPE_DMD])],
             'month' => ['sometimes', 'date_format:Y-m'],
+            'frequency' => ['sometimes', Rule::in(['monthly', 'quarterly', 'yearly'])],
         ]);
 
-        $funds = $this->directorFundService->process($validated['type'], $validated['month'] ?? null);
+        $frequency = $validated['frequency'] ?? null;
+        $funds = $this->directorFundService->process($validated['type'], $validated['month'] ?? null, $frequency);
+        $firstFund = $funds->first();
 
         return response()->json([
             'processed' => $funds->count(),
             'total_amount' => (float) $funds->sum('per_person_amount'),
             'type' => $validated['type'],
             'month' => $validated['month'] ?? null,
+            'frequency' => $firstFund?->meta['frequency'] ?? $frequency,
+            'period_start' => $firstFund?->period_start?->toDateString(),
+            'period_end' => $firstFund?->period_end?->toDateString(),
         ]);
     }
 }
