@@ -90,6 +90,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('agents/dashboard')->group(function () {
       Route::get('commissions', [AgentDashboardController::class, 'commissions']);
       Route::get('wallet', [AgentDashboardController::class, 'wallet']);
+      Route::get('wallet/statement', [AgentDashboardController::class, 'walletStatement']);
       Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
       Route::get('sales', [AgentDashboardController::class, 'salesSummary']);
       Route::get('sales/detail', [AgentDashboardController::class, 'salesDetail']);
@@ -107,6 +108,7 @@ Route::prefix('v1')->group(function () {
       Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
       Route::get('service-commissions', [EmployeeDashboardController::class, 'serviceCommissions']);
       Route::get('wallet', [EmployeeDashboardController::class, 'wallet']);
+      Route::get('wallet/statement', [EmployeeDashboardController::class, 'walletStatement']);
       Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
       Route::get('activities', [EmployeeDashboardController::class, 'activities']);
       Route::post('activities', [EmployeeDashboardController::class, 'storeActivity']);

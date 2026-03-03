@@ -7,8 +7,10 @@ use App\Http\Resources\CommissionResource;
 use App\Models\Agent;
 use App\Models\AgentWallet;
 use App\Models\Commission;
+use App\Models\WalletWithdrawRequest;
 use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
@@ -79,6 +81,52 @@ class AgentDashboardController extends Controller
         }
 
         return new AgentWalletResource($wallet);
+    }
+
+    public function walletStatement(Request $request)
+    {
+        $agentId = $this->resolveAgentId($request);
+
+        if (! $agentId) {
+            abort(422, 'An agent context is required to view a wallet statement.');
+        }
+
+        $wallet = AgentWallet::query()->firstOrCreate(
+            ['agent_id' => $agentId],
+            ['balance' => 0]
+        );
+
+        $creditEntries = Commission::query()
+            ->where('recipient_type', Agent::class)
+            ->where('recipient_id', $agentId)
+            ->where('status', 'paid')
+            ->get()
+            ->map(fn (Commission $commission) => [
+                'date' => $commission->paid_at ?? $commission->created_at,
+                'type' => 'credit',
+                'amount' => (float) $commission->amount,
+                'source' => 'commission',
+                'reference' => 'commission:'.$commission->id,
+                'note' => 'Commission credited to wallet',
+            ]);
+
+        $debitEntries = WalletWithdrawRequest::query()
+            ->where('user_type', WalletWithdrawRequest::USER_TYPE_AGENT)
+            ->where('user_id', $agentId)
+            ->where('status', WalletWithdrawRequest::STATUS_APPROVED)
+            ->get()
+            ->map(fn (WalletWithdrawRequest $withdrawal) => [
+                'date' => $withdrawal->reviewed_at ?? $withdrawal->created_at,
+                'type' => 'debit',
+                'amount' => (float) $withdrawal->amount,
+                'source' => 'withdrawal',
+                'reference' => 'withdrawal:'.$withdrawal->id,
+                'note' => 'Wallet withdrawal approved',
+            ]);
+
+        $statement = $this->buildStatement($wallet->balance, $creditEntries->merge($debitEntries));
+
+        return response()->json($statement);
     }
 
     public function salesSummary(Request $request)
@@ -231,5 +279,52 @@ class AgentDashboardController extends Controller
         $end = $request->filled('to') ? Carbon::parse($request->input('to'))->endOfDay() : null;
 
         return [$start, $end, $start && $end ? $start->toDateString() . ' to ' . $end->toDateString() : null];
+    }
+
+    private function buildStatement(float $currentBalance, Collection $entries): array
+    {
+        $ordered = $entries
+            ->sortBy(fn (array $entry) => [
+                Carbon::parse($entry['date'])->timestamp,
+                $entry['type'] === 'credit' ? 0 : 1,
+                $entry['reference'],
+            ])
+            ->values();
+
+        $totalCredit = $ordered
+            ->where('type', 'credit')
+            ->sum('amount');
+
+        $totalDebit = $ordered
+            ->where('type', 'debit')
+            ->sum('amount');
+
+        $openingBalance = round((float) $currentBalance - (float) $totalCredit + (float) $totalDebit, 2);
+        $runningBalance = $openingBalance;
+
+        $rows = $ordered->map(function (array $entry) use (&$runningBalance) {
+            $isCredit = $entry['type'] === 'credit';
+            $runningBalance += $isCredit ? (float) $entry['amount'] : -1 * (float) $entry['amount'];
+
+            return [
+                'date' => Carbon::parse($entry['date'])->toDateTimeString(),
+                'source' => $entry['source'],
+                'reference' => $entry['reference'],
+                'note' => $entry['note'],
+                'debit' => $isCredit ? 0.0 : round((float) $entry['amount'], 2),
+                'credit' => $isCredit ? round((float) $entry['amount'], 2) : 0.0,
+                'balance' => round($runningBalance, 2),
+            ];
+        });
+
+        return [
+            'data' => [
+                'opening_balance' => $openingBalance,
+                'total_debit' => round((float) $totalDebit, 2),
+                'total_credit' => round((float) $totalCredit, 2),
+                'closing_balance' => round((float) $currentBalance, 2),
+                'transactions' => $rows,
+            ],
+        ];
     }
 }
