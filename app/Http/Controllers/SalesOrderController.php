@@ -10,9 +10,12 @@ use App\Models\SalesOrder;
 use App\Models\StockMovement;
 use App\Models\Service;
 use App\Models\User;
+use App\Notifications\SalesInvoicePublicLinkNotification;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -138,6 +141,22 @@ class SalesOrderController extends Controller
 
             return $order;
         });
+
+        $order->loadMissing('customer');
+
+        $invoiceUrl = URL::temporarySignedRoute(
+            'public.invoices.show',
+            now()->addDays(30),
+            ['salesOrder' => $order->id],
+        );
+
+        if ($order->customer) {
+            $notification = new SalesInvoicePublicLinkNotification($order, $invoiceUrl);
+            $order->customer->notify($notification);
+            app(SmsService::class)->send($order->customer->contact_number, $notification->toSmsText());
+        }
+
+        $order->setAttribute('invoice_public_url', $invoiceUrl);
 
         return response()->json([
             'data' => $order->load([

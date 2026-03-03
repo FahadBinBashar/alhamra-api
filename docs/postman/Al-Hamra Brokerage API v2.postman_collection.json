@@ -2182,6 +2182,43 @@
             "description": "Record installment payment using the generated installment amount (pre-calculated principal + EMI extra share). Allocation amount must equal installment due."
           },
           "response": []
+        },
+        {
+          "name": "Public Invoice (Signed URL)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/public/invoices/{{sales_order_id}}?expires={{public_invoice_expires}}&signature={{public_invoice_signature}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "invoices",
+                "{{sales_order_id}}"
+              ],
+              "query": [
+                {
+                  "key": "expires",
+                  "value": "{{public_invoice_expires}}"
+                },
+                {
+                  "key": "signature",
+                  "value": "{{public_invoice_signature}}"
+                }
+              ]
+            },
+            "description": "Use the exact expires and signature values from the signed URL sent to customer email/SMS or from `data.invoice_public_url` in create sales-order response."
+          },
+          "response": []
         }
       ]
     },
@@ -8927,6 +8964,14 @@
     {
       "key": "session_id",
       "value": "1"
+    },
+    {
+      "key": "public_invoice_expires",
+      "value": ""
+    },
+    {
+      "key": "public_invoice_signature",
+      "value": ""
     }
   ]
 }
