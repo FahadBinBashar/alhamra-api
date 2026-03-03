@@ -27,6 +27,7 @@ use App\Http\Controllers\JournalController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\PublicInvoiceController;
 use App\Http\Controllers\RankController;
 use App\Http\Controllers\RankRequirementController;
 use App\Http\Controllers\ReportController;
@@ -81,6 +82,7 @@ Route::prefix('v1')->group(function () {
     });
   });
   Route::apiResource('categories', CategoryController::class);
+    Route::get('public/invoices/{salesOrder}', [PublicInvoiceController::class, 'show'])->middleware('signed')->name('public.invoices.show');
   Route::apiResource('products', ProductController::class);
   Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);

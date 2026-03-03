@@ -12,7 +12,11 @@ use App\Models\SalesOrder;
 use App\Models\Service;
 use App\Models\StockMovement;
 use App\Models\User;
+use App\Notifications\SalesInvoicePublicLinkNotification;
+use App\Services\SmsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -550,4 +554,127 @@ class SalesOrderTest extends TestCase
         $this->assertSame(5.0, (float) $product->stock_qty);
         $this->assertDatabaseCount('stock_movements', 0);
     }
+
+    public function test_sales_order_creation_sends_invoice_link_by_email_and_sms(): void
+    {
+        Notification::fake();
+
+        $branch = Branch::create([
+            'name' => 'Dhaka Branch',
+            'code' => 'DHK',
+            'address' => 'Dhaka',
+        ]);
+
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $agentUser = User::factory()->create([
+            'role' => User::ROLE_AGENT,
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+            'branch_id' => $branch->id,
+            'agent_code' => Str::uuid()->toString(),
+        ]);
+
+        $marketingExecutiveUser = User::factory()->create([
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+
+        $marketingExecutive = Employee::create([
+            'user_id' => $marketingExecutiveUser->id,
+            'branch_id' => $branch->id,
+            'agent_id' => $agent->id,
+            'rank' => Employee::RANK_ME,
+        ]);
+
+        $customer = User::factory()->create([
+            'source_me_id' => $marketingExecutive->id,
+            'added_by_branch_id' => $branch->id,
+            'added_by_agent_id' => $agent->id,
+            'contact_number' => '01700000000',
+        ]);
+
+        $category = Category::create([
+            'name' => 'Land',
+            'type' => 'product',
+        ]);
+
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'Premium Plot',
+            'product_type' => 'land',
+            'price' => 500000,
+            'attributes' => [],
+        ]);
+
+        $smsService = \Mockery::mock(SmsService::class);
+        $smsService->shouldReceive('send')
+            ->once()
+            ->with('01700000000', \Mockery::on(fn (string $message) => str_contains($message, 'Invoice ready. Order SO-')))
+            ->andReturnTrue();
+        $this->app->instance(SmsService::class, $smsService);
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->postJson('/api/v1/sales-orders', [
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_LAND,
+            'down_payment' => 50000,
+            'total' => 500000,
+            'items' => [
+                [
+                    'item_type' => 'product',
+                    'item_id' => $product->id,
+                    'qty' => 1,
+                ],
+            ],
+        ]);
+
+        $response->assertCreated();
+        $this->assertIsString($response->json('data.invoice_public_url'));
+        $this->assertStringContainsString('/api/v1/public/invoices/', $response->json('data.invoice_public_url'));
+
+        Notification::assertSentTo(
+            $customer,
+            SalesInvoicePublicLinkNotification::class,
+            function (SalesInvoicePublicLinkNotification $notification) {
+                $mail = $notification->toMail((object) ['name' => 'Customer']);
+
+                return str_contains($mail->subject, 'SO-');
+            }
+        );
+    }
+
+    public function test_public_invoice_url_returns_invoice_data_with_valid_signature(): void
+    {
+        $customer = User::factory()->create();
+
+        $order = SalesOrder::create([
+            'customer_id' => $customer->id,
+            'sales_type' => SalesOrder::TYPE_ORDER,
+            'total' => 5000,
+            'status' => SalesOrder::STATUS_ACTIVE,
+            'created_by' => SalesOrder::CREATED_BY_SYSTEM,
+        ]);
+
+        $url = URL::temporarySignedRoute(
+            'public.invoices.show',
+            now()->addMinutes(10),
+            ['salesOrder' => $order->id],
+        );
+
+        $response = $this->getJson($url);
+
+        $response->assertOk()
+            ->assertJsonPath('data.id', $order->id)
+            ->assertJsonPath('data.order_no', 'SO-' . $order->id);
+
+        $unsignedResponse = $this->getJson('/api/v1/public/invoices/' . $order->id);
+        $unsignedResponse->assertForbidden();
+
+    }
+
 }
