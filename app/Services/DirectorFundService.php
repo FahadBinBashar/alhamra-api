@@ -18,11 +18,11 @@ class DirectorFundService
     {
     }
 
-    public function calculate(string $type, ?string $month = null): Collection
+    public function calculate(string $type, ?string $month = null, ?string $frequencyOverride = null): Collection
     {
         $type = strtolower($type);
         $config = $this->getFundConfig($type);
-        $frequency = $config['frequency'];
+        $frequency = $this->resolveFrequency($frequencyOverride, $config['frequency']);
         [$periodStart, $periodEnd] = $this->resolvePeriod($frequency, $month);
 
         $totalSales = $this->collectSalesTotal($periodStart, $periodEnd);
@@ -72,11 +72,11 @@ class DirectorFundService
         return $entries;
     }
 
-    public function process(string $type, ?string $month = null): Collection
+    public function process(string $type, ?string $month = null, ?string $frequencyOverride = null): Collection
     {
         $type = strtolower($type);
         $config = $this->getFundConfig($type);
-        $frequency = $config['frequency'];
+        $frequency = $this->resolveFrequency($frequencyOverride, $config['frequency']);
         [$periodStart] = $this->resolvePeriod($frequency, $month);
 
         $funds = DirectorFund::query()
@@ -87,7 +87,7 @@ class DirectorFundService
             ->get();
 
         if ($funds->isEmpty()) {
-            $funds = $this->calculate($type, $month);
+            $funds = $this->calculate($type, $month, $frequency);
         }
 
         $processed = collect();
@@ -185,6 +185,17 @@ class DirectorFundService
         $merged['percentage'] = isset($merged['percentage']) ? (float) $merged['percentage'] : (float) $defaults[$type]['percentage'];
 
         return $merged;
+    }
+
+    protected function resolveFrequency(?string $override, string $default): string
+    {
+        $override = $override ? strtolower($override) : null;
+
+        if ($override && in_array($override, ['monthly', 'quarterly', 'yearly'], true)) {
+            return $override;
+        }
+
+        return $default;
     }
 
     protected function creditEmployeeWallet(int $employeeId, float $amount): void

@@ -3359,7 +3359,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"date\": \"{{commission_process_date}}\"\n}",
+              "raw": "{\n  \"period_type\": \"week\",\n  \"week\": \"2025-11-17\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3424,7 +3424,7 @@
                 },
                 {
                   "key": "period_type",
-                  "value": "month",
+                  "value": "week",
                   "disabled": true
                 },
                 {
@@ -4258,6 +4258,79 @@
               ]
             },
             "description": "Ledger view of income accounts. Apply account filters or export results for financial reconciliation."
+          },
+          "response": []
+        },
+        {
+          "name": "Monthly Incentive Detail Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/monthly-incentives/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "monthly-incentives",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "frequency",
+                  "value": "weekly",
+                  "disabled": true
+                },
+                {
+                  "key": "month",
+                  "value": "2025-11",
+                  "disabled": true
+                },
+                {
+                  "key": "week",
+                  "value": "2025-11-17",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "draft",
+                  "disabled": true
+                },
+                {
+                  "key": "employee_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2025-11-01",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2025-11-30",
+                  "disabled": true
+                },
+                {
+                  "key": "print",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Admin বিস্তারিত monthly/weekly incentive রিপোর্ট। Filter ও print mode support করে summary সহ response দেয়।"
           },
           "response": []
         },
@@ -5476,7 +5549,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/generate",
@@ -5513,7 +5586,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/process",
@@ -6938,7 +7011,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/generate",
@@ -6975,7 +7048,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/process",
@@ -7379,10 +7452,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/director-funds/calculate?type=ed&month=2025-11",
+              "raw": "{{base_url}}/api/v1/director-funds/calculate",
               "host": [
                 "{{base_url}}"
               ],
@@ -7392,16 +7465,7 @@
                 "director-funds",
                 "calculate"
               ],
-              "query": [
-                {
-                  "key": "type",
-                  "value": "ed"
-                },
-                {
-                  "key": "month",
-                  "value": "2025-11"
-                }
-              ]
+              "query": []
             }
           },
           "response": []
@@ -7426,10 +7490,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"month\": \"2025-11\"\n}"
+              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/director-funds/process?type=ed&month=2025-11",
+              "raw": "{{base_url}}/api/v1/director-funds/process",
               "host": [
                 "{{base_url}}"
               ],
@@ -7439,16 +7503,7 @@
                 "director-funds",
                 "process"
               ],
-              "query": [
-                {
-                  "key": "type",
-                  "value": "ed"
-                },
-                {
-                  "key": "month",
-                  "value": "2025-11"
-                }
-              ]
+              "query": []
             }
           },
           "response": []

@@ -65,12 +65,14 @@ class CommissionCalculationControllerTest extends TestCase
         app(CommissionService::class)->handlePayment($payment, true);
 
         $response = $this->postJson('/api/v1/commission-calculations/process', [
-            'date' => now()->toDateString(),
+            'period_type' => 'week',
+            'week' => now()->startOfWeek()->toDateString(),
         ]);
 
         $response->assertOk();
-        $response->assertJsonPath('processed', 4);
+        $response->assertJsonPath('processed_items', 4);
         $response->assertJsonPath('total_amount', 30000.0);
+        $response->assertJsonPath('period_type', 'week');
 
         $this->assertDatabaseHas('commission_calculation_units', [
             'payment_id' => $payment->id,

@@ -195,6 +195,7 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/employee-performance', [AdminReportController::class,'employeePerformance']);
     Route::get('reports/emi-extra-income', [AdminReportController::class,'emiExtraIncome']);
     Route::get('reports/incomes', [AdminReportController::class,'incomeReport']);
+    Route::get('reports/monthly-incentives/detail', [AdminReportController::class,'monthlyIncentiveReport']);
     Route::get('reports/ledger/customer', [AdminReportController::class,'customerLedger']);
     Route::get('reports/ledger/supplier', [AdminReportController::class,'supplierLedger']);
     Route::get('reports/ledger/account', [AdminReportController::class,'accountStatement']);
