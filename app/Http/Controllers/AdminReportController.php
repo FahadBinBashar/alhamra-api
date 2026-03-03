@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ResolvesIncludes;
 use App\Http\Resources\CommissionResource;
+use App\Http\Resources\MonthlyIncentiveResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\SalesOrderResource;
 use App\Models\Agent;
@@ -12,6 +13,7 @@ use App\Models\Commission;
 use App\Models\Employee;
 use App\Models\LedgerAccount;
 use App\Models\LedgerEntry;
+use App\Models\MonthlyIncentive;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\SalesOrder;
@@ -19,6 +21,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -228,6 +231,86 @@ class AdminReportController extends Controller
 
         return SalesOrderResource::collection($orders)
             ->additional(['summary' => $summary]);
+    }
+
+
+    public function monthlyIncentiveReport(Request $request)
+    {
+        $validated = $request->validate([
+            'employee_id' => ['sometimes', 'integer', 'exists:employees,id'],
+            'status' => ['sometimes', 'string'],
+            'frequency' => ['sometimes', 'in:monthly,weekly'],
+            'month' => ['sometimes', 'date_format:Y-m'],
+            'week' => ['sometimes', 'date_format:Y-m-d'],
+            'from' => ['sometimes', 'date'],
+            'to' => ['sometimes', 'date'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $query = MonthlyIncentive::query()
+            ->with(['employee.user', 'reviewer'])
+            ->orderByDesc('period_start')
+            ->orderByDesc('id');
+
+        if (isset($validated['employee_id'])) {
+            $query->where('employee_id', (int) $validated['employee_id']);
+        }
+
+        if (isset($validated['status'])) {
+            $query->where('status', $validated['status']);
+        }
+
+        if (isset($validated['frequency'])) {
+            if ($validated['frequency'] === 'weekly') {
+                $query->where('meta->frequency', 'weekly');
+            } else {
+                $query->where(function (Builder $builder) {
+                    $builder->whereNull('meta->frequency')
+                        ->orWhere('meta->frequency', 'monthly');
+                });
+            }
+        }
+
+        if (isset($validated['month'])) {
+            $month = Carbon::createFromFormat('Y-m', $validated['month']);
+            $query->whereDate('period_start', '>=', $month->copy()->startOfMonth()->toDateString())
+                ->whereDate('period_start', '<=', $month->copy()->endOfMonth()->toDateString());
+        }
+
+        if (isset($validated['week'])) {
+            $weekStart = Carbon::parse($validated['week'])->startOfWeek(Carbon::MONDAY);
+            $query->whereDate('period_start', $weekStart->toDateString());
+        }
+
+        if (isset($validated['from'])) {
+            $query->whereDate('period_start', '>=', $validated['from']);
+        }
+
+        if (isset($validated['to'])) {
+            $query->whereDate('period_end', '<=', $validated['to']);
+        }
+
+        $summaryRecords = (clone $query)->get();
+        $summary = [
+            'count' => $summaryRecords->count(),
+            'total_amount' => (float) $summaryRecords->sum('amount'),
+            'draft_amount' => (float) $summaryRecords->where('status', MonthlyIncentive::STATUS_DRAFT)->sum('amount'),
+            'approved_amount' => (float) $summaryRecords->where('status', MonthlyIncentive::STATUS_APPROVED)->sum('amount'),
+            'paid_amount' => (float) $summaryRecords->where('status', MonthlyIncentive::STATUS_PAID)->sum('amount'),
+        ];
+
+        if ($this->isPrintRequest($request)) {
+            return response()->json([
+                'data' => MonthlyIncentiveResource::collection($summaryRecords)->resolve(),
+                'summary' => $summary,
+            ]);
+        }
+
+        $incentives = $query
+            ->paginate(max(1, (int) ($validated['per_page'] ?? 15)))
+            ->appends($request->query());
+
+        return MonthlyIncentiveResource::collection($incentives)->additional(['summary' => $summary]);
     }
 
     public function stockReport(Request $request)

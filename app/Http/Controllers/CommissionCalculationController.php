@@ -90,13 +90,15 @@ class CommissionCalculationController extends Controller
     public function process(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'period_type' => ['required', 'in:date,month'],
+            'period_type' => ['required', 'in:date,week,month'],
             'cutoff_date' => ['required_if:period_type,date', 'date'],
+            'week' => ['required_if:period_type,week', 'date_format:Y-m-d'],
             'month' => ['required_if:period_type,month', 'date_format:Y-m'],
         ]);
 
         $periodType = $data['period_type'];
         $cutoffDate = null;
+        $week = null;
         $month = null;
         $start = null;
         $end = null;
@@ -104,6 +106,10 @@ class CommissionCalculationController extends Controller
         if ($periodType === 'date') {
             $cutoffDate = Carbon::parse($data['cutoff_date'])->toDateString();
             $end = Carbon::parse($cutoffDate);
+        } elseif ($periodType === 'week') {
+            $week = $data['week'];
+            $start = Carbon::parse($week)->startOfWeek(Carbon::MONDAY);
+            $end = $start->copy()->endOfWeek(Carbon::SUNDAY);
         } else {
             $month = $data['month'];
             $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
@@ -121,6 +127,7 @@ class CommissionCalculationController extends Controller
             'period_type' => $periodType,
             'cutoff_date' => $cutoffDate,
             'month' => $month,
+            'meta' => $week ? ['week' => $week] : null,
             'processed_units' => 0,
             'processed_items' => 0,
             'total_amount' => 0,
@@ -166,6 +173,7 @@ class CommissionCalculationController extends Controller
             'total_amount' => $totalAmount,
             'period_type' => $periodType,
             'month' => $month,
+            'meta' => $week ? ['week' => $week] : null,
             'cutoff_date' => $cutoffDate,
             'processed_at' => $processedAt->toIso8601String(),
         ]);
@@ -177,7 +185,7 @@ class CommissionCalculationController extends Controller
             'from' => ['sometimes', 'date'],
             'to' => ['sometimes', 'date'],
             'processed_by' => ['sometimes', 'integer', 'exists:users,id'],
-            'period_type' => ['sometimes', 'in:date,month'],
+            'period_type' => ['sometimes', 'in:date,week,month'],
         ]);
 
         $query = CommissionProcessBatch::query()->with('processor');

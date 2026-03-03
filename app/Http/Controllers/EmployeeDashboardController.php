@@ -11,14 +11,18 @@ use App\Models\Commission;
 use App\Models\Employee;
 use App\Models\EmployeeActivity;
 use App\Models\EmployeeWallet;
+use App\Models\EmployeeWalletTransaction;
+use App\Models\MonthlyIncentive;
 use App\Models\SalesOrder;
 use App\Models\User;
+use App\Models\WalletWithdrawRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
 class EmployeeDashboardController extends Controller
@@ -195,6 +199,83 @@ class EmployeeDashboardController extends Controller
         }
 
         return new EmployeeWalletResource($wallet);
+    }
+
+    public function walletStatement(Request $request): JsonResponse
+    {
+        $employeeId = $this->resolveEmployeeId($request);
+
+        if (! $employeeId) {
+            abort(422, 'An employee context is required to view a wallet statement.');
+        }
+
+        $wallet = EmployeeWallet::query()->firstOrCreate(
+            ['employee_id' => $employeeId],
+            ['balance' => 0]
+        );
+
+        $creditFromCommissions = Commission::query()
+            ->where('recipient_type', Employee::class)
+            ->where('recipient_id', $employeeId)
+            ->where('status', 'paid')
+            ->get()
+            ->map(fn (Commission $commission) => [
+                'date' => $commission->paid_at ?? $commission->created_at,
+                'type' => 'credit',
+                'amount' => (float) $commission->amount,
+                'source' => 'commission',
+                'reference' => 'commission:'.$commission->id,
+                'note' => 'Commission credited to wallet',
+            ]);
+
+        $creditFromIncentives = MonthlyIncentive::query()
+            ->where('employee_id', $employeeId)
+            ->where('status', MonthlyIncentive::STATUS_PAID)
+            ->get()
+            ->map(fn (MonthlyIncentive $incentive) => [
+                'date' => $incentive->processed_at ?? $incentive->updated_at,
+                'type' => 'credit',
+                'amount' => (float) $incentive->amount,
+                'source' => 'monthly_incentive',
+                'reference' => 'monthly_incentive:'.$incentive->id,
+                'note' => 'Monthly incentive credited to wallet',
+            ]);
+
+        $creditFromRewards = EmployeeWalletTransaction::query()
+            ->where('employee_id', $employeeId)
+            ->get()
+            ->map(fn (EmployeeWalletTransaction $transaction) => [
+                'date' => $transaction->created_at,
+                'type' => 'credit',
+                'amount' => (float) $transaction->amount,
+                'source' => $transaction->type,
+                'reference' => 'employee_wallet_transaction:'.$transaction->id,
+                'note' => $transaction->narration ?: 'Wallet transaction credited',
+            ]);
+
+        $debitEntries = WalletWithdrawRequest::query()
+            ->where('user_type', WalletWithdrawRequest::USER_TYPE_EMPLOYEE)
+            ->where('user_id', $employeeId)
+            ->where('status', WalletWithdrawRequest::STATUS_APPROVED)
+            ->get()
+            ->map(fn (WalletWithdrawRequest $withdrawal) => [
+                'date' => $withdrawal->reviewed_at ?? $withdrawal->created_at,
+                'type' => 'debit',
+                'amount' => (float) $withdrawal->amount,
+                'source' => 'withdrawal',
+                'reference' => 'withdrawal:'.$withdrawal->id,
+                'note' => 'Wallet withdrawal approved',
+            ]);
+
+        $statement = $this->buildStatement(
+            (float) $wallet->balance,
+            $creditFromCommissions
+                ->merge($creditFromIncentives)
+                ->merge($creditFromRewards)
+                ->merge($debitEntries)
+        );
+
+        return response()->json($statement);
     }
 
     public function activities(Request $request): AnonymousResourceCollection
@@ -374,5 +455,52 @@ class EmployeeDashboardController extends Controller
         }
 
         abort(403, 'You are not authorised to manage this activity.');
+    }
+
+    private function buildStatement(float $currentBalance, Collection $entries): array
+    {
+        $ordered = $entries
+            ->sortBy(fn (array $entry) => [
+                Carbon::parse($entry['date'])->timestamp,
+                $entry['type'] === 'credit' ? 0 : 1,
+                $entry['reference'],
+            ])
+            ->values();
+
+        $totalCredit = $ordered
+            ->where('type', 'credit')
+            ->sum('amount');
+
+        $totalDebit = $ordered
+            ->where('type', 'debit')
+            ->sum('amount');
+
+        $openingBalance = round((float) $currentBalance - (float) $totalCredit + (float) $totalDebit, 2);
+        $runningBalance = $openingBalance;
+
+        $rows = $ordered->map(function (array $entry) use (&$runningBalance) {
+            $isCredit = $entry['type'] === 'credit';
+            $runningBalance += $isCredit ? (float) $entry['amount'] : -1 * (float) $entry['amount'];
+
+            return [
+                'date' => Carbon::parse($entry['date'])->toDateTimeString(),
+                'source' => $entry['source'],
+                'reference' => $entry['reference'],
+                'note' => $entry['note'],
+                'debit' => $isCredit ? 0.0 : round((float) $entry['amount'], 2),
+                'credit' => $isCredit ? round((float) $entry['amount'], 2) : 0.0,
+                'balance' => round($runningBalance, 2),
+            ];
+        });
+
+        return [
+            'data' => [
+                'opening_balance' => $openingBalance,
+                'total_debit' => round((float) $totalDebit, 2),
+                'total_credit' => round((float) $totalCredit, 2),
+                'closing_balance' => round((float) $currentBalance, 2),
+                'transactions' => $rows,
+            ],
+        ];
     }
 }

@@ -31,6 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+    'sms' => [
+        'endpoint' => env('SMS_ENDPOINT'),
+        'api_key' => env('SMS_API_KEY'),
+        'sender_id' => env('SMS_SENDER_ID', 'ALHAMRA'),
+    ],
+
     'sslcommerz' => [
         'store_id' => env('SSLCOMMERZ_STORE_ID'),
         'store_password' => env('SSLCOMMERZ_STORE_PASSWORD'),

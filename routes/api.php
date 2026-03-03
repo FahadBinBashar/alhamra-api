@@ -27,6 +27,7 @@ use App\Http\Controllers\JournalController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\PublicInvoiceController;
 use App\Http\Controllers\RankController;
 use App\Http\Controllers\RankRequirementController;
 use App\Http\Controllers\ReportController;
@@ -81,6 +82,7 @@ Route::prefix('v1')->group(function () {
     });
   });
   Route::apiResource('categories', CategoryController::class);
+    Route::get('public/invoices/{salesOrder}', [PublicInvoiceController::class, 'show'])->middleware('signed')->name('public.invoices.show');
   Route::apiResource('products', ProductController::class);
   Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
@@ -90,6 +92,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('agents/dashboard')->group(function () {
       Route::get('commissions', [AgentDashboardController::class, 'commissions']);
       Route::get('wallet', [AgentDashboardController::class, 'wallet']);
+      Route::get('wallet/statement', [AgentDashboardController::class, 'walletStatement']);
       Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
       Route::get('sales', [AgentDashboardController::class, 'salesSummary']);
       Route::get('sales/detail', [AgentDashboardController::class, 'salesDetail']);
@@ -107,6 +110,7 @@ Route::prefix('v1')->group(function () {
       Route::get('commissions', [EmployeeDashboardController::class, 'commissions']);
       Route::get('service-commissions', [EmployeeDashboardController::class, 'serviceCommissions']);
       Route::get('wallet', [EmployeeDashboardController::class, 'wallet']);
+      Route::get('wallet/statement', [EmployeeDashboardController::class, 'walletStatement']);
       Route::get('wallet/withdrawals', [WalletWithdrawRequestController::class, 'history']);
       Route::get('activities', [EmployeeDashboardController::class, 'activities']);
       Route::post('activities', [EmployeeDashboardController::class, 'storeActivity']);
@@ -191,6 +195,7 @@ Route::prefix('v1')->group(function () {
     Route::get('reports/employee-performance', [AdminReportController::class,'employeePerformance']);
     Route::get('reports/emi-extra-income', [AdminReportController::class,'emiExtraIncome']);
     Route::get('reports/incomes', [AdminReportController::class,'incomeReport']);
+    Route::get('reports/monthly-incentives/detail', [AdminReportController::class,'monthlyIncentiveReport']);
     Route::get('reports/ledger/customer', [AdminReportController::class,'customerLedger']);
     Route::get('reports/ledger/supplier', [AdminReportController::class,'supplierLedger']);
     Route::get('reports/ledger/account', [AdminReportController::class,'accountStatement']);
