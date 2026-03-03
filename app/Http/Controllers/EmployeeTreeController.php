@@ -268,6 +268,7 @@ class EmployeeTreeController extends Controller
                 'node_type' => 'employee',
                 'id' => $employee?->id,
                 'name' => $employee?->user?->name ?? $employee?->full_name_en,
+                'mobile' => $employee?->mobile,
                 'rank' => $employee?->rank,
                 'step' => $depth,
                 'parent_id' => $parent,
