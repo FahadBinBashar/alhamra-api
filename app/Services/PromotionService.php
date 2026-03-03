@@ -202,13 +202,8 @@ class PromotionService
             ->where('payments.type', Payment::TYPE_DOWN_PAYMENT)
             ->whereBetween('payments.paid_at', [$startDate->toDateString(), $endDate->toDateString()]);
 
-        if ($rule->finance_verified_only) {
-            $paymentsQuery->where(function ($q) {
-                $q->where('payments.meta->finance_verified', true)
-                    ->orWhere('payments.meta->verified_by_finance', true)
-                    ->orWhere('payments.meta->verification_status', 'approved');
-            });
-        }
+        // Intentionally not filtering by payments.meta finance verification flags.
+        // Business requested to exclude payment meta-based filtering from eligibility.
 
         $downPaymentCount = (clone $paymentsQuery)->count();
         $salesCount = (clone $paymentsQuery)->distinct('payments.sales_order_id')->count('payments.sales_order_id');
