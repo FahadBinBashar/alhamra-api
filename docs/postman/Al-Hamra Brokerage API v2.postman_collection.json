@@ -114,39 +114,6 @@
           "response": []
         },
         {
-          "name": "Change Password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"current_password\": \"secret123\",\n  \"new_password\": \"newsecret123\",\n  \"new_password_confirmation\": \"newsecret123\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/v1/change-password",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "change-password"
-              ]
-            },
-            "description": "Change the authenticated user's password. Requires Bearer token."
-          },
-          "response": []
-        },
-        {
           "name": "Logout",
           "request": {
             "method": "POST",
@@ -1570,46 +1537,6 @@
           "response": []
         },
         {
-          "name": "Agent Wallet Statement",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{agent_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/agents/dashboard/wallet/statement",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "agents",
-                "dashboard",
-                "wallet",
-                "statement"
-              ],
-              "query": [
-                {
-                  "key": "agent_id",
-                  "value": "{{agent_id}}",
-                  "description": "View the statement for a specific agent (requires admin or manager role).",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Retrieve the wallet statement (debit, credit, and running balance) for the authenticated agent. Admins can pass an `agent_id` query parameter to inspect a specific agent."
-          },
-          "response": []
-        },
-        {
           "name": "Agent Commissions",
           "request": {
             "method": "GET",
@@ -2180,43 +2107,6 @@
               ]
             },
             "description": "Record installment payment using the generated installment amount (pre-calculated principal + EMI extra share). Allocation amount must equal installment due."
-          },
-          "response": []
-        },
-        {
-          "name": "Public Invoice (Signed URL)",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/public/invoices/{{sales_order_id}}?expires={{public_invoice_expires}}&signature={{public_invoice_signature}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "public",
-                "invoices",
-                "{{sales_order_id}}"
-              ],
-              "query": [
-                {
-                  "key": "expires",
-                  "value": "{{public_invoice_expires}}"
-                },
-                {
-                  "key": "signature",
-                  "value": "{{public_invoice_signature}}"
-                }
-              ]
-            },
-            "description": "Use the exact expires and signature values from the signed URL sent to customer email/SMS or from `data.invoice_public_url` in create sales-order response."
           },
           "response": []
         }
@@ -3359,7 +3249,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"period_type\": \"week\",\n  \"week\": \"2025-11-17\"\n}",
+              "raw": "{\n  \"date\": \"{{commission_process_date}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3424,7 +3314,7 @@
                 },
                 {
                   "key": "period_type",
-                  "value": "week",
+                  "value": "month",
                   "disabled": true
                 },
                 {
@@ -4258,79 +4148,6 @@
               ]
             },
             "description": "Ledger view of income accounts. Apply account filters or export results for financial reconciliation."
-          },
-          "response": []
-        },
-        {
-          "name": "Monthly Incentive Detail Report",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/reports/monthly-incentives/detail",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "reports",
-                "monthly-incentives",
-                "detail"
-              ],
-              "query": [
-                {
-                  "key": "frequency",
-                  "value": "weekly",
-                  "disabled": true
-                },
-                {
-                  "key": "month",
-                  "value": "2025-11",
-                  "disabled": true
-                },
-                {
-                  "key": "week",
-                  "value": "2025-11-17",
-                  "disabled": true
-                },
-                {
-                  "key": "status",
-                  "value": "draft",
-                  "disabled": true
-                },
-                {
-                  "key": "employee_id",
-                  "value": "1",
-                  "disabled": true
-                },
-                {
-                  "key": "from",
-                  "value": "2025-11-01",
-                  "disabled": true
-                },
-                {
-                  "key": "to",
-                  "value": "2025-11-30",
-                  "disabled": true
-                },
-                {
-                  "key": "print",
-                  "value": "1",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Admin বিস্তারিত monthly/weekly incentive রিপোর্ট। Filter ও print mode support করে summary সহ response দেয়।"
           },
           "response": []
         },
@@ -5209,46 +5026,6 @@
           "response": []
         },
         {
-          "name": "View Employee Wallet Statement",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/employees/dashboard/wallet/statement",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "employees",
-                "dashboard",
-                "wallet",
-                "statement"
-              ],
-              "query": [
-                {
-                  "key": "employee_id",
-                  "value": "{{employee_id}}",
-                  "description": "View the statement for a specific employee (requires admin or manager role).",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Retrieve the employee wallet statement including debit, credit, opening balance, running balance, and closing balance. Administrators can supply an `employee_id` to inspect another employee's statement."
-          },
-          "response": []
-        },
-        {
           "name": "View Monthly Incentive (Employee)",
           "request": {
             "method": "GET",
@@ -5549,7 +5326,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/generate",
@@ -5586,7 +5363,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/process",
@@ -7011,7 +6788,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/generate",
@@ -7048,7 +6825,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/monthly-incentives/process",
@@ -7452,10 +7229,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/director-funds/calculate",
+              "raw": "{{base_url}}/api/v1/director-funds/calculate?type=ed&month=2025-11",
               "host": [
                 "{{base_url}}"
               ],
@@ -7465,7 +7242,16 @@
                 "director-funds",
                 "calculate"
               ],
-              "query": []
+              "query": [
+                {
+                  "key": "type",
+                  "value": "ed"
+                },
+                {
+                  "key": "month",
+                  "value": "2025-11"
+                }
+              ]
             }
           },
           "response": []
@@ -7490,10 +7276,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"type\": \"ed\",\n  \"month\": \"2025-11\",\n  \"frequency\": \"quarterly\"\n}"
+              "raw": "{\n    \"month\": \"2025-11\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/director-funds/process",
+              "raw": "{{base_url}}/api/v1/director-funds/process?type=ed&month=2025-11",
               "host": [
                 "{{base_url}}"
               ],
@@ -7503,7 +7289,16 @@
                 "director-funds",
                 "process"
               ],
-              "query": []
+              "query": [
+                {
+                  "key": "type",
+                  "value": "ed"
+                },
+                {
+                  "key": "month",
+                  "value": "2025-11"
+                }
+              ]
             }
           },
           "response": []
@@ -8493,7 +8288,6 @@
           "response": []
         }
       ]
-<<<<<<< codex/requirements-j4yrvz
     },
     {
       "name": "Promotions",
@@ -8926,51 +8720,32 @@
           ]
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost",
-      "type": "string"
     },
     {
-      "key": "access_token",
-      "value": "",
-      "type": "string"
-=======
->>>>>>> main
-    },
-    {
-      "name": "Promotions",
+      "name": "Blogs & Gallery",
       "item": [
         {
-          "name": "Admin APIs",
+          "name": "Blogs",
           "item": [
             {
-              "name": "List Promotion Sessions",
+              "name": "List Blogs (Public)",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "Accept",
                     "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions?per_page=15",
+                  "raw": "{{base_url}}/api/v1/blogs?per_page=15",
                   "host": [
                     "{{base_url}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "promotions",
-                    "sessions"
+                    "blogs"
                   ],
                   "query": [
                     {
@@ -8983,7 +8758,32 @@
               "response": []
             },
             {
-              "name": "Create Promotion Session (Monthly)",
+              "name": "Show Blog (Public)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/blogs/{{blog_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "blogs",
+                    "{{blog_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Blog",
               "request": {
                 "method": "POST",
                 "header": [
@@ -8992,35 +8792,46 @@
                     "value": "application/json"
                   },
                   {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
                     "key": "Authorization",
                     "value": "Bearer {{access_token}}"
                   }
                 ],
                 "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Monthly Promotion - Mar 2026\",\n  \"session_type\": \"monthly\",\n  \"start_date\": \"2026-03-01\",\n  \"end_date\": \"2026-03-31\",\n  \"target_metric\": \"down_payment_count\",\n  \"target_value\": 20,\n  \"min_product_or_share_sales\": 2,\n  \"rules\": [\n    {\n      \"slot_no\": 1,\n      \"eligibility_basis\": \"personal\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"national_tour_self\"\n    },\n    {\n      \"slot_no\": 2,\n      \"eligibility_basis\": \"first_step\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"fund\",\n      \"fund_amount\": 50000,\n      \"currency\": \"BDT\"\n    }\n  ]\n}"
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "New Blog Title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Blog description text here",
+                      "type": "text"
+                    },
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
                 },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions",
+                  "raw": "{{base_url}}/api/v1/blogs",
                   "host": [
                     "{{base_url}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "promotions",
-                    "sessions"
+                    "blogs"
                   ]
                 }
               },
               "response": []
             },
             {
-              "name": "Update Promotion Session",
+              "name": "Update Blog",
               "request": {
                 "method": "PATCH",
                 "header": [
@@ -9029,36 +8840,47 @@
                     "value": "application/json"
                   },
                   {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
                     "key": "Authorization",
                     "value": "Bearer {{access_token}}"
                   }
                 ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "Updated Blog Title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Updated description text",
+                      "type": "text"
+                    },
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
                 "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}",
+                  "raw": "{{base_url}}/api/v1/blogs/{{blog_id}}",
                   "host": [
                     "{{base_url}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "promotions",
-                    "sessions",
-                    "{{session_id}}"
+                    "blogs",
+                    "{{blog_id}}"
                   ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Monthly Promotion - Mar 2026 (Updated)\",\n  \"target_value\": 25,\n  \"rules\": [\n    {\n      \"slot_no\": 1,\n      \"eligibility_basis\": \"personal\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"national_tour_couple\"\n    },\n    {\n      \"slot_no\": 2,\n      \"eligibility_basis\": \"first_step\",\n      \"finance_verified_only\": true,\n      \"incentive_type\": \"fund\",\n      \"fund_amount\": 75000,\n      \"currency\": \"BDT\"\n    }\n  ]\n}"
                 }
               },
               "response": []
             },
             {
-              "name": "Delete Promotion Session",
+              "name": "Delete Blog",
               "request": {
                 "method": "DELETE",
                 "header": [
@@ -9072,197 +8894,15 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}",
+                  "raw": "{{base_url}}/api/v1/blogs/{{blog_id}}",
                   "host": [
                     "{{base_url}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "promotions",
-                    "sessions",
-                    "{{session_id}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Activate Promotion Session",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/activate",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "promotions",
-                    "sessions",
-                    "{{session_id}}",
-                    "activate"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Close Promotion Session",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/close",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "promotions",
-                    "sessions",
-                    "{{session_id}}",
-                    "close"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Calculate Session Eligibility",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/sessions/{{session_id}}/calculate-eligibility",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "promotions",
-                    "sessions",
-                    "{{session_id}}",
-                    "calculate-eligibility"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Generate Promotion Awards",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"session_id\": 1\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/awards/generate",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "promotions",
-                    "awards",
-                    "generate"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Process Promotion Awards",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"session_id\": 1\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/api/v1/promotions/awards/process",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "promotions",
-                    "awards",
-                    "process"
+                    "blogs",
+                    "{{blog_id}}"
                   ]
                 }
               },
@@ -9271,99 +8911,275 @@
           ]
         },
         {
-          "name": "Employee APIs",
+          "name": "Gallery",
           "item": [
             {
-              "name": "Employee Promotion Achievements",
+              "name": "List Galleries (Public)",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "Accept",
                     "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
                   }
                 ],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/employee/promotions/achievements",
+                  "raw": "{{base_url}}/api/v1/galleries?per_page=15",
                   "host": [
                     "{{base_url}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "employee",
-                    "promotions",
-                    "achievements"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Employee Promotion Progress",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/employee/promotions/progress",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "employee",
-                    "promotions",
-                    "progress"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Employee Promotion Reward Transactions",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  },
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{access_token}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/employee/wallet/transactions?per_page=15",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "employee",
-                    "wallet",
-                    "transactions"
+                    "galleries"
                   ],
                   "query": [
                     {
                       "key": "per_page",
                       "value": "15"
                     }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show Gallery (Public)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries/{{gallery_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries",
+                    "{{gallery_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Gallery (Single Image)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "Front View",
+                      "type": "text"
+                    },
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Gallery (Multiple Images + Shared Title)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "Project Gallery",
+                      "type": "text"
+                    },
+                    {
+                      "key": "images[]",
+                      "type": "file",
+                      "src": ""
+                    },
+                    {
+                      "key": "images[]",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Gallery (Multiple Images + Titles Array)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "titles[]",
+                      "value": "Lobby",
+                      "type": "text"
+                    },
+                    {
+                      "key": "titles[]",
+                      "value": "Rooftop",
+                      "type": "text"
+                    },
+                    {
+                      "key": "images[]",
+                      "type": "file",
+                      "src": ""
+                    },
+                    {
+                      "key": "images[]",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Gallery",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "Updated Gallery Title",
+                      "type": "text"
+                    },
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": ""
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries/{{gallery_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries",
+                    "{{gallery_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Gallery",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/galleries/{{gallery_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "galleries",
+                    "{{gallery_id}}"
                   ]
                 }
               },
@@ -9466,17 +9282,16 @@
     {
       "key": "session_id",
       "value": "1"
-<<<<<<< codex/requirements-j4yrvz
-=======
     },
     {
-      "key": "public_invoice_expires",
-      "value": ""
+      "key": "blog_id",
+      "value": "1",
+      "type": "string"
     },
     {
-      "key": "public_invoice_signature",
-      "value": ""
->>>>>>> main
+      "key": "gallery_id",
+      "value": "1",
+      "type": "string"
     }
   ]
 }

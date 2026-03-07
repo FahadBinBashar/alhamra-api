@@ -8,6 +8,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\ChartOfAccountsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommissionCalculationController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\EmployeeTreeController;
 use App\Http\Controllers\ServiceCommissionController;
 use App\Http\Controllers\InstallmentController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
@@ -82,11 +84,21 @@ Route::prefix('v1')->group(function () {
     });
   });
   Route::apiResource('categories', CategoryController::class);
+  Route::get('blogs', [BlogPostController::class, 'index']);
+  Route::get('blogs/{blog}', [BlogPostController::class, 'show']);
+  Route::get('galleries', [GalleryController::class, 'index']);
+  Route::get('galleries/{gallery}', [GalleryController::class, 'show']);
     Route::get('public/invoices/{salesOrder}', [PublicInvoiceController::class, 'show'])->middleware('signed')->name('public.invoices.show');
   Route::apiResource('products', ProductController::class);
   Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class,'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('blogs', [BlogPostController::class, 'store']);
+    Route::match(['put', 'patch'], 'blogs/{blog}', [BlogPostController::class, 'update']);
+    Route::delete('blogs/{blog}', [BlogPostController::class, 'destroy']);
+    Route::post('galleries', [GalleryController::class, 'store']);
+    Route::match(['put', 'patch'], 'galleries/{gallery}', [GalleryController::class, 'update']);
+    Route::delete('galleries/{gallery}', [GalleryController::class, 'destroy']);
     Route::apiResource('branches', BranchController::class);
     Route::apiResource('agents', AgentController::class);
     Route::prefix('agents/dashboard')->group(function () {
