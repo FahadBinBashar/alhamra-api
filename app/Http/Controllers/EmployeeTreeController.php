@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commission;
 use App\Models\CommissionCalculationItem;
+use App\Models\CommissionSetting;
 use App\Models\Employee;
 use App\Models\Payment;
 use App\Models\Rank;
@@ -34,8 +35,9 @@ class EmployeeTreeController extends Controller
 
         $paymentTotals = $this->collectPaymentTotals($start, $end);
         $commissionTotals = $this->collectCommissionTotals($start, $end);
+        $shareCounts = $this->collectShareCounts($start, $end);
 
-        $nodes = $this->buildEmployeeNodes($children, $employees, $childMap, $paymentTotals, $commissionTotals, $maxDepth, $rootId);
+        $nodes = $this->buildEmployeeNodes($children, $employees, $childMap, $paymentTotals, $commissionTotals, $shareCounts, $maxDepth, $rootId);
 
         return response()->json([
             'root_employee_id' => $rootId,
@@ -55,6 +57,7 @@ class EmployeeTreeController extends Controller
 
         $paymentTotals = $this->collectPaymentTotals($start, $end);
         $commissionTotals = $this->collectCommissionTotals($start, $end);
+        $shareCounts = $this->collectShareCounts($start, $end);
 
         $ownPaymentTotals = Payment::query()
             ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
@@ -107,8 +110,10 @@ class EmployeeTreeController extends Controller
                 'own_installment' => (float) ($ownPaymentTotals?->installment ?? 0),
                 'own_commission_paid' => $ownCommissionPaid,
                 'own_commission_pending' => $ownCommissionUnpaid + $ownCommissionDraft,
+                'own_share_count' => (int) ($shareCounts[$employee->id] ?? 0),
                 'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
                 'team_commission_total' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
+                'team_share_count' => $this->sumCountsFor($subtreeIds, $shareCounts),
             ],
             'recent_sales' => $recentSales,
             'recent_commissions' => $recentCommissions,
@@ -122,6 +127,7 @@ class EmployeeTreeController extends Controller
 
         $paymentTotals = $this->collectPaymentTotals($start, $end);
         $commissionTotals = $this->collectCommissionTotals($start, $end);
+        $shareCounts = $this->collectShareCounts($start, $end);
 
         if ($rankCode) {
             $employees = Employee::query()
@@ -139,6 +145,7 @@ class EmployeeTreeController extends Controller
                 $childMap,
                 $paymentTotals,
                 $commissionTotals,
+                $shareCounts,
                 $maxDepth
             );
 
@@ -158,7 +165,7 @@ class EmployeeTreeController extends Controller
             ->get()
             ->groupBy('rank');
 
-        $nodes = $ranks->map(function (Rank $rank) use ($rankEmployeeIds, $paymentTotals, $commissionTotals) {
+        $nodes = $ranks->map(function (Rank $rank) use ($rankEmployeeIds, $paymentTotals, $commissionTotals, $shareCounts) {
             $employeeIds = $rankEmployeeIds->get($rank->code)?->pluck('id')->all() ?? [];
 
             return [
@@ -169,8 +176,10 @@ class EmployeeTreeController extends Controller
                 'stats' => [
                     'own_sales' => $this->sumTotalsFor($employeeIds, $paymentTotals),
                     'own_commission' => $this->sumTotalsFor($employeeIds, $commissionTotals),
+                    'own_share_count' => $this->sumCountsFor($employeeIds, $shareCounts),
                     'team_sales' => $this->sumTotalsFor($employeeIds, $paymentTotals),
                     'team_commission' => $this->sumTotalsFor($employeeIds, $commissionTotals),
+                    'team_share_count' => $this->sumCountsFor($employeeIds, $shareCounts),
                 ],
             ];
         })->values();
@@ -246,6 +255,7 @@ class EmployeeTreeController extends Controller
         array $childMap,
         array $paymentTotals,
         array $commissionTotals,
+        array $shareCounts,
         ?int $maxDepth,
         ?int $parentId = null
     ): array {
@@ -276,8 +286,10 @@ class EmployeeTreeController extends Controller
                 'stats' => [
                     'own_sales' => (float) ($paymentTotals[$employeeId] ?? 0),
                     'own_commission' => (float) ($commissionTotals[$employeeId] ?? 0),
+                    'own_share_count' => (int) ($shareCounts[$employeeId] ?? 0),
                     'team_sales' => $this->sumTotalsFor($subtreeIds, $paymentTotals),
                     'team_commission' => $this->sumTotalsFor($subtreeIds, $commissionTotals),
+                    'team_share_count' => $this->sumCountsFor($subtreeIds, $shareCounts),
                 ],
             ];
 
@@ -386,6 +398,26 @@ class EmployeeTreeController extends Controller
         return $paidTotals;
     }
 
+    protected function collectShareCounts(Carbon $start, Carbon $end): array
+    {
+        $shareValue = (float) CommissionSetting::value('share_value', 50000);
+
+        if ($shareValue <= 0) {
+            return [];
+        }
+
+        return Payment::query()
+            ->selectRaw('sales_orders.source_me_id as employee_id, SUM(payments.amount) as total_down_payment')
+            ->join('sales_orders', 'sales_orders.id', '=', 'payments.sales_order_id')
+            ->whereNotNull('sales_orders.source_me_id')
+            ->where('payments.type', Payment::TYPE_DOWN_PAYMENT)
+            ->whereBetween('payments.paid_at', [$start->toDateString(), $end->toDateString()])
+            ->groupBy('sales_orders.source_me_id')
+            ->pluck('total_down_payment', 'employee_id')
+            ->map(fn ($totalDownPayment) => (int) floor(((float) $totalDownPayment) / $shareValue))
+            ->toArray();
+    }
+
     protected function sumTotalsFor(array $employeeIds, array $totals): float
     {
         $total = 0.0;
@@ -395,6 +427,17 @@ class EmployeeTreeController extends Controller
         }
 
         return round($total, 2);
+    }
+
+    protected function sumCountsFor(array $employeeIds, array $counts): int
+    {
+        $total = 0;
+
+        foreach ($employeeIds as $employeeId) {
+            $total += $counts[$employeeId] ?? 0;
+        }
+
+        return $total;
     }
 
     protected function commissionSumForEmployee(int $employeeId, string $status, Carbon $start, Carbon $end): float
