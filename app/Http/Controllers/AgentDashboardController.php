@@ -108,7 +108,8 @@ class AgentDashboardController extends Controller
                 'source' => 'commission',
                 'reference' => 'commission:'.$commission->id,
                 'note' => 'Commission credited to wallet',
-            ]);
+            ])
+            ->toBase();
 
         $debitEntries = WalletWithdrawRequest::query()
             ->where('user_type', WalletWithdrawRequest::USER_TYPE_AGENT)
@@ -122,7 +123,8 @@ class AgentDashboardController extends Controller
                 'source' => 'withdrawal',
                 'reference' => 'withdrawal:'.$withdrawal->id,
                 'note' => 'Wallet withdrawal approved',
-            ]);
+            ])
+            ->toBase();
 
         $statement = $this->buildStatement($wallet->balance, $creditEntries->merge($debitEntries));
 

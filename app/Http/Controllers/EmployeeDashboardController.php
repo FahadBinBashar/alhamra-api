@@ -226,7 +226,8 @@ class EmployeeDashboardController extends Controller
                 'source' => 'commission',
                 'reference' => 'commission:'.$commission->id,
                 'note' => 'Commission credited to wallet',
-            ]);
+            ])
+            ->toBase();
 
         $creditFromIncentives = MonthlyIncentive::query()
             ->where('employee_id', $employeeId)
@@ -239,7 +240,8 @@ class EmployeeDashboardController extends Controller
                 'source' => 'monthly_incentive',
                 'reference' => 'monthly_incentive:'.$incentive->id,
                 'note' => 'Monthly incentive credited to wallet',
-            ]);
+            ])
+            ->toBase();
 
         $creditFromRewards = EmployeeWalletTransaction::query()
             ->where('employee_id', $employeeId)
@@ -251,7 +253,8 @@ class EmployeeDashboardController extends Controller
                 'source' => $transaction->type,
                 'reference' => 'employee_wallet_transaction:'.$transaction->id,
                 'note' => $transaction->narration ?: 'Wallet transaction credited',
-            ]);
+            ])
+            ->toBase();
 
         $debitEntries = WalletWithdrawRequest::query()
             ->where('user_type', WalletWithdrawRequest::USER_TYPE_EMPLOYEE)
@@ -265,7 +268,8 @@ class EmployeeDashboardController extends Controller
                 'source' => 'withdrawal',
                 'reference' => 'withdrawal:'.$withdrawal->id,
                 'note' => 'Wallet withdrawal approved',
-            ]);
+            ])
+            ->toBase();
 
         $statement = $this->buildStatement(
             (float) $wallet->balance,
